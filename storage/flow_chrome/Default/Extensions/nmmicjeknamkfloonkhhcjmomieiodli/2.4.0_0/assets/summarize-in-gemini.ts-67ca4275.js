@@ -1,0 +1,1 @@
+import{S as r}from"./summarizer-6a36ddea.js";import"./browser-polyfill-3de740ec.js";import"./settings-d590cdf1.js";import"./extension-info-79ba4f04.js";import"./createLucideIcon-4fd69bff.js";const m="gemini";try{(async()=>await new r({enableFollowup:!0,platform:m}).initialize())()}catch{}

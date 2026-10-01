@@ -1,0 +1,1517 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "photorealistic cinematic film",
+    "color_palette": "natural cinematic colors",
+    "lighting_language": "motivated realistic lighting",
+    "camera_language": "cinematic composition, natural depth of field",
+    "texture": "natural skin texture, realistic materials",
+    "global_negative_prompt": "inconsistent identity, different face, extra fingers, deformed hands, duplicate people, text, captions, watermark"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "wardrobe": "",
+      "identity_markers": [],
+      "consistency_rules": [
+        "same face, age, hairstyle, body proportions and skin tone in every shot",
+        "same wardrobe and accessories until the script explicitly changes them"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "In October 2018, in a house on the Via del Vasuvio that was being excavated for the first time,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "a workman had written a line in charcoal on a wall.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Charcoal fades within weeks in the open air.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "This had survived because it was sealed almost immediately.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "It was a date, the 16th day before the calendars of November,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the 17th of October.\nSomebody wrote that on a wall in a house that was still",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "being renovated. And then the mountain came down on top of it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "It fits everything else.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Intimate close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The brazers found in the houses set up for heating in a city where August",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "afternoons run to 35°.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom in",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "The heavier clothing on the bodies,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "the pomegranates and the walnuts and the chestnuts in the storooms,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "which are October food,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "the wine that had already been pressed and sealed into jars,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "which happens after the harvest and never before it.\nA coin found in the house",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "of the golden bracelet carries a title that the emperor Titus took up in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "second half of September 79. It was in circulation before the ash fell.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_18",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "So the eruption almost certainly happened in late October,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Intimate close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_19",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "most likely on the 24th,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_20",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "2 months after the date that every one of us was taught.\nHold on to that",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom in",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_21",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "because it is the pattern of everything that follows.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_22",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "The story of Pompei is one that was written down early, repeated confidently,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_23",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "and left alone by everyone since.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_24",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "And the biggest thing left alone is the 10,000.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_25",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "One more thing has to go in before the people do because without it,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_26",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the behavior in the rest of this film makes no sense.\nPompei in October 79 was",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_27",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "a building site. 17 years earlier on the 5th of February in the year 62 there had been an",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Intimate close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_28",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "earthquake a serious one.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_29",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "The philosopher Senica wrote about it because it happened in his lifetime and",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom in",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_30",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "it frightened people and he records that Pompei was largely thrown down and",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_31",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "that the surrounding district was damaged.\nHerculanium took it badly too.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_32",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "livestock died in the fields and there is a detail in his account about a flock",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_33",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "of 600 sheep found dead which he attributes to bad air coming out of the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_34",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "ground. Modern estimates put it somewhere around magnitude 6.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_35",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "There is a relief carved in stone in a house in Pompei,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_36",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "paid for by a banker called Lucius Chicilius Yukundis that shows the temple of",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_37",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Jupiter in the forum,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Intimate close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_38",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "tilting over with its columns coming apart and an equestrian statue sliding off",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_39",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "its base and the Vuvius gate collapsing.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom in",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_40",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "He\ncommissioned it to mark his own survival or his gratitude or both.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_41",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "That relief is a man putting up a picture of the worst day of his life on his",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_42",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "own wall. And here is what matters about it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_43",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "17 years later in 79, the city had not finished repairing itself.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_44",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The forum, the civic heart of the town,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_45",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the place with the temples and the basilica and the administrative buildings,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_46",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "was still under scaffolding.\nThe great public buildings were partly rebuilt and",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_47",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "partly propped. The water system had been reworked.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Intimate close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_48",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Private houses across the town show repairs in progress.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_49",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "New plaster half applied.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom in",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_50",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Walls rebuilt in a cheaper technique than the original.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_51",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "Rooms in use as storage that had been dining rooms.\nThe house on the Via del",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_52",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Visuvio where the charcoal date was written on the wall was itself being",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_53",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "renovated. That is why a workman was writing on the plaster.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_54",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Two generations of Pompeans had grown up in a town that was always being fixed.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_55",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "And that has a consequence that runs straight through the rest of this film.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

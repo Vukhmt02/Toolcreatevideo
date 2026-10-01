@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolCreateVideo — Tạo Video từ Kịch Bản</title>
+    <meta name="description" content="Tool tạo video tự động từ kịch bản với AI voice và Veo 3.1">
+    <link rel="stylesheet" href="/static/css/style.css?v=20260930-2">
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+    <div class="logo">
+        <span class="logo-icon">🎬</span>
+        <h1>ToolCreateVideo</h1>
+    </div>
+    <div class="header-status">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Đang kết nối...</span>
+    </div>
+</header>
+
+<!-- Navigation -->
+<nav class="nav-tabs">
+    <button class="nav-tab active" data-tab="config" onclick="switchTab('config')">⚙️ Cài đặt</button>
+    <button class="nav-tab" data-tab="script" onclick="switchTab('script')">📝 Kịch bản</button>
+    <button class="nav-tab" data-tab="characters" onclick="switchTab('characters')">👥 Nhân vật</button>
+    <button class="nav-tab" data-tab="generate" onclick="switchTab('generate')">🎬 Tạo Video</button>
+    <button class="nav-tab" data-tab="result" onclick="switchTab('result')">📦 Kết quả</button>
+</nav>
+
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Main Content -->
+<main class="main-content">
+
+    <!-- Tab: Config -->
+    <div class="tab-panel active" id="tab-config">
+        <div class="card">
+            <div class="card-title"><span class="icon">🔑</span> Cấu Hình API Keys & Dịch Vụ AI</div>
+            <div class="config-grid">
+                <div class="config-item">
+                    <label>Google AI Studio API Key (cho Veo và Gemini tạo ảnh)</label>
+                    <input type="password" id="googleApiKey" placeholder="Nhập API key từ aistudio.google.com">
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        Dùng chung cho Veo 3.1 (cảnh KEY) và Gemini tạo ảnh (cảnh FILLER). Lấy khóa tại aistudio.google.com/apikey.
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>Dịch vụ giọng đọc toàn video</label>
+                    <select id="voiceProvider">
+                        <option value="gemini">Gemini TTS (khuyên dùng)</option>
+                        <option value="omnivoice">OmniVoice</option>
+                        <option value="edge_tts">Edge TTS miễn phí</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label>Model Gemini TTS</label>
+                    <select id="geminiTtsModel">
+                        <option value="gemini-3.8-flash-tts">Gemini 3.8 Flash TTS — chất lượng cao</option>
+                        <option value="gemini-3.8-flash-lite-tts">Gemini 3.8 Flash-Lite TTS — nhanh, tiết kiệm</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label>Giọng Gemini TTS</label>
+                    <select id="geminiTtsVoice">
+                        <option value="Gacrux">Gacrux — trưởng thành</option>
+                        <option value="Charon">Charon — thuyết minh</option>
+                        <option value="Sulafat">Sulafat — ấm áp</option>
+                        <option value="Iapetus">Iapetus — rõ ràng</option>
+                        <option value="Achernar">Achernar — nhẹ nhàng</option>
+                        <option value="Rasalgethi">Rasalgethi — kiến thức</option>
+                        <option value="Schedar">Schedar — đều đặn</option>
+                        <option value="Kore">Kore — chắc chắn</option>
+                        <option value="Achird">Achird — thân thiện</option>
+                        <option value="Vindemiatrix">Vindemiatrix — dịu dàng</option>
+                    </select>
+                </div>
+                <div class="config-item">
+                    <label>Phong cách đọc Gemini</label>
+                    <input type="text" id="geminiTtsStyle" value="mature Vietnamese narrator, warm, clear, natural pacing, restrained emotion">
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        Chỉ mô tả cách đọc; nội dung kịch bản sẽ được gửi riêng để tránh đọc luôn chỉ dẫn.
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>OmniVoice Server URL (Colab GPU Ngrok)</label>
+                    <input type="text" id="omnivoiceUrl" placeholder="Ví dụ: https://xxxx.ngrok-free.app">
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        Để trống nếu muốn dùng Edge TTS miễn phí
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>OmniVoice API Key (tùy chọn)</label>
+                    <input type="password" id="omnivoiceApiKey" placeholder="TTS_API_KEY nếu đã cài đặt trên Colab">
+                </div>
+                <div class="config-item">
+                    <label>Chất lượng OmniVoice (num_step)</label>
+                    <input type="number" id="omnivoiceNumStep" min="4" max="64" step="1" value="32">
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        16 nhanh hơn; 32 cân bằng; 48–64 chất lượng cao nhưng chậm hơn.
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>Tốc độ đọc OmniVoice</label>
+                    <input type="number" id="omnivoiceSpeed" min="0.5" max="2" step="0.05" value="1.0">
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        1.0 là tốc độ gốc; 0.9 chậm hơn; 1.1 nhanh hơn.
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>WaveSpeed API Key (legacy / tùy chọn)</label>
+                    <input type="password" id="wavespeedApiKey" placeholder="Để trống nếu không dùng">
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveConfig()">💾 Lưu Cấu Hình</button>
+                <button class="btn btn-secondary" onclick="testGoogleConnection()">🔍 Kiểm tra Google API</button>
+                <button class="btn btn-secondary" onclick="testOmniVoiceConnection()">🎙️ Kiểm tra OmniVoice</button>
+            </div>
+            <div id="serviceStatusGrid" style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title"><span class="icon">🎙️</span> Nghe thử giọng đọc toàn video</div>
+            <div class="config-grid">
+                <div class="config-item">
+                    <label>Nội dung test</label>
+                    <input type="text" id="testVoiceText" value="Xin chào, đây là giọng nói thử nghiệm từ ToolCreateVideo.">
+                </div>
+                <div class="config-item">
+                    <label>Giọng Edge TTS dự phòng</label>
+                    <select id="testVoiceGender">
+                        <option value="female">Nữ (HoaiMy)</option>
+                        <option value="male">Nam (NamMinh)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="testVoice()">▶️ Nghe thử</button>
+            </div>
+            <audio id="testAudioPlayer" style="margin-top:12px;width:100%;display:none" controls></audio>
+        </div>
+    </div>
+
+    <!-- Tab: Script -->
+    <div class="tab-panel" id="tab-script">
+        <div class="card">
+            <div class="card-title"><span class="icon">📝</span> Kịch Bản Video</div>
+
+            <!-- Upload input ẩn -->
+            <input type="file" id="scriptFileInput" accept=".json,.txt,.md" style="display:none" onchange="handleScriptFileUpload(this)">
+
+            <!-- Khu vực kéo thả / chọn file kịch bản -->
+            <div class="upload-area" id="scriptDropArea" onclick="document.getElementById('scriptFileInput').click()" style="margin-bottom:16px;padding:22px 16px;border-width:2px;">
+                <div style="font-size:26px;margin-bottom:6px">📁</div>
+                <div id="scriptDropText" style="font-weight:600;font-size:14px;color:var(--text-primary);margin-bottom:4px">
+                    Bấm vào đây để tải file kịch bản lên (hoặc kéo thả file vào ô này)
+                </div>
+                <div style="font-size:12px;color:var(--text-secondary)">
+                    Hỗ trợ: <strong style="color:var(--accent-secondary)">.json</strong> (kịch bản chuẩn) hoặc <strong style="color:var(--accent-secondary)">.txt / .md</strong> (kịch bản viết tự nhiên)
+                </div>
+            </div>
+
+            <div class="btn-group" style="margin-top:0;margin-bottom:12px;flex-wrap:wrap">
+                <button class="btn btn-secondary btn-sm" onclick="document.getElementById('scriptFileInput').click()">📁 Chọn file kịch bản</button>
+                <button class="btn btn-secondary btn-sm" onclick="formatJson()" style="border-color:var(--accent-secondary);color:#38bdf8;font-weight:600">⚡ Tách đoạn sang JSON</button>
+                <button class="btn btn-secondary btn-sm" onclick="loadSampleScript()">📄 Tải kịch bản mẫu</button>
+                <button class="btn btn-secondary btn-sm" onclick="validateScript()">✅ Kiểm tra kịch bản</button>
+                <button class="btn btn-secondary btn-sm" id="btnAiRefine" onclick="refineScriptWithAI()" style="border-color:var(--accent-primary);color:#c4b5fd">🤖 AI Chuẩn hóa kịch bản (Gemini)</button>
+            </div>
+
+            <textarea id="scriptEditor" placeholder='Dán kịch bản JSON hoặc kịch bản tự nhiên vào đây...
+
+Ví dụ kịch bản dạng chữ tự nhiên:
+Tiêu đề: Cuộc gặp gỡ mùa đông
+Nhân vật:
+- Minh (nam): 30 tuổi, áo khoác dạ tối màu
+- Lan (nữ): 25 tuổi, áo len trắng, nụ cười ấm áp
+
+Cảnh 1: Quán cà phê nhỏ ấm cúng, ngoài trời mưa rơi
+Minh: Em có nhớ lần đầu chúng mình gặp nhau không?
+Lan: Nhớ chứ. Hôm đó trời cũng mưa như thế này.
+
+Cảnh 2: Hồi tưởng công viên mùa thu ngập lá vàng
+Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi xuống. Hai người xa lạ tình cờ gặp nhau trên con đường nhỏ.'></textarea>
+
+            <div class="btn-group">
+                <button class="btn btn-primary" id="btnCreateProject" onclick="createProject()">🚀 Tạo Project</button>
+            </div>
+
+            <div id="scriptValidation" style="margin-top:14px;font-size:13px;line-height:1.6"></div>
+
+            <details style="margin-top:16px;background:rgba(255,255,255,0.02);border:1px solid var(--border-glass);border-radius:var(--radius-md);padding:12px 16px;">
+                <summary style="cursor:pointer;font-weight:600;font-size:13px;color:var(--accent-secondary)">
+                    💡 Xem hướng dẫn cấu trúc JSON chuẩn & đầy đủ các trường
+                </summary>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:12px;line-height:1.7">
+                    <p style="margin-bottom:8px">Một kịch bản video chuẩn và đầy đủ gồm 4 phần chính:</p>
+                    <ul style="padding-left:20px;margin-bottom:10px">
+                        <li><strong>title</strong>: Tên kịch bản (tiếng Việt).</li>
+                        <li><strong>settings</strong>: <code>aspect_ratio</code> (16:9, 9:16 cho Shorts/TikTok, 1:1), <code>resolution</code> (720p, 1080p), <code>default_language</code> ("vi").</li>
+                        <li><strong>characters</strong>: Danh sách nhân vật (<code>id</code>, <code>name</code>, <code>description</code> bằng tiếng Anh để Veo vẽ hình, <code>voice_gender</code>: "male" hoặc "female").</li>
+                        <li><strong>scenes</strong>: Danh sách các cảnh:
+                            <ul style="padding-left:16px;margin-top:4px">
+                                <li><code>setting</code>: Mô tả bối cảnh chi tiết bằng tiếng Anh (ánh sáng, thời tiết, vị trí).</li>
+                                <li><code>camera</code>: Góc quay camera (Medium shot, Close-up, Wide shot, Slow zoom in).</li>
+                                <li><code>dialogues</code>: Lời thoại nhân vật (<code>character</code>, <code>text</code> tiếng Việt, <code>emotion</code> cảm xúc, <code>action</code> hành động).</li>
+                                <li><code>narration</code>: Lời dẫn chuyện / Voiceover (<code>text</code> tiếng Việt, <code>voice</code>, <code>emotion</code>).</li>
+                                <li><code>background_music</code>: Nhạc nền (piano, acoustic, ambient).</li>
+                                <li><code>duration_hint</code>: Thời lượng cảnh (ví dụ: "10s", "15s").</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- Tab: Characters -->
+    <div class="tab-panel" id="tab-characters">
+        <div class="card">
+            <div class="card-title"><span class="icon">👥</span> Nhân Vật</div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
+                Upload ảnh reference và audio giọng mẫu cho từng nhân vật (tùy chọn).
+            </p>
+            <div class="character-grid" id="characterGrid">
+                <div class="empty-state">
+                    <div class="icon">👤</div>
+                    <p>Chưa có nhân vật. Hãy tạo project từ kịch bản trước.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Generate -->
+    <div class="tab-panel" id="tab-generate">
+        <div class="card">
+            <div class="card-title"><span class="icon">🎬</span> Tạo Video</div>
+
+            <div id="generateInfo" style="margin-bottom:16px">
+                <div class="empty-state">
+                    <div class="icon">📋</div>
+                    <p>Chưa có project. Hãy tạo project từ tab Kịch Bản trước.</p>
+                </div>
+            </div>
+
+            <div id="generateControls" style="display:none">
+                <div class="stats-banner" style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap">
+                    <div class="stat-box" style="background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:8px;border:1px solid var(--border-glass)">
+                        <span style="color:var(--text-secondary);font-size:12px">Project:</span>
+                        <strong id="projectTitle" style="display:block;color:var(--accent-secondary)">—</strong>
+                    </div>
+                    <div class="stat-box" style="background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:8px;border:1px solid var(--border-glass)">
+                        <span style="color:var(--text-secondary);font-size:12px">Tổng số cảnh:</span>
+                        <strong id="projectScenes" style="display:block">0</strong>
+                    </div>
+                    <div class="stat-box" style="background:rgba(168,85,247,0.08);padding:10px 14px;border-radius:8px;border:1px solid rgba(168,85,247,0.3)">
+                        <span style="color:#c084fc;font-size:12px">🎬 Cảnh KEY (Veo 3.1):</span>
+                        <strong id="projectKeyScenes" style="display:block;color:#e879f9">0</strong>
+                    </div>
+                    <div class="stat-box" style="background:rgba(56,189,248,0.08);padding:10px 14px;border-radius:8px;border:1px solid rgba(56,189,248,0.3)">
+                        <span style="color:#38bdf8;font-size:12px">🖼️ Cảnh FILLER (Gemini tạo ảnh):</span>
+                        <strong id="projectFillerScenes" style="display:block;color:#7dd3fc">0</strong>
+                    </div>
+                    <div class="stat-box" style="background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:8px;border:1px solid var(--border-glass)">
+                        <span style="color:var(--text-secondary);font-size:12px">Nhân vật:</span>
+                        <strong id="projectChars" style="display:block">0</strong>
+                    </div>
+                </div>
+
+                <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
+                    <button class="btn btn-secondary" id="btnVisualAnalyze" type="button" onclick="analyzeVisualPlan()">🧠 AI phân tích bố cục & đồng bộ</button>
+                    <button class="btn btn-primary" id="btnGenerate" onclick="startGeneration()">
+                        🎬 Bắt đầu tạo Video (Veo 3.1 + Gemini tạo ảnh)
+                    </button>
+                    <button class="btn btn-secondary" type="button" onclick="openFlowWindows()">🌐 Mở các cửa sổ Flow</button>
+                    <button class="btn btn-secondary" type="button" onclick="generateInFlow()">⚡ Gửi prompt vào Flow (3 luồng)</button>
+                    <span style="font-size:12px;color:var(--text-secondary)">
+                        💡 Nhấp vào nút <b>KEY / FILLER</b> tại từng cảnh bên dưới để đổi loại cảnh nếu muốn.
+                    </span>
+                </div>
+                <div id="visualBibleSummary" class="visual-bible-summary"></div>
+            </div>
+
+            <div id="progressContainer" style="display:none;margin-top:20px">
+                <div id="sceneProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Result -->
+    <div class="tab-panel" id="tab-result">
+        <div class="card">
+            <div id="resultContent">
+                <div class="empty-state">
+                    <div class="icon">🎥</div>
+                    <p>Chưa có video. Hãy tạo video từ tab Tạo Video.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+<script src="/static/js/app.js?v=20260930-2"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+{
+  "title": "Test Project",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "characters": [
+    {
+      "id": "char_01",
+      "name": "Nam",
+      "description": "Man 30s",
+      "voice_ref": "",
+      "voice_gender": "female",
+      "reference_images": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Street morning",
+      "camera": "Wide",
+      "dialogues": [
+        {
+          "character": "char_01",
+          "text": "Xin chào thế giới",
+          "emotion": "neutral",
+          "action": ""
+        }
+      ],
+      "narration": null,
+      "scene_type": "key",
+      "background_music": "",
+      "duration_hint": ""
+    },
+    {
+      "id": "scene_02",
+      "setting": "Coffee shop sunset",
+      "camera": "Medium",
+      "dialogues": [],
+      "narration": {
+        "text": "Trời dần chuyển về chiều",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "",
+      "duration_hint": ""
+    }
+  ]
+}

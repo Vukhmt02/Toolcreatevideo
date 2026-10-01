@@ -1,0 +1,1 @@
+import{r as t,s as C}from"./extension-info-79ba4f04.js";import{q as c}from"./use-translation-4ce3b1af.js";const u=()=>{const{userConfig:n,onChangeUserConfig:o}=c(),e=t.useCallback(async(s,a)=>{await C(s,a),o(r=>({...r,[s]:a}))},[o]);return{userConfig:n,onChange:e}};export{u};

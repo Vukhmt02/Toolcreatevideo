@@ -1,0 +1,65 @@
+{
+  "title": "Cuộc gặp gỡ mùa đông",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "characters": [
+    {
+      "id": "char_01",
+      "name": "Minh",
+      "description": "Vietnamese man, 30 years old, short black hair, wearing a dark coat, thoughtful expression",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": []
+    },
+    {
+      "id": "char_02",
+      "name": "Lan",
+      "description": "Vietnamese woman, 25 years old, long black hair, wearing a white sweater, warm smile",
+      "voice_ref": "",
+      "voice_gender": "female",
+      "reference_images": []
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "scene_type": "key",
+      "setting": "A cozy small coffee shop with warm lighting, rain falling outside the window, afternoon",
+      "camera": "Medium shot, slowly zooming in on the two characters sitting at a table",
+      "dialogues": [
+        {
+          "character": "char_01",
+          "text": "Em có nhớ lần đầu chúng mình gặp nhau không?",
+          "emotion": "nostalgic, gentle voice",
+          "action": "looking out the window, holding a coffee cup"
+        },
+        {
+          "character": "char_02",
+          "text": "Nhớ chứ. Hôm đó trời cũng mưa như thế này.",
+          "emotion": "warm smile, soft voice",
+          "action": "smiling and tilting head slightly"
+        }
+      ],
+      "narration": null,
+      "background_music": "soft piano, rain sounds",
+      "duration_hint": "12s"
+    },
+    {
+      "id": "scene_02",
+      "scene_type": "filler",
+      "setting": "Flashback: An autumn park with golden leaves falling, warm sunlight filtering through trees",
+      "camera": "Wide shot transitioning to close-up of the two characters meeting for the first time",
+      "dialogues": [],
+      "narration": {
+        "text": "Đó là một ngày thu, khi những chiếc lá cuối cùng rơi xuống. Hai người xa lạ tình cờ gặp nhau trên con đường nhỏ.",
+        "voice": "char_01",
+        "emotion": "contemplative, calm"
+      },
+      "background_music": "gentle acoustic guitar, ambient autumn sounds",
+      "duration_hint": "10s"
+    }
+  ]
+}

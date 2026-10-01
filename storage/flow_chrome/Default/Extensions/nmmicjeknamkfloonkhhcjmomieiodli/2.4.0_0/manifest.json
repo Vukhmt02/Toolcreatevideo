@@ -1,0 +1,106 @@
+{
+   "action": {
+      "default_icon": {
+         "48": "images/48.png"
+      }
+   },
+   "background": {
+      "service_worker": "service-worker-loader.js",
+      "type": "module"
+   },
+   "content_scripts": [ {
+      "js": [ "assets/message-listener.ts-loader-95223002.js" ],
+      "matches": [ "https://glasp.co/*", "https://glasp.ai/*" ]
+   }, {
+      "css": [ "assets/createLucideIcon-d0c85fa7.css" ],
+      "js": [ "assets/summarize-in-chatgpt.ts-loader-cac749f7.js" ],
+      "matches": [ "https://chat.openai.com/*", "https://chatgpt.com/*", "https://chat.com/*" ]
+   }, {
+      "css": [ "assets/createLucideIcon-d0c85fa7.css" ],
+      "js": [ "assets/summarize-in-claude.ts-loader-1e4b5541.js" ],
+      "matches": [ "https://claude.ai/*" ]
+   }, {
+      "css": [ "assets/createLucideIcon-d0c85fa7.css" ],
+      "js": [ "assets/summarize-in-mistral-ai.ts-loader-dcf4b696.js" ],
+      "matches": [ "https://chat.mistral.ai/*" ]
+   }, {
+      "css": [ "assets/createLucideIcon-d0c85fa7.css" ],
+      "js": [ "assets/summarize-in-gemini.ts-loader-4b2340e1.js" ],
+      "matches": [ "https://gemini.google.com/*" ]
+   }, {
+      "css": [ "assets/createLucideIcon-d0c85fa7.css" ],
+      "js": [ "assets/summarize-in-aistudio.ts-loader-0b8161f0.js" ],
+      "matches": [ "https://aistudio.google.com/*" ]
+   }, {
+      "css": [ "assets/createLucideIcon-d0c85fa7.css" ],
+      "js": [ "assets/summarize-in-grok.ts-loader-c137b5eb.js" ],
+      "matches": [ "https://grok.com/*" ]
+   }, {
+      "css": [ "assets/createLucideIcon-d0c85fa7.css", "assets/youtube-helper-4cbe6cad.css" ],
+      "js": [ "assets/youtube-helper.ts-loader-3637051b.js" ],
+      "matches": [ "https://www.youtube.com/*" ]
+   }, {
+      "all_frames": false,
+      "css": [ "assets/createLucideIcon-d0c85fa7.css" ],
+      "js": [ "assets/web-helper.ts-loader-6a0a74d3.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_idle"
+   } ],
+   "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'"
+   },
+   "description": "Summarize YouTube videos, web articles, and PDFs to save time, powered by ChatGPT, Claude, Mistral AI, and Gemini.",
+   "icons": {
+      "128": "images/128.png",
+      "256": "images/256.png",
+      "48": "images/48.png",
+      "512": "images/512.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtZHQBuB6QePjVPOHNn7B7fSRp1wW0VK8Ky0SpOefo7OxAc54t0VmOd9GLtYHVdYjOnR+xIgSEAI3Rb1ZK75kFrIcAnB5/3O6p8SWu69ziKgyjCkQtxXLmadMKjRaUcQR/UUZL/NBznKFu8GlbhYm0i0gtaA/a9xoQCpF2I6S1nIH54YVVQZkKS7Wv/kLAj8bNsU/AkI3c2hov+fzGZiQvmc1ooLH442AOgwD74deTvEPcUaa1+Fo1pOemtUylQ6NIqNPyGn0irT/icZoA1mceyOWVCvRb9dvsQ5nK8FrRsdVJLG0NmjUwCQA2GwPdgNZWlRlPFmhs8ruVtwBW53bZQIDAQAB",
+   "manifest_version": 3,
+   "name": "YouTube Summary with ChatGPT & Claude",
+   "options_ui": {
+      "open_in_tab": true,
+      "page": "src/options/index.html"
+   },
+   "permissions": [ "storage" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "2.4.0",
+   "web_accessible_resources": [ {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "src/utils/pdf/pdf.worker.min.mjs", "assets/createLucideIcon-4fd69bff.js", "assets/messaging-443d5504.js", "assets/extension-info-79ba4f04.js", "assets/settings-d590cdf1.js", "assets/use-translation-4ce3b1af.js", "assets/summary-panel-claim-5f4e9ba9.js", "assets/browser-polyfill-3de740ec.js", "assets/cloud-functions-42a5ee11.js", "assets/use-form-7cf68786.js", "assets/defuddle-extract-382e046a.js", "assets/web-helper.ts-672794fc.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://glasp.ai/*", "https://glasp.co/*" ],
+      "resources": [ "assets/browser-polyfill-3de740ec.js", "assets/message-listener.ts-688d260a.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://chat.com/*", "https://chat.openai.com/*", "https://chatgpt.com/*" ],
+      "resources": [ "assets/summarizer-6a36ddea.js", "assets/browser-polyfill-3de740ec.js", "assets/settings-d590cdf1.js", "assets/extension-info-79ba4f04.js", "assets/createLucideIcon-4fd69bff.js", "assets/summarize-in-chatgpt.ts-5e6956c2.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://claude.ai/*" ],
+      "resources": [ "assets/summarizer-6a36ddea.js", "assets/browser-polyfill-3de740ec.js", "assets/settings-d590cdf1.js", "assets/extension-info-79ba4f04.js", "assets/createLucideIcon-4fd69bff.js", "assets/summarize-in-claude.ts-6b9da345.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://chat.mistral.ai/*" ],
+      "resources": [ "assets/summarizer-6a36ddea.js", "assets/browser-polyfill-3de740ec.js", "assets/settings-d590cdf1.js", "assets/extension-info-79ba4f04.js", "assets/createLucideIcon-4fd69bff.js", "assets/summarize-in-mistral-ai.ts-588cbbb5.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://gemini.google.com/*" ],
+      "resources": [ "assets/summarizer-6a36ddea.js", "assets/browser-polyfill-3de740ec.js", "assets/settings-d590cdf1.js", "assets/extension-info-79ba4f04.js", "assets/createLucideIcon-4fd69bff.js", "assets/summarize-in-gemini.ts-67ca4275.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://aistudio.google.com/*" ],
+      "resources": [ "assets/summarizer-6a36ddea.js", "assets/browser-polyfill-3de740ec.js", "assets/settings-d590cdf1.js", "assets/extension-info-79ba4f04.js", "assets/createLucideIcon-4fd69bff.js", "assets/summarize-in-aistudio.ts-b96ba8f1.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://grok.com/*" ],
+      "resources": [ "assets/summarizer-6a36ddea.js", "assets/browser-polyfill-3de740ec.js", "assets/settings-d590cdf1.js", "assets/extension-info-79ba4f04.js", "assets/createLucideIcon-4fd69bff.js", "assets/summarize-in-grok.ts-9cd1c101.js" ],
+      "use_dynamic_url": false
+   }, {
+      "matches": [ "https://www.youtube.com/*" ],
+      "resources": [ "assets/createLucideIcon-4fd69bff.js", "assets/extension-info-79ba4f04.js", "assets/summary-panel-claim-5f4e9ba9.js", "assets/use-translation-4ce3b1af.js", "assets/shadcn-util-cf6fa587.js", "assets/browser-polyfill-3de740ec.js", "assets/settings-d590cdf1.js", "assets/cloud-functions-42a5ee11.js", "assets/messaging-443d5504.js", "assets/defuddle-extract-382e046a.js", "assets/youtube-helper.ts-b67dd05a.js" ],
+      "use_dynamic_url": false
+   } ]
+}

@@ -1,0 +1,87 @@
+{
+  "title": "Test Project",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "photorealistic cinematic film",
+    "color_palette": "natural cinematic colors",
+    "lighting_language": "motivated realistic lighting",
+    "camera_language": "cinematic composition, natural depth of field",
+    "texture": "natural skin texture, realistic materials",
+    "global_negative_prompt": "inconsistent identity, different face, extra fingers, deformed hands, duplicate people, text, captions, watermark"
+  },
+  "characters": [
+    {
+      "id": "char_01",
+      "name": "Nam",
+      "description": "Man 30s",
+      "voice_ref": "",
+      "voice_gender": "female",
+      "reference_images": [],
+      "appearance_signature": "Man 30s",
+      "wardrobe": "",
+      "identity_markers": [],
+      "consistency_rules": [
+        "same face, age, hairstyle, body proportions and skin tone in every shot",
+        "same wardrobe and accessories until the script explicitly changes them"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Street morning",
+      "camera": "Wide",
+      "dialogues": [
+        {
+          "character": "char_01",
+          "text": "Xin chào thế giới",
+          "emotion": "neutral",
+          "action": ""
+        }
+      ],
+      "narration": null,
+      "scene_type": "key",
+      "background_music": "",
+      "duration_hint": "",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": ""
+    },
+    {
+      "id": "scene_02",
+      "setting": "Coffee shop sunset",
+      "camera": "Medium",
+      "dialogues": [],
+      "narration": {
+        "text": "Trời dần chuyển về chiều",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "",
+      "duration_hint": "",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": ""
+    }
+  ]
+}

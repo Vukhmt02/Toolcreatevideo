@@ -1,0 +1,249 @@
+{
+  "title": "Người Gác Đèn Cuối Cùng",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "characters": [
+    {
+      "id": "char_elias",
+      "name": "Elias",
+      "description": "An old Vietnamese lighthouse keeper, over 70 years old, weathered face with deep wrinkles, kind and gentle eyes, silver hair, wearing a simple worn-out blue jacket",
+      "voice_ref": "D:\\ToolCreateVideo\\storage\\projects\\31a86792a4a4\\assets\\char_elias_voice.mp3",
+      "voice_gender": "male",
+      "reference_images": [
+        "D:\\ToolCreateVideo\\storage\\projects\\31a86792a4a4\\assets\\char_elias_image.jpg"
+      ]
+    },
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "D:\\ToolCreateVideo\\storage\\projects\\31a86792a4a4\\assets\\char_narrator_voice.mp3",
+      "voice_gender": "male",
+      "reference_images": [
+        "D:\\ToolCreateVideo\\storage\\projects\\31a86792a4a4\\assets\\char_narrator_image.jpg"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Cinematic establishing shot of Grayhaven coastal village, old lighthouse standing tall on a rocky cliff, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "Ngôi làng ven biển Grayhaven từng nổi tiếng với ngọn hải đăng cao nhất vùng.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_02",
+      "setting": "Nighttime sea, powerful beam of light from the lighthouse sweeping across the dark ocean waves, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Mỗi đêm, ánh sáng từ đỉnh tháp quét qua mặt biển,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_03",
+      "setting": "A wooden ship sailing safely through rough waves guided by the lighthouse beam, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "dẫn đường cho những con tàu trở về an toàn.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_04",
+      "setting": "Cozy village harbor at night, warm lights from small houses, lighthouse beam in the background, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Người dân vẫn truyền tai nhau rằng, chỉ cần còn ánh đèn ấy,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_05",
+      "setting": "Calm ocean under a starry night sky, gentle waves, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "biển sẽ không bao giờ nuốt mất những người đi xa.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_06",
+      "setting": "Elias, an old lighthouse keeper over 70, standing on the lighthouse balcony looking out at the sea, dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Người gác đèn cuối cùng tên là Elias, một ông lão đã ngoài bảy mươi tuổi.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_07",
+      "setting": "Close-up of Elias's weathered face, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Suốt hơn bốn mươi năm,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_08",
+      "setting": "A small cozy room at the base of the lighthouse, simple wooden furniture, sunset lighting glowing through the window, photorealistic 4k",
+      "camera": "Slow pan across the small room under the lighthouse",
+      "dialogues": [],
+      "narration": {
+        "text": "ông sống một mình trong căn phòng nhỏ dưới chân ngọn hải đăng.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_09",
+      "setting": "Elias carefully wiping the large glass lens of the lighthouse, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Công việc của ông lặp đi lặp lại mỗi ngày: lau sạch thấu kính,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_10",
+      "setting": "Elias checking gears, pouring oil, and lighting the giant lantern at sunset, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "kiểm tra bánh răng, đổ dầu và châm ngọn đèn đúng lúc mặt trời lặn.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_11",
+      "setting": "Elias talking with a villager at the base of the lighthouse, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "Nhiều người từng hỏi vì sao ông không nghỉ hưu.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_12",
+      "setting": "Elias smiling gently, looking out at the sea, warm sunset light on his face, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [
+        {
+          "character": "char_elias",
+          "text": "Bởi vì vẫn còn những người cần nhìn thấy ánh sáng.",
+          "emotion": "gentle",
+          "action": "smiling gently and looking at the camera"
+        }
+      ],
+      "narration": {
+        "text": "Elias chỉ mỉm cười.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_13",
+      "setting": "Modern ship bridge with glowing radar screens and GPS navigation systems, high-tech atmosphere, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Thời gian trôi qua, công nghệ phát triển. Hệ thống định vị vệ tinh xuất hiện.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_14",
+      "setting": "Modern cargo ship sailing at night without looking at the lighthouse, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "Những con tàu hiện đại không còn phụ thuộc vào hải đăng nữa.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    },
+    {
+      "id": "scene_15",
+      "setting": "The lighthouse standing dark and unlit at dusk, a sign on the door saying 'Closed', dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Chính quyền quyết định đóng cửa ngọn tháp vì chi phí bảo trì quá cao.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s"
+    }
+  ]
+}

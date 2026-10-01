@@ -1,0 +1,14 @@
+2026/09/29-15:29:49.523 661c Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\chrome-extension_nmmicjeknamkfloonkhhcjmomieiodli_0.indexeddb.leveldb/MANIFEST-000001
+2026/09/29-15:29:49.525 661c Recovering log #42
+2026/09/29-15:29:49.527 661c Reusing old log D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\chrome-extension_nmmicjeknamkfloonkhhcjmomieiodli_0.indexeddb.leveldb/000042.log 
+2026/09/29-15:29:49.527 661c Delete type=2 #40
+2026/09/29-15:29:49.810 4380 Level-0 table #47: started
+2026/09/29-15:29:49.844 4380 Level-0 table #47: 1533 bytes OK
+2026/09/29-15:29:49.845 4380 Delete type=0 #42
+2026/09/29-15:29:49.845 661c Manual compaction at level-0 from '\x00\x0f\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x10\x00\x00\x00' @ 0 : 0; will stop at '\x00\x0f\x00\x00\x05' @ 519 : 1
+2026/09/29-15:29:49.846 661c Compacting 1@0 + 1@1 files
+2026/09/29-15:29:49.876 661c Generated table #48@0: 50 keys, 1544 bytes
+2026/09/29-15:29:49.876 661c Compacted 1@0 + 1@1 files => 1544 bytes
+2026/09/29-15:29:49.878 661c compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/09/29-15:29:49.878 661c Delete type=2 #47
+2026/09/29-15:29:49.879 661c Manual compaction at level-0 from '\x00\x0f\x00\x00\x05' @ 519 : 1 .. '\x00\x10\x00\x00\x00' @ 0 : 0; will stop at (end)

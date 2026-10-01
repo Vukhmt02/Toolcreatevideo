@@ -1,0 +1,446 @@
+{
+  "title": "Người Gác Đèn Cuối Cùng",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "photorealistic cinematic film",
+    "color_palette": "natural cinematic colors",
+    "lighting_language": "motivated realistic lighting",
+    "camera_language": "cinematic composition, natural depth of field",
+    "texture": "natural skin texture, realistic materials",
+    "global_negative_prompt": "inconsistent identity, different face, extra fingers, deformed hands, duplicate people, text, captions, watermark"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "wardrobe": "",
+      "identity_markers": [],
+      "consistency_rules": [
+        "same face, age, hairstyle, body proportions and skin tone in every shot",
+        "same wardrobe and accessories until the script explicitly changes them"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "Ngôi làng ven biển Grayhaven từng nổi tiếng với ngọn hải đăng cao nhất vùng.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom in",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Mỗi đêm, ánh sáng từ đỉnh tháp quét qua mặt biển,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "dẫn đường cho những con tàu trở về an toàn.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Người dân vẫn truyền tai nhau rằng, chỉ cần còn ánh đèn ấy,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "biển sẽ không bao giờ nuốt mất những người đi xa.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Người gác đèn cuối cùng tên là Elias, một ông lão đã ngoài bảy mươi tuổi.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Suốt hơn bốn mươi năm,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "ông sống một mình trong căn phòng nhỏ dưới chân ngọn hải đăng.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Công việc của ông lặp đi lặp lại mỗi ngày: lau sạch thấu kính,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Intimate close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "kiểm tra bánh răng, đổ dầu và châm ngọn đèn đúng lúc mặt trời lặn.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "Nhiều người từng hỏi vì sao ông không nghỉ hưu.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Slow zoom in",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [
+        {
+          "character": "char_narrator",
+          "text": "Bởi vì vẫn còn những người cần nhìn thấy ánh sáng.",
+          "emotion": "neutral",
+          "action": ""
+        }
+      ],
+      "narration": {
+        "text": "Elias chỉ mỉm cười.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Close-up",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": [
+        "char_narrator"
+      ]
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Thời gian trôi qua, công nghệ phát triển. Hệ thống định vị vệ tinh xuất hiện.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "Những con tàu hiện đại không còn phụ thuộc vào hải đăng nữa.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Medium shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Chính quyền quyết định đóng cửa ngọn tháp vì chi phí bảo trì quá cao.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "balanced cinematic composition using the rule of thirds",
+      "lighting": "motivated realistic lighting",
+      "action_beats": [],
+      "continuity": [
+        "preserve every recurring character's exact identity and wardrobe",
+        "maintain story time, props and spatial logic from the previous shot"
+      ],
+      "negative_prompt": "identity drift, wardrobe change, discontinuous props, inconsistent lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

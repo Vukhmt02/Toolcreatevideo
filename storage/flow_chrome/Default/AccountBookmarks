@@ -1,0 +1,70 @@
+{
+   "checksum": "bc127e08ff495bc4589a7cc1f40f1d2e",
+   "roots": {
+      "bookmark_bar": {
+         "children": [  ],
+         "date_added": "13434887334281073",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "5",
+         "name": "Bookmarks bar",
+         "type": "folder"
+      },
+      "other": {
+         "children": [ {
+            "date_added": "13391856375597768",
+            "date_last_used": "0",
+            "guid": "1a16dc0f-a51a-4591-bcf7-01a3998aae51",
+            "id": "8",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Sleepless Historian - YouTube",
+            "type": "url",
+            "url": "https://www.youtube.com/@SleeplessHistorian/videos"
+         }, {
+            "date_added": "13392875647634283",
+            "date_last_used": "0",
+            "guid": "3338dd6a-e765-4b3e-aa7b-03dc54855ad9",
+            "id": "9",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Mạng-máy-tính - bài tập mạng máy tính - 1 CÂU HỎI TRẮC NGHIỆM MẠNG MÁY TÍNH Chương 1: 40 câu Chương - Studocu",
+            "type": "url",
+            "url": "https://www.studocu.vn/vn/document/truong-dai-hoc-nguyen-tat-thanh/mang-may-tinh/mang-may-tinh-bai-tap-mang-may-tinh/63337159?origin=university-course-page"
+         }, {
+            "date_added": "13409592924614066",
+            "date_last_used": "0",
+            "guid": "2aaa9a51-cea1-44a0-a618-ad7d6defc1e8",
+            "id": "10",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "TopCV - CV xịn việc làm chất - Tạo CV & Tìm việc miễn phí",
+            "type": "url",
+            "url": "https://www.topcv.vn/"
+         } ],
+         "date_added": "13434887334281073",
+         "date_last_used": "0",
+         "date_modified": "13409592924614066",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "6",
+         "name": "Other bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13434887334281073",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "7",
+         "name": "Mobile bookmarks",
+         "type": "folder"
+      }
+   },
+   "sync_metadata": "CpYCCvUBCIiBAhLuASAAkgHZAQrWAQoOY2hyb21lX3N5bmNfYm0SBTUxIWJtGhIJLF20Ll9cBgARLF20Ll9cBgAiNAkKvpcuX1wGABADGXngDd0MrKFlIAEqHDUxIWJtL2ZkOjkxNjM3MjM1NTk0Njg4OTMxNjEiNAkKvpcuX1wGABADGXngDd0MrKFlIAEqHDUxIWJtL2ZkOjkxNjM3MjM1NTk0Njg4OTMxNjEiNAkKvpcuX1wGABADGXngDd0MrKFlIAEqHDUxIWJtL2ZkOjkxNjM3MjM1NTk0Njg4OTMxNjEpig61Ll9cBgDqAQwIp5fe1QYQ4PTt4QESACoYWDQ5b1kyZkJzS29sR3FOZlR2QmJlZz09SAMSwQEIBxK8AQocbmpnRHU4OGVDcnZYcDg2cEQ3ZkhHY3FGcDg4PRJmWjpBRHF0QVp6M0dTZmppaVd1M0NHR2NWUFNOZjVqQmc1S3dwRE1sMDVHeXRha3hEM25CU09SZm5iOVRxa2VTa00rdEowSitZTkZ4M0NWUldkQWFMZjlYb2g1WDhTdytEanN3Zz09GAAgACgAMOvzgsShs5QDOABAAEoceXpOQjAxY241NEE3Y1JVMHVUKy9QZ21UdFVvPWUAAAAAEuwBCAkS5wEKHFVWb3lJcXVrVGFwd3VjY0Yxa3hkVXIwSVlDWT0SZlo6QURxdEFaem9xaHFVZVRjeTN5NnRsTnNJN1hwbzlZSS84bk1Ha0w4K2ZDTkw2azd5OGpBSmRvc1hXNlR3cFRJS0xkenVpTnU3cDdUU1V3M3gvbTZiWUlwZk0zOUVjT0dKdnc9PRgAIAAoADCKrrnFobOUAzjTuaTZ4TNA07mk2eEzShxjaHVCUS9wVnRxWG10L21IN055RDJNbFpvMUU9Wh8iHbpDSEpqd2IvWFljMk95aGJZNGp6L0JtYzI5MVk9ZQAAAAAS7AEIChLnAQocVmVuQzU0QXNrei95WFNvV0JwL2RyWDlpYkF3PRJmWjpBRHF0QVp6b3FocVVlVGN5M3k2dGxOc0k3WHBvOG9LNFVQTE94VS9Zb2w1LzdEMUlVTzgzTm1lYm5XUHI1OTlLQXNsT2xoc0NmN3NvdmxLZ1RwNEFxTTdDbWhydGZ0MnRRUT09GAAgACgAMIquucWhs5QDONO5pNnhM0DTuaTZ4TNKHEVZdmk2LzMwcXk1QkFjc0h3Zjl1ZGVGMUFGST1aHyId3VA5d1kwMzNHbTgxelkxRkkvajJ1REhPZnpTZz1lIOIS4RKpAQgFEqQBChx5eEovNmZ2a2VjcjdrcDVFUXpCNHRXTHBkYkU9Ek5aOkFEcXRBWnpsS1ZNMkNwWitnL0h2WmkvSEZmRGhScXBaSVlnWFRybkJyMEF5cmVZcGhNa2lOYVZ2NEVLbTdJVVZLWmZVNGF2T2RYbFYYACAAKAAw6/OCxKGzlAM4AEAAShxhUkNXTGdoRjliNUlucUtJRHZ1Si9qdlFrRmM9ZQAAAAAS6wEICBLmAQoccG9jd1dTYmc3bk9EVW9aQzNqSVg1a0s5VFI4PRJmWjpBRHF0QVp6b3FocVVlVGN5M3k2dGxOc0k3WHBvakw4bVJjUFJzQmFBc1BzYTVNT0liSDJDdXRNeHYwNUQxQ3FmYmxBZ0hkT2hMNC8vU04zTW9CMDJLQzZ4Q0NBZDE4ZDJ2UT09GAAgACgAMIquucWhs5QDONO5pNnhM0DTuaTZ4TNKHDBMTUkvYnVFQkpZVHdsRi9xVmRhTS9VVFJHND1aHiIcdE4wSXpFTTIxMEdxQWU2RFgvSW5wNVpNSmlNPWX9nIxKEsEBCAYSvAEKHFljU1RvbnZFU1B3cUNzNEwyY3JWaHY2OEw5OD0SZlo6QURxdEFaeU5ockRPeVhIRDFpeCt5SFpzNFA1T0M2M1FtV0xkSko2WVFCQzlSbUxNMlpYcGtyUGsrZTdzd2FMNTh0QjNkTExxWWVyRXNSM2J6WEJjMGlqZjJ5NkNaSjAyY0E9PRgAIAAoADDr84LEobOUAzgAQABKHG9QVmtod0JSYlY2NUtDV1IyK0lPTkhXb091OD1lAAAAADABOAA=",
+   "version": 1
+}

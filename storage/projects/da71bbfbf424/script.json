@@ -1,0 +1,1688 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic documentary style, highly detailed textures of ancient Roman architecture, volcanic ash, and archaeological artifacts.",
+    "color_palette": "Muted earth tones, warm terracotta, volcanic ash grays, charcoal blacks, punctuated by amber and golden hour sunlight.",
+    "lighting_language": "Dramatic chiaroscuro, natural golden hour sidelighting, flickering torchlight, and soft atmospheric haze.",
+    "camera_language": "Shallow depth of field, steady tracking shots, intimate macro close-ups of textures, sweeping panoramic landscape views.",
+    "texture": "Gritty stone, crumbling fresco plaster, rough charcoal marks, weathered wood, and coarse Roman textiles.",
+    "global_negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "D:\\ToolCreateVideo\\storage\\projects\\da71bbfbf424\\assets\\char_narrator_voice.mp3",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Age 40, Vietnamese, average build, oval face shape, warm olive skin tone, dark brown eyes, short neatly combed black hair.",
+      "wardrobe": "Dark minimalist modern wool blazer over a charcoal grey turtleneck sweater.",
+      "identity_markers": [
+        "Calm and clear vocal presence",
+        "Subtle cinematic framing"
+      ],
+      "consistency_rules": [
+        "Never appear physically on screen",
+        "Maintain neutral off-screen presence"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "In October 2018, in a house on the Via del Vasuvio that was being excavated for the first time,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_01_9986e0d2.jpg",
+      "shot_type": "Medium cinematic shot",
+      "composition": "Medium shot framing a newly excavated Roman room on Via del Vasuvio, gentle pan right revealing crumbling frescoes and volcanic debris in the background.",
+      "lighting": "Warm golden hour sunlight slanting through scaffolding and protective overhead netting, casting soft long shadows.",
+      "action_beats": [
+        "Camera pans gently right across the excavated archaeological site",
+        "Dust motes drift slowly in the golden sidelight illuminating ancient stonework"
+      ],
+      "continuity": [
+        "Establishment of the October 2018 excavation site on Via del Vasuvio in Pompeii",
+        "Muted earth tones and volcanic ash grays dominate the color palette"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "a workman had written a line in charcoal on a wall.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_02_33aebce8.jpg",
+      "shot_type": "Close-up cinematic shot",
+      "composition": "Macro close-up on a rough plaster wall surface, slow push in towards a faint, fragile handwritten charcoal inscription.",
+      "lighting": "Dramatic side lighting emphasizing the coarse texture of the plaster and the dark charcoal marks.",
+      "action_beats": [
+        "Camera slowly pushes in on the handwritten charcoal line on the wall",
+        "Fine details of the weathered plaster and charcoal dust become sharply visible"
+      ],
+      "continuity": [
+        "Continues the focus on the workman's inscription discovered in the excavation",
+        "Maintains shallow depth of field and intimate textural focus"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Charcoal fades within weeks in the open air.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_03_5b7c30a6.jpg",
+      "shot_type": "Wide cinematic shot",
+      "composition": "Static wide shot of an open-air archaeological ruin exposed to daylight, with atmospheric dust hanging in the air.",
+      "lighting": "Diffused daylight under a pale overcast sky, soft shadows, natural environmental illumination.",
+      "action_beats": [
+        "Atmospheric haze subtly shifts in the open air above the ancient stone walls",
+        "Static composition emphasizes the vulnerability of exposed organic markings"
+      ],
+      "continuity": [
+        "Illustrates the ephemeral nature of charcoal exposed to open air elements",
+        "Consistent rubble and stone textures from preceding scenes"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "This had survived because it was sealed almost immediately.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_04_f10517ce.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight tilt up from a protective ash layer to a section of sealed wall.",
+      "lighting": "Soft ambient light filtering down from protective overhead canopy, highlighting preserved plaster colors.",
+      "action_beats": [
+        "Camera executes a slight tilt up along the preserved vertical wall surface",
+        "Reveals the clean demarcation where volcanic debris immediately sealed the structure"
+      ],
+      "continuity": [
+        "Explains how the fragile charcoal writing miraculously survived preservation",
+        "Maintains consistency with the Via del Vasuvio excavation site"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "It was a date, the 16th day before the calendars of November,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_05_9688d12f.jpg",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "Low angle framing looking up at the ancient stone wall where the inscription is located, enhancing historical gravity.",
+      "lighting": "Contrasted chiaroscuro lighting with deep shadows in the stone recesses and sharp amber highlights on the carved edges.",
+      "action_beats": [
+        "Camera holds steady at a low angle emphasizing the monumental weight of the ruin",
+        "Subtle play of light across the engraved Roman numerals and calendar date text"
+      ],
+      "continuity": [
+        "Focuses on the specific date recorded: the 16th day before the calendars of November",
+        "Rich terracotta and charcoal black color grading"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the 17th of October.\nSomebody wrote that on a wall in a house that was still",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_06_32174792.jpg",
+      "shot_type": "Eye-level medium shot",
+      "composition": "Eye-level medium framing focusing on the damaged yet decorated frescoed wall section undergoing active restoration.",
+      "lighting": "Soft natural indoor lighting with gentle golden rim light on the crumbling edges.",
+      "action_beats": [
+        "Gentle focus pull across the textured surface of the wall under active renovation",
+        "Dust particles catch the ambient light drifting off the ancient mortar"
+      ],
+      "continuity": [
+        "Reinforces the context of a house still being renovated when disaster struck",
+        "Matches the color palette and material textures of previous archaeological shots"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "being renovated. And then the mountain came down on top of it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_07_db880efd.jpg",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Sweeping aerial view looking down over the vast archaeological expanse of Pompeii with Mount Vesuvius looming in the background.",
+      "lighting": "Sunset lighting casting long, dramatic shadows across the ancient street grid and volcanic slopes.",
+      "action_beats": [
+        "Drone camera slowly drifts forward over the ancient ruins toward the imposing mountain",
+        "Warm amber sun dips lower, bathing the volcanic landscape in a solemn glow"
+      ],
+      "continuity": [
+        "Transitions from the micro-scale inscription to the macro-scale disaster of the mountain eruption",
+        "Consistent volcanic ash grays and sunset amber tones"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "It fits everything else.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_08_049a76f8.jpg",
+      "shot_type": "Intimate close-up",
+      "composition": "Static intimate close-up on a bronze Roman artifact or brazier fragment resting on a weathered wooden archaeologist's table.",
+      "lighting": "Warm indoor directional lighting simulating a desktop workspace lamp or low sun through a window.",
+      "action_beats": [
+        "Static framing highlights the intricate patina and corrosion on the ancient metal object",
+        "Background softly blurs into warm earthy tones"
+      ],
+      "continuity": [
+        "Connects physical material evidence with the overarching historical narrative",
+        "Maintains shallow depth of field and gritty artifact texture"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The brazers found in the houses set up for heating in a city where August",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_09_a0da6021.jpg",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Slow zoom out starting from a close-up of a recovered bronze brazier to a wide view of an excavated peristyle courtyard.",
+      "lighting": "Epic golden hour lighting casting dramatic long shadows across ancient marble columns and ash-covered ground.",
+      "action_beats": [
+        "Camera slowly zooms out from the heating brazier artifact",
+        "Reveals the broader context of the ancient Roman villa set up for cooler weather"
+      ],
+      "continuity": [
+        "References the presence of heating braziers found within the excavated rooms",
+        "Consistent lighting language with preceding sunset scenes"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "afternoons run to 35°.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_10_10ebcdb2.jpg",
+      "shot_type": "Cinematic establishing shot",
+      "composition": "Slow zoom in starting wide on the sun-baked rooftops and stone ruins of Pompeii under an intense sky.",
+      "lighting": "Bright, glaring natural daylight mimicking hot August afternoon conditions with heavy atmospheric heat haze.",
+      "action_beats": [
+        "Camera slowly pushes in from a wide vista of ancient stone structures",
+        "Heat shimmer ripples softly across the distant horizon above the silent ruins"
+      ],
+      "continuity": [
+        "Contrasts the warmth of August afternoons with the autumn reality of the October eruption date",
+        "Final atmospheric shot grounding the historical timeline in physical setting"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "The heavier clothing on the bodies,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_11_5a666d62.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with gentle pan right across excavated mannequins or plaster casts wearing heavy wool cloaks and tunics.",
+      "lighting": "Warm golden sidelighting cutting through atmospheric haze, highlighting coarse textile textures.",
+      "action_beats": [
+        "Camera gently pans right across heavy Roman garments preserved on figures",
+        "Emphasizes the thick woolen fabric indicating cooler seasonal temperatures"
+      ],
+      "continuity": [
+        "Follows scene 10 heat transition by focusing on the clothing evidence proving autumn weather",
+        "Maintains consistent golden hour color grading and texture detail"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "the pomegranates and the walnuts and the chestnuts in the storooms,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_12_e665739c.jpg",
+      "shot_type": "Close-up",
+      "composition": "Extreme macro close-up with slow push in on preserved carbonized pomegranates, walnuts, and chestnuts resting on a rustic wooden storehouse table.",
+      "lighting": "Dramatic chiaroscuro side lighting casting deep shadows, highlighting the rough textures of autumn fruits and nuts.",
+      "action_beats": [
+        "Camera slowly pushes in on the collection of seasonal autumn produce",
+        "Focuses sharply on the distinct details of walnuts and pomegranate husks covered in fine volcanic dust"
+      ],
+      "continuity": [
+        "Follows the clothing evidence with tangible seasonal agricultural proof",
+        "Maintains the established gritty stone and weathered wood textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "which are October food,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_13_11cf880c.jpg",
+      "shot_type": "Wide shot",
+      "composition": "Static wide view of a deep excavated storeroom filled with large terracotta amphorae arranged against ancient stone walls.",
+      "lighting": "Soft ambient natural daylight filtering down from the top of the excavation site.",
+      "action_beats": [
+        "Camera holds a static wide frame on rows of ancient storage jars",
+        "Highlights the October food supplies stored securely within the Roman villa"
+      ],
+      "continuity": [
+        "Extends the storehouse setting from the close-up of nuts and fruits",
+        "Consistent cool gray volcanic ash tones balanced with terracotta warmth"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "the wine that had already been pressed and sealed into jars,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_14_0beceb4d.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight upward tilt focusing on the rim and sealed stoppers of ancient clay wine amphorae.",
+      "lighting": "Soft ambient indoor lighting with warm highlights glancing off the weathered ceramic surfaces.",
+      "action_beats": [
+        "Camera tilts slightly upward along the body of a large sealed wine jar",
+        "Reveals the resin and clay seals used to preserve the freshly pressed autumn vintage"
+      ],
+      "continuity": [
+        "Connects directly to the food storehouse theme of the previous shot",
+        "Maintains physical proximity to the excavated villa storage areas"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "which happens after the harvest and never before it.\nA coin found in the house",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_15_81f2122c.jpg",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "Low angle dramatic framing looking up at a heavy stone doorway and an excavated pedestal where a small Roman coin rests.",
+      "lighting": "Contrasted lighting with strong directional beams cutting through airborne dust particles.",
+      "action_beats": [
+        "Camera holds steady at a low angle emphasizing the archaeological weight of the discovery",
+        "Focus shifts slightly to highlight an ancient metallic coin resting on a stone surface"
+      ],
+      "continuity": [
+        "Transitions from seasonal food evidence to numismatic dating evidence",
+        "Matches the dramatic archaeological aesthetic established in earlier ruins"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "of the golden bracelet carries a title that the emperor Titus took up in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_16_5b681f3e.jpg",
+      "shot_type": "Eye-level medium shot",
+      "composition": "Eye-level medium shot with soft focus foreground framing an ornate golden bracelet intertwined with ash and earth.",
+      "lighting": "Natural directional light catching the polished gold details against a dark stone background.",
+      "action_beats": [
+        "Camera maintains an intimate medium framing on the golden artifact",
+        "Soft focus pulls cleanly onto the engraved inscriptions referencing Emperor Titus"
+      ],
+      "continuity": [
+        "Directly continues from the coin discovery to the house of the golden bracelet",
+        "Maintains shallow depth of field and warm amber highlights"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "second half of September 79. It was in circulation before the ash fell.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_17_be99c8d6.jpg",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Sweeping aerial view looking down over the vast grid of Pompeii ruins bathed in late afternoon light.",
+      "lighting": "Sunset lighting casting long, dramatic shadows across the ancient streets and rooftops.",
+      "action_beats": [
+        "Camera slowly tracks forward across the panoramic layout of the ancient city",
+        "Establishes the chronological setting of late September 79 AD before the catastrophe"
+      ],
+      "continuity": [
+        "Expands the scale from the individual artifact to the entire urban landscape",
+        "Consistent golden hour color palette and atmospheric haze"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_18",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "So the eruption almost certainly happened in late October,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_18_1f775f84.jpg",
+      "shot_type": "Intimate close-up",
+      "composition": "Static intimate close-up on a fragment of a frescoed wall showing crumbling plaster and charcoal marks.",
+      "lighting": "Warm indoor lighting with deep shadows highlighting the rough plaster texture.",
+      "action_beats": [
+        "Camera remains static on the weathered architectural surface",
+        "Subtly underscores the temporal conclusion regarding the late October eruption"
+      ],
+      "continuity": [
+        "Transitions back from the aerial view to an intimate physical detail of the ruins",
+        "Maintains gritty stone and crumbling fresco texture notes"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_19",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "most likely on the 24th,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_19_55eb9eed.jpg",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Slow zoom out from a close-up of volcanic ash layers embedded in a stone wall to a wide view of the silent excavation site.",
+      "lighting": "Epic golden hour lighting casting dramatic long shadows across the archaeological trenches.",
+      "action_beats": [
+        "Camera pulls back steadily to reveal the stratified layers of ash and pumice",
+        "Points definitively toward the late October date of October 24th"
+      ],
+      "continuity": [
+        "Echoes the movement of scene 09 while advancing the narrative timeline conclusion",
+        "Consistent volcanic gray and terracotta color tones"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_20",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "2 months after the date that every one of us was taught.\nHold on to that",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_20_d14587ef.jpg",
+      "shot_type": "Slow zoom in, starting wide",
+      "composition": "Slow zoom in starting wide on the imposing peak of Mount Vesuvius looming quietly under a clear sky, transitioning to a tight frame on the ash fields.",
+      "lighting": "Natural daylight with a heavy atmospheric haze hanging over the volcanic mountain.",
+      "action_beats": [
+        "Camera slowly pushes in from a wide vista of Vesuvius toward the foreground ruins",
+        "Concludes the sequence by challenging traditional historical dates with physical evidence"
+      ],
+      "continuity": [
+        "Mirrors the opening establishing framing while providing closure to the documentary argument",
+        "Maintains the photorealistic documentary texture and color palette"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_21",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "because it is the pattern of everything that follows.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_21_2f29ea1a.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium cinematic shot with a gentle pan right across weathered stone walls of an ancient Roman street.",
+      "lighting": "Warm golden hour sunlight raking across ancient brickwork.",
+      "action_beats": [
+        "Camera pans slowly right revealing architectural patterns",
+        "Establishes a continuous sense of historical routine"
+      ],
+      "continuity": [
+        "Maintains the warm terracotta and volcanic ash color palette",
+        "Follows the documentary visual style of previous scenes"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_22",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "The story of Pompei is one that was written down early, repeated confidently,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_22_989de6a2.jpg",
+      "shot_type": "Close-up",
+      "composition": "Close-up cinematic shot with a slow push in on an ancient rolled papyrus scroll fragment with faded ink script.",
+      "lighting": "Dramatic side lighting emphasizing the fibrous texture of the ancient paper.",
+      "action_beats": [
+        "Camera pushes in slowly on the weathered text",
+        "Evokes the concept of early written history"
+      ],
+      "continuity": [
+        "Matches the tactile focus on archaeological artifacts",
+        "Consistent muted earth tones"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_23",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "and left alone by everyone since.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "shot_type": "Wide shot",
+      "composition": "Wide cinematic static shot of an empty, dust-swept Roman forum flanked by silent stone columns.",
+      "lighting": "Atmospheric, overcast daylight with soft shadows.",
+      "action_beats": [
+        "Camera remains static, emphasizing the undisturbed quiet of the ruins",
+        "Conveys a sense of long-lasting isolation"
+      ],
+      "continuity": [
+        "Maintains architectural scale and consistent stone textures",
+        "Matches the somber archaeological mood"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_24",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "And the biggest thing left alone is the 10,000.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_24_2842864b.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight tilt up from a mosaic floor fragment to the crumbling remains of a villa wall.",
+      "lighting": "Soft ambient natural lighting illuminating dust motes in the air.",
+      "action_beats": [
+        "Camera tilts upward slowly",
+        "Directs focus toward the vast scale of the ancient population"
+      ],
+      "continuity": [
+        "Preserves the physical texture of crumbling fresco plaster",
+        "Seamless transition from floor detail to vertical architecture"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_25",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "One more thing has to go in before the people do because without it,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_25_84801835.jpg",
+      "shot_type": "Low angle shot",
+      "composition": "Dramatic low angle shot looking up a towering ancient brick archway against a muted sky.",
+      "lighting": "Contrasted lighting with deep shadows pooling in the architectural recesses.",
+      "action_beats": [
+        "Camera holds a powerful low angle",
+        "Introduces a foundational historical premise crucial for understanding the documentary"
+      ],
+      "continuity": [
+        "Maintains structural continuity of Roman brickwork",
+        "Consistent use of dramatic chiaroscuro"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_26",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the behavior in the rest of this film makes no sense.\nPompei in October 79 was",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_26_7443a01d.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Eye-level medium shot of an unexcavated section of a street showing layers of construction debris and mortar.",
+      "lighting": "Soft focus natural lighting with gentle amber highlights.",
+      "action_beats": [
+        "Camera focuses steadily on the stratified construction materials",
+        "Bridges the narrative toward the timeline of October 79 AD"
+      ],
+      "continuity": [
+        "Matches the stratigraphic visual language of earlier scenes",
+        "Consistent earthy color palette"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_27",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "a building site. 17 years earlier on the 5th of February in the year 62 there had been an",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_27_c6cbcc94.jpg",
+      "shot_type": "Close-up",
+      "composition": "Intimate close-up static shot of a mason's iron trowel resting half-buried in dry mortar and stone dust.",
+      "lighting": "Warm indoor-style directional light simulating site lamps.",
+      "action_beats": [
+        "Camera stays locked on the tool",
+        "Highlights the active building site nature of Pompeii prior to the disaster"
+      ],
+      "continuity": [
+        "Maintains macro texture of iron, stone dust, and coarse mortar",
+        "Seamless connection to the historical rebuilding narrative"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_28",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "earthquake a serious one.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_28_45bd96a6.jpg",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Slow zoom out from a cracked marble column capital to a wide view of a ruined courtyard.",
+      "lighting": "Epic golden hour lighting casting long, dramatic shadows across the marble.",
+      "action_beats": [
+        "Camera pulls back steadily",
+        "Emphasizes the massive destructive impact of the past earthquake"
+      ],
+      "continuity": [
+        "Mirrors the movement style of scene 19",
+        "Consistent golden sidelighting and marble textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_29",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "The philosopher Senica wrote about it because it happened in his lifetime and",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_29_de12fef7.jpg",
+      "shot_type": "Slow zoom in",
+      "composition": "Slow zoom in starting wide on a weathered stone pedestal inscribed with Latin lettering.",
+      "lighting": "Natural daylight with soft atmospheric haze.",
+      "action_beats": [
+        "Camera pushes in slowly toward the carved inscription",
+        "Connects physical ruins to historical written accounts by Seneca"
+      ],
+      "continuity": [
+        "Maintains documentary focus on epigraphic evidence",
+        "Consistent weathering and stone grain"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_30",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "it frightened people and he records that Pompei was largely thrown down and",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_30_280de452.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a gentle pan right across a collapsed stone lintel and fractured wall blocks.",
+      "lighting": "Warm golden lighting highlighting the chaotic displacement of the masonry.",
+      "action_beats": [
+        "Camera pans smoothly across the earthquake damage",
+        "Illustrates the historical account of widespread destruction"
+      ],
+      "continuity": [
+        "Mirrors the camera movement of scene 21",
+        "Maintains cohesive lighting and ruined architecture aesthetics"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_31",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "that the surrounding district was damaged.\nHerculanium took it badly too.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_31_42fdb761.jpg",
+      "shot_type": "Close-up",
+      "composition": "Close-up on charred wooden beams and cracked stucco, slow push in.",
+      "lighting": "Harsh golden sidelighting emphasizing deep fissures in the masonry.",
+      "action_beats": [
+        "Camera pushes slowly into a fracture in a Herculaneum wall",
+        "Highlights the severe structural impact on the neighboring town"
+      ],
+      "continuity": [
+        "Follows the earthquake aftermath established in scene 30",
+        "Consistent scorched texture and volcanic ash residue"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_32",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "livestock died in the fields and there is a detail in his account about a flock",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_32_c3f5712f.jpg",
+      "shot_type": "Wide shot",
+      "composition": "Wide static shot of an empty, ash-covered Roman field bordered by distant crumbling hills.",
+      "lighting": "Overcast daylight casting flat, somber tones across the landscape.",
+      "action_beats": [
+        "Static wide frame showing the desolate agricultural field",
+        "Evokes the historical loss of livestock mentioned in narration"
+      ],
+      "continuity": [
+        "Maintains the grey and earthy color palette",
+        "Consistent atmospheric haze from previous scenes"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_33",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "of 600 sheep found dead which he attributes to bad air coming out of the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_33_35b1f537.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight tilt up from scorched earth to dry, withered grass tufts.",
+      "lighting": "Low afternoon sunlight filtering through a hazy atmosphere.",
+      "action_beats": [
+        "Camera tilts upward slowly",
+        "Symbolizes the lingering toxic vapors rising from the soil"
+      ],
+      "continuity": [
+        "Maintains continuity of the desolate landscape from scene 32",
+        "Consistent lighting and textural details"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_34",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "ground. Modern estimates put it somewhere around magnitude 6.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_34_d6eaefe6.jpg",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "Dramatic low angle looking up at towering, fractured stone blocks leaning precariously.",
+      "lighting": "High-contrast chiaroscuro lighting accentuating the massive scale and danger.",
+      "action_beats": [
+        "Camera holds a powerful low angle",
+        "Conveys the sheer destructive force of a magnitude 6 earthquake"
+      ],
+      "continuity": [
+        "Matches the architectural destruction theme of scene 30",
+        "Consistent weathered stone and mortar texture"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_35",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "There is a relief carved in stone in a house in Pompei,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_35_8d04bd64.jpg",
+      "shot_type": "Eye-level medium shot",
+      "composition": "Eye-level medium shot focusing on an ancient stone relief embedded in a weathered plaster wall.",
+      "lighting": "Soft side lighting revealing the shallow chisel marks of the carving.",
+      "action_beats": [
+        "Camera centers on the ancient carved stone panel inside a Pompeian house",
+        "Brings focus to the historical artifact commissioned by Lucius Caecilius Jucundus"
+      ],
+      "continuity": [
+        "Maintains archaeological documentary style",
+        "Consistent Roman fresco plaster and stone texture"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_36",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "paid for by a banker called Lucius Chicilius Yukundis that shows the temple of",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_36_bd5e9ea4.jpg",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Aerial establishing shot sweeping over the excavated ruins of the Pompeii forum at sunset.",
+      "lighting": "Warm sunset amber lighting casting long shadows across the ancient flagstones.",
+      "action_beats": [
+        "Drone-style camera glides over the forum layout",
+        "Establishes the location of the Temple of Jupiter"
+      ],
+      "continuity": [
+        "Matches the golden hour lighting language from the visual bible",
+        "Consistent spatial layout of the Roman forum ruins"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_37",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Jupiter in the forum,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_37_fc5d4341.jpg",
+      "shot_type": "Intimate close-up",
+      "composition": "Intimate static close-up on the carved marble details of a temple capital.",
+      "lighting": "Warm directional sunlight highlighting the weathered white marble edges.",
+      "action_beats": [
+        "Camera holds a steady close-up on the architectural details of the temple",
+        "Focuses viewers on the specific structure depicted in the relief"
+      ],
+      "continuity": [
+        "Maintains the focus on Temple of Jupiter architecture from scene 36",
+        "Consistent marble weathering"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_38",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "tilting over with its columns coming apart and an equestrian statue sliding off",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_38_c5f503e6.jpg",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Slow zoom out from a cracked marble column to reveal a wide view of collapsing temple ruins.",
+      "lighting": "Dramatic golden hour light filtering through dust and haze.",
+      "action_beats": [
+        "Camera slowly pulls back",
+        "Visually depicts columns tilting apart and statues shifting from their bases"
+      ],
+      "continuity": [
+        "Directly mirrors the events described in the relief from scene 35",
+        "Consistent stone fragmentation and dust particles"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_39",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "its base and the Vuvius gate collapsing.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_39_25cfe29c.jpg",
+      "shot_type": "Slow zoom in, starting wide",
+      "composition": "Wide establishing shot of a massive stone gateway structure, slowly zooming in on fractured archways.",
+      "lighting": "Natural daylight with soft atmospheric haze and sharp shadows.",
+      "action_beats": [
+        "Camera pushes in steadily toward the collapsing Vesuvius gate structure",
+        "Portrays the dramatic structural failure of the city entrance"
+      ],
+      "continuity": [
+        "Matches the cinematic tracking movement from scene 29",
+        "Consistent ancient Roman masonry and volcanic ash setting"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_40",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "He\ncommissioned it to mark his own survival or his gratitude or both.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_40_dd84e305.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a gentle pan right across a restored section of an inscribed marble plaque.",
+      "lighting": "Warm golden lighting highlighting the deep Latin lettering.",
+      "action_beats": [
+        "Camera pans smoothly across the commemorative inscription",
+        "Reflects the banker's personal gratitude and survival testament"
+      ],
+      "continuity": [
+        "Links back to the epigraphic focus established in scene 29",
+        "Consistent stone grain and golden hour warmth"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_41",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "That relief is a man putting up a picture of the worst day of his life on his",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_41_b2f1a962.jpg",
+      "shot_type": "Close-up",
+      "composition": "Extreme close-up on a detailed Roman stone relief carving, shallow depth of field with background softly blurred.",
+      "lighting": "Warm, directional side lighting emphasizing the carved contours and textured stone surface.",
+      "action_beats": [
+        "Camera pushes in slowly toward the carved figures on the ancient relief",
+        "Focuses on the distressed expressions and narrative details of the historical artwork"
+      ],
+      "continuity": [
+        "Follows the archaeological and epigraphic focus of scene 40",
+        "Consistent warm stone texture and ancient Roman aesthetic"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_42",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "own wall. And here is what matters about it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_42_7f32c7a5.jpg",
+      "shot_type": "Wide shot",
+      "composition": "Static wide composition framing a weathered ancient wall segment with a mounted relief panel centered in the frame.",
+      "lighting": "Soft ambient daylight falling evenly across the stone facade.",
+      "action_beats": [
+        "Static camera holds on the architectural assembly",
+        "Highlights the physical placement of the relief artifact within its historical context"
+      ],
+      "continuity": [
+        "Maintains the physical setting of the archaeological site established in previous scenes",
+        "Consistent overcast daylight and muted earth tones"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_43",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "17 years later in 79, the city had not finished repairing itself.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_43_6c6d294b.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight upward tilt capturing ancient stone ruins against an atmospheric sky.",
+      "lighting": "Soft atmospheric daylight with gentle volumetric rays filtering through dust particles.",
+      "action_beats": [
+        "Camera tilts up gradually from foundation stones to crumbling upper walls",
+        "Evokes the passage of time and lingering damage from historical disasters"
+      ],
+      "continuity": [
+        "Connects to the timeline of post-earthquake and pre-eruption recovery",
+        "Consistent weathered stone and volcanic ash gray color palette"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_44",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The forum, the civic heart of the town,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_44_83805d0c.jpg",
+      "shot_type": "Low angle shot",
+      "composition": "Dramatic low angle shot looking up at monumental stone columns of an ancient forum.",
+      "lighting": "High contrast chiaroscuro lighting with deep shadows cast across fluted stone pillars.",
+      "action_beats": [
+        "Camera remains steady, emphasizing the grand scale of the civic architecture",
+        "Conveys the imposing and central nature of the Roman public square"
+      ],
+      "continuity": [
+        "Maintains the architectural scale introduced in scene 39",
+        "Consistent weathered masonry and dramatic lighting language"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_45",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the place with the temples and the basilica and the administrative buildings,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_45_85edf18d.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Eye-level medium shot framing the stone foundations and crumbling column bases of a ruined basilica.",
+      "lighting": "Soft natural golden hour sunlight washing across the weathered stone surfaces.",
+      "action_beats": [
+        "Subtle horizontal tracking movement past the ancient administrative ruins",
+        "Underscores the institutional heart of the ancient city"
+      ],
+      "continuity": [
+        "Follows the spatial progression from the forum in scene 44",
+        "Consistent warm terracotta and stone textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_46",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "was still under scaffolding.\nThe great public buildings were partly rebuilt and",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_46_81f256d1.jpg",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Sweeping panoramic aerial view looking down over the extensive ruins of the ancient Roman forum layout.",
+      "lighting": "Warm sunset lighting casting long shadows across open plazas and stone foundations.",
+      "action_beats": [
+        "Camera slowly drifts over the grid of ancient streets and incomplete structures",
+        "Reveals areas enclosed by timber scaffolding and ongoing construction"
+      ],
+      "continuity": [
+        "Builds upon the wide architectural vistas from scene 39",
+        "Consistent golden hour lighting and archaeological site topography"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_47",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "partly propped. The water system had been reworked.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_47_c0b2f549.jpg",
+      "shot_type": "Close-up",
+      "composition": "Intimate close-up static shot of lead pipes and stone water channels embedded in an ancient wall.",
+      "lighting": "Warm directional lighting highlighting the metallic texture and damp stone mortar.",
+      "action_beats": [
+        "Static framing focused on intricate engineering details of the repaired water system",
+        "Portrays the infrastructural adaptation and ongoing municipal labor"
+      ],
+      "continuity": [
+        "Continues the theme of post-disaster repair established in scene 46",
+        "Consistent gritty stone and weathered lead textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_48",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Private houses across the town show repairs in progress.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_48_4e1011c2.jpg",
+      "shot_type": "Wide shot",
+      "composition": "Slow zooming out from a detailed courtyard doorway to a wider view of domestic Roman housing facades.",
+      "lighting": "Natural golden hour sidelighting illuminating the courtyards and terracotta tile roofs.",
+      "action_beats": [
+        "Camera pulls back steadily to reveal multiple residential units undergoing simultaneous restoration",
+        "Illustrates widespread urban rebuilding efforts across the neighborhood"
+      ],
+      "continuity": [
+        "Transitions from municipal infrastructure to private domestic spaces",
+        "Consistent terracotta and weathered wood color palette"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_49",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "New plaster half applied.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_49_19214cef.jpg",
+      "shot_type": "Wide shot",
+      "composition": "Wide establishing shot pushing in slowly toward an unfinished wall section covered in unpainted white plaster.",
+      "lighting": "Soft directional daylight accentuating the rough texture of fresh plaster patches over older brickwork.",
+      "action_beats": [
+        "Camera moves inward toward the contrasting patch of fresh wall coating",
+        "Emphasizes the hurried and incomplete nature of recent domestic repairs"
+      ],
+      "continuity": [
+        "Extends the focus on private housing repairs from scene 48",
+        "Consistent rough plaster and brick textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_50",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Walls rebuilt in a cheaper technique than the original.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_50_d5691457.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a gentle rightward pan across a repaired wall utilizing irregular rubble masonry.",
+      "lighting": "Warm golden lighting casting stark shadows across the uneven stones and hastily applied mortar.",
+      "action_beats": [
+        "Camera pans smoothly across the low-cost structural reinforcement",
+        "Highlights the economic compromise and rushed construction techniques used by residents"
+      ],
+      "continuity": [
+        "Maintains the domestic repair motif from scene 49",
+        "Consistent warm golden lighting and rough architectural textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_51",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "Rooms in use as storage that had been dining rooms.\nThe house on the Via del",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_51_ff96de1c.jpg",
+      "shot_type": "Close-up",
+      "composition": "Macro close-up on ancient Roman storage containers and amphorae piled in a converted dining room, shallow depth of field with the background softly blurred.",
+      "lighting": "Muted golden hour light filtering through a high small window, catching dust motes in the air and highlighting the textured clay surfaces.",
+      "action_beats": [
+        "Camera slowly pushes in toward an array of old clay storage jars",
+        "Reveals the repurposed functional nature of a once-grand Roman dining space"
+      ],
+      "continuity": [
+        "Maintains the architectural restoration theme from scene 50",
+        "Consistent dusty atmosphere and ancient Roman terracotta textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_52",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Visuvio where the charcoal date was written on the wall was itself being",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_52_dd64015d.jpg",
+      "shot_type": "Wide shot",
+      "composition": "Static wide architectural shot framing the ruined interior corridors of the house on the Via del Vesuvio.",
+      "lighting": "Dramatic chiaroscuro with strong natural sunlight casting sharp diagonal shadows across masonry walls.",
+      "action_beats": [
+        "Camera remains static framing the expansive ongoing structural work of the ancient villa",
+        "Emphasizes the scale and disruptive nature of the active domestic renovation"
+      ],
+      "continuity": [
+        "Follows the house on the Via del Vesuvio continuity from previous scenes",
+        "Consistent volcanic ash gray and weathered stone color palette"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_53",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "renovated. That is why a workman was writing on the plaster.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_53_df8f032a.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight upward tilt toward a newly plastered wall section inside the ancient Roman residence.",
+      "lighting": "Soft ambient natural light illuminating the damp white plaster surface.",
+      "action_beats": [
+        "Camera tilts up slightly to follow the height of the fresh wall renovation",
+        "Highlights the context of why a workman was actively writing on the plaster"
+      ],
+      "continuity": [
+        "Builds on the wall repair motifs established in scene 49 and 50",
+        "Consistent unpainted plaster and brick textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_54",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Two generations of Pompeans had grown up in a town that was always being fixed.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_54_65970327.jpg",
+      "shot_type": "Low angle shot",
+      "composition": "Dramatic low angle medium shot looking up past weathered scaffolding holes and structural reinforcement beams in the ruined town.",
+      "lighting": "Contrasted harsh daylight and deep shadows emphasizing the permanent state of civic construction.",
+      "action_beats": [
+        "Camera holds a steady low angle capturing the weary architectural layers",
+        "Evokes the generational endurance of citizens living in a perpetually repaired town"
+      ],
+      "continuity": [
+        "Maintains the ongoing repair and structural instability narrative motif",
+        "Consistent gritty stone and weathered timber textures"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_55",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "And that has a consequence that runs straight through the rest of this film.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "D:\\ToolCreateVideo\\storage\\temp\\flow\\scene_55_582602a8.jpg",
+      "shot_type": "Medium shot",
+      "composition": "Eye-level medium shot capturing an artifact display niche within a softly lit archaeological site museum, shallow depth of field.",
+      "lighting": "Warm directional spot lighting creating a contemplative and atmospheric mood.",
+      "action_beats": [
+        "Camera remains steady at eye-level framing a collection of recovered domestic artifacts",
+        "Brings focus to the overarching historical consequence guiding the remainder of the film"
+      ],
+      "continuity": [
+        "Connects all preceding archaeological and domestic repair themes into a unified narrative conclusion",
+        "Consistent warm terracotta and amber lighting language"
+      ],
+      "negative_prompt": "cartoon, illustration, low resolution, modern clothing, neon colors, bright digital graphics, text overlays, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+2026/09/26-17:25:01.559 4134 Creating DB D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_chatgpt.com_0.indexeddb.leveldb since it was missing.
+2026/09/26-17:25:01.567 4134 Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_chatgpt.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/09/26-17:25:01.571 2238 Level-0 table #5: started
+2026/09/26-17:25:01.579 2238 Level-0 table #5: 1289 bytes OK
+2026/09/26-17:25:01.580 2238 Delete type=0 #3
+2026/09/26-17:25:01.580 52ec Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
