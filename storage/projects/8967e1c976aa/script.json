@@ -1,0 +1,143 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic 4k historical documentary style with authentic 15th-century historical details",
+    "color_palette": "Deep oceanic blues, sun-bleached coastal ambers, faded saffron, and rich maritime browns",
+    "lighting_language": "Naturalistic golden hour sunlight, harsh maritime glare, and dramatic chiaroscuro for interior and atmospheric shots",
+    "camera_language": "Anamorphic lenses, shallow depth of field, steady tracking establishing shots, and intimate character close-ups",
+    "texture": "Gritty salt-crusted wood, weathered linen, rusted iron, and sun-baked stone",
+    "global_negative_prompt": "modern elements, plastic, digital art, cartoon, 3d render, oversaturated colors, visible narrator"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Voiceover character, not visually depicted on screen as a physical body",
+      "wardrobe": "None",
+      "identity_markers": [
+        "calm and clear voice",
+        "Vietnamese storyteller"
+      ],
+      "consistency_rules": [
+        "Never render a visible narrator on screen",
+        "Maintain an off-screen vocal presence only"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "In 1498, a Portuguese explorer named Vasco da Gama sailed into the port of",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Wide establishing shot",
+      "composition": "Anamorphic 2.39:1, slow push-in framing a 15th-century Portuguese carrack anchored off a misty coastal harbor with salt-crusted wooden textures in the foreground",
+      "lighting": "Harsh maritime glare and naturalistic golden hour sunlight casting long shadows across the deck and water",
+      "action_beats": [
+        "A Portuguese carrack rides the gentle swells of the coastal harbor",
+        "Faded saffron flags flutter lightly in the sea breeze against the horizon"
+      ],
+      "continuity": [
+        "Establishes the maritime journey of 1498 in deep oceanic blues and sun-bleached coastal ambers"
+      ],
+      "negative_prompt": "modern elements, plastic, digital art, cartoon, 3d render, oversaturated colors, visible narrator",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Calicut on the southwestern coast of India. He had spent nearly a year at sea.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Medium cinematic shot",
+      "composition": "Medium framing with a gentle pan right, revealing the bustling exotic port of Calicut with sun-baked stone and weathered linen awnings",
+      "lighting": "Warm golden lighting reflecting off the calm coastal waters onto the shore",
+      "action_beats": [
+        "Local wooden trading vessels and bustling activity line the sun-bleached southwestern coast of India",
+        "The camera pans slowly to reveal the sprawling port architecture"
+      ],
+      "continuity": [
+        "Maintains the 1498 historical timeline and warm coastal color palette from the establishing shot"
+      ],
+      "negative_prompt": "modern elements, plastic, digital art, cartoon, 3d render, oversaturated colors, visible narrator",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "He had lost a third of his crew to scurvy and storms.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Close-up cinematic shot",
+      "composition": "Tight macro framing with a slow push-in on a rusted iron ship's bell and salt-crusted wood railing on the deck",
+      "lighting": "Dramatic chiaroscuro lighting cutting across the weathered grain of the ship timber",
+      "action_beats": [
+        "Dust and salt crystals catch the directional light on the worn wooden surface",
+        "The camera slowly creeps forward, emphasizing isolation and hardship at sea"
+      ],
+      "continuity": [
+        "Preserves the grittiness, salt-crusted wood texture, and maritime brown tones established in earlier scenes"
+      ],
+      "negative_prompt": "modern elements, plastic, digital art, cartoon, 3d render, oversaturated colors, visible narrator",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

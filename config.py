@@ -42,22 +42,17 @@ class Config:
     # WaveSpeed API Key (legacy)
     WAVESPEED_API_KEY: str = os.getenv("WAVESPEED_API_KEY", "")
 
-    # OmniVoice TTS Service (self-host, github.com/Le-Ngoc-Tu/OmniVoice_TTS_Service_api)
-    # URL server OmniVoice chạy trên Colab/GPU (ví dụ: https://xxxx.ngrok-free.app)
-    OMNIVOICE_URL: str = os.getenv("OMNIVOICE_URL", "")
-    # API key của OmniVoice server (khớp với TTS_API_KEY trong .env của server)
-    OMNIVOICE_API_KEY: str = os.getenv("OMNIVOICE_API_KEY", "")
-    OMNIVOICE_NUM_STEP: int = max(4, min(64, int(os.getenv("OMNIVOICE_NUM_STEP", "32"))))
-    OMNIVOICE_SPEED: float = max(0.5, min(2.0, float(os.getenv("OMNIVOICE_SPEED", "1.0"))))
-
-    # One narrator voice for the whole video
-    VOICE_PROVIDER: str = os.getenv("VOICE_PROVIDER", "gemini").strip().lower()
-    GEMINI_TTS_MODEL: str = os.getenv("GEMINI_TTS_MODEL", "gemini-3.8-flash-tts")
-    GEMINI_TTS_VOICE: str = os.getenv("GEMINI_TTS_VOICE", "Gacrux")
-    GEMINI_TTS_STYLE: str = os.getenv(
-        "GEMINI_TTS_STYLE",
-        "mature Vietnamese narrator, warm, clear, natural pacing, restrained emotion",
+    # ElevenLabs is the only narration provider.
+    ELEVENLABS_API_KEY: str = os.getenv("ELEVENLABS_API_KEY", "")
+    ELEVENLABS_VOICE_ID: str = os.getenv("ELEVENLABS_VOICE_ID", "")
+    ELEVENLABS_MODEL_ID: str = os.getenv("ELEVENLABS_MODEL_ID", "eleven_multilingual_v2")
+    ELEVENLABS_OUTPUT_FORMAT: str = os.getenv("ELEVENLABS_OUTPUT_FORMAT", "mp3_44100_128")
+    ELEVENLABS_STABILITY: float = max(0.0, min(1.0, float(os.getenv("ELEVENLABS_STABILITY", "0.5"))))
+    ELEVENLABS_SIMILARITY_BOOST: float = max(
+        0.0, min(1.0, float(os.getenv("ELEVENLABS_SIMILARITY_BOOST", "0.75")))
     )
+    ELEVENLABS_STYLE: float = max(0.0, min(1.0, float(os.getenv("ELEVENLABS_STYLE", "0.0"))))
+    ELEVENLABS_SPEAKER_BOOST: bool = os.getenv("ELEVENLABS_SPEAKER_BOOST", "true").lower() == "true"
 
     # Server
     HOST: str = os.getenv("HOST", "127.0.0.1")
@@ -91,6 +86,15 @@ class Config:
     FLOW_URL: str = os.getenv("FLOW_URL", "https://flow.google.com/")
     FLOW_CONCURRENCY: int = max(1, min(6, int(os.getenv("FLOW_CONCURRENCY", "3"))))
 
+    # Muse browser bridge. Muse Video does not have a public generation API yet.
+    MUSE_ENABLED: bool = os.getenv("MUSE_ENABLED", "true").lower() == "true"
+    MUSE_CDP_URL: str = os.getenv("MUSE_CDP_URL", "http://127.0.0.1:9222")
+    MUSE_URL: str = os.getenv("MUSE_URL", "https://muse.ai/")
+    MUSE_CONCURRENCY: int = max(1, min(3, int(os.getenv("MUSE_CONCURRENCY", "1"))))
+    MUSE_RESULT_TIMEOUT_SECONDS: int = max(
+        30, min(1800, int(os.getenv("MUSE_RESULT_TIMEOUT_SECONDS", "900")))
+    )
+
     # Voice settings
     DEFAULT_VOICE_VI_FEMALE: str = "vi-VN-HoaiMyNeural"
     DEFAULT_VOICE_VI_MALE: str = "vi-VN-NamMinhNeural"
@@ -120,9 +124,8 @@ class Config:
         return bool(cls.WAVESPEED_API_KEY)
 
     @classmethod
-    def has_omnivoice_api(cls) -> bool:
-        """Kiểm tra OmniVoice server đã được cấu hình chưa"""
-        return bool(cls.OMNIVOICE_URL)
+    def has_elevenlabs_api(cls) -> bool:
+        return bool(cls.ELEVENLABS_API_KEY and cls.ELEVENLABS_VOICE_ID)
 
 
 config = Config()

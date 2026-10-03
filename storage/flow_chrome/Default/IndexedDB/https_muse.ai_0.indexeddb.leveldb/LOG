@@ -1,0 +1,13 @@
+2026/10/03-01:19:03.998 a7bc Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_muse.ai_0.indexeddb.leveldb/MANIFEST-000001
+2026/10/03-01:19:03.998 a7bc Recovering log #407
+2026/10/03-01:19:04.000 a7bc Reusing old log D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_muse.ai_0.indexeddb.leveldb/000407.log 
+2026/10/03-01:19:04.055 16b8 Level-0 table #412: started
+2026/10/03-01:19:04.060 16b8 Level-0 table #412: 1704757 bytes OK
+2026/10/03-01:19:04.061 16b8 Delete type=0 #407
+2026/10/03-01:19:04.061 a7bc Manual compaction at level-0 from '\x00\x9e\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x9f\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/10/03-01:19:05.708 9824 Compacting 1@1 + 1@2 files
+2026/10/03-01:19:05.730 9824 Generated table #413@1: 724 keys, 68470 bytes
+2026/10/03-01:19:05.730 9824 Compacted 1@1 + 1@2 files => 68470 bytes
+2026/10/03-01:19:05.731 9824 compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/10/03-01:19:05.731 9824 Delete type=2 #409
+2026/10/03-01:19:05.732 9824 Delete type=2 #412

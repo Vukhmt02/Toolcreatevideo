@@ -1,0 +1,633 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic historical documentary, high-end film production quality, rich historical detail, 8k resolution, anamorphic lens flare",
+    "color_palette": "Deep sea blues, warm golden hour amber, blood red accents, muted earth tones, desaturated parchment and spice hues",
+    "lighting_language": "Dramatic chiaroscuro lighting, harsh maritime sunlight, warm flickering candlelight, atmospheric volumetric rays",
+    "camera_language": "Anamorphic widescreen, shallow depth of field for close-ups, sweeping epic crane shots for historical vistas, steady medium tracking shots",
+    "texture": "Gritty historical realism, weathered wood, rough linen fabrics, oxidized metal, sea salt crust, organic skin pores",
+    "global_negative_prompt": "cartoon, illustration, animation, low resolution, modern clothing, plastic look, oversaturated colors, watermark, text, deformed anatomy"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Age 45, South Asian, athletic build, defined square face shape, medium tan skin tone, dark brown observant eyes, short trimmed black and gray hair.",
+      "wardrobe": "Charcoal gray linen shirt, dark brown leather satchel, minimalist historical explorer aesthetic.",
+      "identity_markers": [
+        "Calm observant expression",
+        "Subtle silver ring on left hand"
+      ],
+      "consistency_rules": [
+        "Maintain consistent age and facial structure across all scenes",
+        "Keep lighting natural and matching the environment"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "In 1498, a Portuguese explorer named Vasco da Gama sailed into the port of",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Anamorphic wide establishing shot, 35mm lens",
+      "composition": "The vast expanse of the 15th-century Indian Ocean fills the lower frame with historical Portuguese sailing ships anchored off a distant tropical coastline.",
+      "lighting": "Harsh maritime sunlight with deep blue sea contrast and natural volumetric haze.",
+      "action_beats": [
+        "Portuguese carrick ships ride the ocean swells",
+        "A slow, steady zoom in reveals the sprawling harbor of Calicut"
+      ],
+      "continuity": [
+        "Establishes the historical setting of 1498",
+        "Sets the maritime palette of deep sea blues and desaturated parchment"
+      ],
+      "negative_prompt": "modern boats, cartoon, illustration, low resolution, plastic look",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Calicut on the southwestern coast of India. He had spent nearly a year at sea.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Medium cinematic shot, 50mm anamorphic lens",
+      "composition": "A weathered wooden deck of a Portuguese ship in the foreground, with crew members looking out toward the sun-drenched Indian shore on the right third of the screen.",
+      "lighting": "Warm golden hour amber sunlight casting long shadows across worn teak wood planks.",
+      "action_beats": [
+        "A tired sailor grips the ship railing, staring intently ahead",
+        "Camera pans gently right to follow the horizon toward the port"
+      ],
+      "continuity": [
+        "Maintains the 1498 timeline and sea voyage fatigue",
+        "Matches the warm golden lighting established in the visual bible"
+      ],
+      "negative_prompt": "modern clothing, cartoon, illustration, low resolution, text",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "He had lost a third of his crew to scurvy and storms.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Extreme close-up, 85mm macro lens",
+      "composition": "A tightly framed shot of a rusted iron ship anchor chain encrusted with dried salt, with the blurred ocean churning in the deep background.",
+      "lighting": "Dramatic chiaroscuro lighting highlighting the rough metallic texture and oxidation.",
+      "action_beats": [
+        "Water droplets slide down the rusted iron links",
+        "Slow push in emphasizes the brutal physical toll of the journey"
+      ],
+      "continuity": [
+        "Reflects the narrative mention of storms and crew loss",
+        "Maintains gritty historical realism and oxidized metal texture"
+      ],
+      "negative_prompt": "plastic look, modern steel, cartoon, illustration, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "And when the local rulers of Calicut asked him what he had come all this way",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Wide cinematic shot, 28mm anamorphic lens",
+      "composition": "Local Indian rulers and dignitaries in traditional 15th-century attire standing on an ornate stone terrace overlooking the harbor, facing off against European visitors.",
+      "lighting": "Atmospheric volumetric rays filtering through lush tropical canopy and stone archways.",
+      "action_beats": [
+        "Dignitaries gesture toward the horizon where the foreign ships sit",
+        "Camera remains static, framing the cultural divide"
+      ],
+      "continuity": [
+        "Maintains geographical accuracy of the Calicut coastline",
+        "Adheres to muted earth tones and rich historical detail"
+      ],
+      "negative_prompt": "modern architecture, cartoon, illustration, low resolution, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "for, his answer was simple: pepper, cinnamon, cloves. That was it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Medium close-up, 50mm lens",
+      "composition": "A rustic wooden merchant table laden with burlap sacks spilling raw peppercorns, dried cinnamon bark, and dark cloves.",
+      "lighting": "Soft ambient window light mixed with warm flickering candlelight.",
+      "action_beats": [
+        "A hand reaches into frame to pick up a handful of black peppercorns",
+        "Slight tilt up to reveal the rich textures of the spices"
+      ],
+      "continuity": [
+        "Directly illustrates the narration listing the spices",
+        "Maintains organic textures and spice hue palette"
+      ],
+      "negative_prompt": "plastic food, modern packaging, cartoon, illustration, text",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Three dried plants, three ingredients you can buy today at any grocery store for a few dollars.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Eye-level medium shot, 50mm shallow depth of field",
+      "composition": "A simple modern kitchen pantry counter in soft focus, holding a glass jar of peppercorns and cinnamon sticks, bridging history with the present day.",
+      "lighting": "Clean, natural daylight with a soft contemporary feel.",
+      "action_beats": [
+        "Camera holds steady on the modern glass container",
+        "Subtle focus shift highlights the everyday familiarity of the spices"
+      ],
+      "continuity": [
+        "Contrasts the historical journey with modern accessibility",
+        "Maintains the narrative theme of mundane spices driving global history"
+      ],
+      "negative_prompt": "historical elements, old world background, cartoon, illustration, low resolution",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Da Gama had risked everything, crossed 17,000 miles of open ocean,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Aerial establishing shot, drone view",
+      "composition": "A sweeping panoramic view of the infinite open ocean under a dramatic, fiery sunset sky reflecting blood red accents on the water surface.",
+      "lighting": "Deep sunset lighting with intense amber and blood red color grading.",
+      "action_beats": [
+        "Camera sweeps majestically across the vast horizon line",
+        "Emphasizes the massive scale of the 17,000-mile ocean expanse"
+      ],
+      "continuity": [
+        "Reinforces the immense distance and danger crossed by da Gama",
+        "Uses the blood red and deep sea blue palette"
+      ],
+      "negative_prompt": "modern air traffic, landmasses, cartoon, illustration, watermark",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "and watched dozens of men die, all for seasoning.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Intimate close-up, 85mm lens",
+      "composition": "A weathered maritime navigation logbook on a wooden desk, with faded ink handwriting detailing casualty counts, illuminated by a single candle.",
+      "lighting": "Warm flickering candlelight casting deep shadows across the parchment.",
+      "action_beats": [
+        "A quill rests next to ink-stained pages",
+        "Static frame captures the quiet grimness of the historical record"
+      ],
+      "continuity": [
+        "Links back to the loss of crew members mentioned in earlier scenes",
+        "Features desaturated parchment and rough linen textures"
+      ],
+      "negative_prompt": "printed font, modern paper, cartoon, illustration, low resolution",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "That was 1498, but by 1502,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Slow zoom out to wide cinematic shot, 35mm anamorphic lens",
+      "composition": "An aging parchment map of the world from 1498 slowly revealing its borders as the camera pulls back, with a bold ink transition changing the date to 1502.",
+      "lighting": "Warm sepia-toned ambient light from a side source.",
+      "action_beats": [
+        "Camera slowly zooms out from a detailed cartography drawing",
+        "The focal length shift emphasizes the passage of time to 1502"
+      ],
+      "continuity": [
+        "Bridges the transition from da Gama's first voyage to his return",
+        "Maintains the desaturated parchment and historical map aesthetic"
+      ],
+      "negative_prompt": "modern digital map, cartoon, illustration, low resolution, text overlay",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "da Gama returned to the same coast with 20 warships and cannons.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Epic wide establishing shot, 24mm anamorphic lens",
+      "composition": "A formidable armada of twenty heavy Portuguese warships lined up in formation off the Calicut coast, their cannon ports ominously open.",
+      "lighting": "Hard, unforgiving maritime daylight cutting through heavy gunsmoke and sea spray.",
+      "action_beats": [
+        "Warships cut through the water in imposing military array",
+        "Slow zoom in highlights the metallic glint of heavy bronze cannons"
+      ],
+      "continuity": [
+        "Returns to the Calicut coast setting established in scene 01 and 02",
+        "Escalates tension with oxidized metal and naval military might"
+      ],
+      "negative_prompt": "peaceful scenery, modern navy, cartoon, illustration, low resolution",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "And he burned an entire merchant vessel full of Muslim traders alive in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Medium cinematic shot, 50mm anamorphic lens",
+      "composition": "A large wooden merchant vessel engulfed in roaring orange flames and thick black smoke on the dark sea, viewed from a slightly elevated angle.",
+      "lighting": "Intense flickering firelight illuminating rolling waves and dark smoke clouds with deep crimson accents.",
+      "action_beats": [
+        "Flames aggressively consume the wooden deck and masts of the merchant ship",
+        "Sparks and embers drift across the dark surface of the Calicut harbor"
+      ],
+      "continuity": [
+        "Continues the naval confrontation established in scene 10",
+        "Employs blood red accents and deep sea blues from the color palette"
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern watercraft, plastic look",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "harbor of Calicut. Over 400 men, women, and children were killed.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Close-up cinematic shot, 85mm anamorphic lens",
+      "composition": "An oxidized bronze ship's rail in the foreground, out of focus, with the distant burning ship reflecting harshly on the choppy, dark water surface.",
+      "lighting": "Harsh, dramatic flickering amber light casting long, harsh shadows across wet wood.",
+      "action_beats": [
+        "Camera slowly pushes in on the churning water stained red by the reflection",
+        "Sea salt crust glitters on the weathered wood rail in the foreground"
+      ],
+      "continuity": [
+        "Maintains the emotional weight and aftermath of the burning vessel from scene 11",
+        "Utilizes weathered wood and sea salt textures"
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, bright daylight, modern objects",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "His reason was the same as before: spices.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Wide cinematic shot, 35mm anamorphic lens",
+      "composition": "A single wooden chest resting on a sandy Calicut shore, overflowing with dark cinnamon sticks and cloves, with Portuguese warships silhouetted on the horizon.",
+      "lighting": "Atmospheric volumetric rays breaking through heavy maritime haze at sunset.",
+      "action_beats": [
+        "Gentle waves wash over the edge of the spice-filled chest",
+        "Camera remains static, emphasizing the stark contrast between wealth and devastation"
+      ],
+      "continuity": [
+        "Ties the concept of spices back to the Calicut setting from earlier scenes",
+        "Features rough linen fabrics and weathered wood textures"
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern packaging, plastic",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "So, how did a handful of dried bark and flower buds become valuable enough to",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Medium shot, 50mm anamorphic lens",
+      "composition": "Macro view of exotic dried spices, including star anise, cinnamon bark, and cloves, piled on a weathered wooden merchant table.",
+      "lighting": "Soft warm side lighting creating deep shadows and highlighting organic textures.",
+      "action_beats": [
+        "Camera executes a slight tilt up to reveal the rich pile of spices",
+        "Dust motes dance softly in the warm ambient light beam"
+      ],
+      "continuity": [
+        "Bridges the historical narrative from naval violence to the economic value of spices",
+        "Incorporates desaturated parchment and spice hues"
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern food items, plastic look",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "justify mass murder, fund entire empires, and redraw the map of the world?",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Dramatic low angle shot, 28mm anamorphic lens",
+      "composition": "Towering stone arches of a grand 16th-century European treasury, with heavy iron-bound doors and flickering torches casting long shadows.",
+      "lighting": "Contrasted chiaroscuro lighting with deep shadows and warm amber torch glow.",
+      "action_beats": [
+        "Camera looks up imposingly at the heavy stone architecture",
+        "Torches flicker steadily against the damp stone walls"
+      ],
+      "continuity": [
+        "Connects the concept of empire funding and geopolitical power to the spice trade",
+        "Maintains the dramatic chiaroscuro lighting language"
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern architecture, electric lights",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The answer starts thousands of years before da Gama was born,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Eye-level medium shot, 50mm anamorphic lens",
+      "composition": "An ancient stone carving of a lotus flower and botanical motifs on a sun-bleached temple wall, with shallow depth of field.",
+      "lighting": "Soft, natural morning sunlight illuminating organic stone pores and weathered carvings.",
+      "action_beats": [
+        "Camera holds a steady focus on the ancient botanical reliefs",
+        "Soft breeze brushes across the stone surface"
+      ],
+      "continuity": [
+        "Shifts the timeline backward thousands of years prior to da Gama",
+        "Emphasizes organic stone texture and historical realism"
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern graffiti, plastic",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "in the deserts of ancient Egypt along the banks of the Nile River.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "",
+      "media_generation_error": "",
+      "shot_type": "Aerial establishing shot, 24mm anamorphic lens",
+      "composition": "A sweeping cinematic vista of the winding Nile River at sunset, bordered by ancient desert dunes and lush green riverbanks.",
+      "lighting": "Warm golden hour sunset lighting casting a rich amber glow over the landscape and water.",
+      "action_beats": [
+        "Camera slowly tracks over the winding river valley",
+        "Sun sinks lower on the horizon, bathing the desert in a desaturated parchment hue"
+      ],
+      "continuity": [
+        "Establishes the ancient Egyptian setting along the Nile mentioned in narration",
+        "Utilizes warm golden hour amber and muted earth tones"
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern cities, electricity poles",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

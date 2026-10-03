@@ -1,3 +1,6 @@
-2026/09/30-11:18:24.998 9a9c Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\shared_proto_db/MANIFEST-000001
-2026/09/30-11:18:25.016 9a9c Recovering log #4
-2026/09/30-11:18:25.017 9a9c Reusing old log D:\ToolCreateVideo\storage\flow_chrome\Default\shared_proto_db/000004.log 
+2026/10/03-00:56:36.408 4cdc Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\shared_proto_db/MANIFEST-000001
+2026/10/03-00:56:36.425 4cdc Recovering log #4
+2026/10/03-00:56:36.428 4cdc Reusing old log D:\ToolCreateVideo\storage\flow_chrome\Default\shared_proto_db/000004.log 
+2026/10/03-00:56:37.321 16b8 Level-0 table #8: started
+2026/10/03-00:56:37.327 16b8 Level-0 table #8: 119392 bytes OK
+2026/10/03-00:56:37.331 16b8 Delete type=0 #4

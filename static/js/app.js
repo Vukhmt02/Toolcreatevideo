@@ -8,6 +8,7 @@
 let currentProjectId = null;
 let currentScript = null;
 let ws = null;
+let generationPollTimer = null;
 
 // ═══════════════════════════════════════════
 //  Tab Navigation
@@ -18,6 +19,28 @@ function switchTab(tabName) {
 
     document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
     document.getElementById(`tab-${tabName}`).classList.add('active');
+}
+
+function startNewProject() {
+    stopGenerationPolling();
+    if (ws) ws.close();
+    ws = null;
+    currentProjectId = null;
+    currentScript = null;
+    // Keep the new-project workspace blank after refresh until the user creates
+    // a project or explicitly reopens the most recent saved one.
+    localStorage.setItem('toolCreateVideoProjectId', '__new__');
+    document.getElementById('scriptEditor').value = '';
+    document.getElementById('scriptFileInput').value = '';
+    document.getElementById('scriptValidation').textContent = '';
+    document.getElementById('scriptDropText').textContent = 'Bấm vào đây để tải file kịch bản lên (hoặc kéo thả file vào ô này)';
+    document.getElementById('generateInfo').style.display = 'block';
+    document.getElementById('generateControls').style.display = 'none';
+    document.getElementById('characterGrid').innerHTML = '<div class="empty-state"><div class="icon">👤</div><p>Chưa có nhân vật. Hãy tạo project từ kịch bản trước.</p></div>';
+    document.getElementById('locationGrid').innerHTML = '';
+    document.getElementById('btnRestoreProject').style.display = '';
+    switchTab('script');
+    document.getElementById('scriptEditor').focus();
 }
 
 // ═══════════════════════════════════════════
@@ -55,12 +78,9 @@ async function checkStatus() {
         const text = document.getElementById('statusText');
         const statusGrid = document.getElementById('serviceStatusGrid');
 
-        const voiceLabels = {
-            gemini_tts: `Gemini TTS (${data.gemini_tts_voice || 'Gacrux'})`,
-            omnivoice: 'OmniVoice',
-            edge_tts: 'Edge TTS (Miễn phí)'
-        };
-        const voiceLabel = voiceLabels[data.voice_method] || data.voice_method;
+        const voiceLabel = data.elevenlabs_voice_id
+            ? `ElevenLabs (${data.elevenlabs_voice_id})`
+            : 'ElevenLabs — chưa cấu hình';
 
         if (data.google_api) {
             dot.classList.add('connected');
@@ -70,36 +90,20 @@ async function checkStatus() {
             text.textContent = 'Chưa có Google API Key';
         }
 
-        if (data.omnivoice_url && document.getElementById('omnivoiceUrl')) {
-            if (!document.getElementById('omnivoiceUrl').value) {
-                document.getElementById('omnivoiceUrl').value = data.omnivoice_url;
-            }
-        }
-        if (document.getElementById('omnivoiceNumStep')) {
-            document.getElementById('omnivoiceNumStep').value = data.omnivoice_num_step || 32;
-        }
-        if (document.getElementById('omnivoiceSpeed')) {
-            document.getElementById('omnivoiceSpeed').value = data.omnivoice_speed || 1.0;
-        }
-        if (document.getElementById('voiceProvider')) {
-            document.getElementById('voiceProvider').value = data.voice_provider || 'gemini';
-        }
-        if (document.getElementById('geminiTtsModel')) {
-            document.getElementById('geminiTtsModel').value = data.gemini_tts_model || 'gemini-3.8-flash-tts';
-        }
-        if (document.getElementById('geminiTtsVoice')) {
-            document.getElementById('geminiTtsVoice').value = data.gemini_tts_voice || 'Gacrux';
-        }
-        if (document.getElementById('geminiTtsStyle')) {
-            document.getElementById('geminiTtsStyle').value = data.gemini_tts_style || '';
-        }
+        if (document.getElementById('elevenlabsVoiceId')) document.getElementById('elevenlabsVoiceId').value = data.elevenlabs_voice_id || '';
+        if (document.getElementById('elevenlabsModelId')) document.getElementById('elevenlabsModelId').value = data.elevenlabs_model_id || 'eleven_multilingual_v2';
+        if (document.getElementById('elevenlabsOutputFormat')) document.getElementById('elevenlabsOutputFormat').value = data.elevenlabs_output_format || 'mp3_44100_128';
+        if (document.getElementById('elevenlabsStability')) document.getElementById('elevenlabsStability').value = data.elevenlabs_stability ?? 0.5;
+        if (document.getElementById('elevenlabsSimilarity')) document.getElementById('elevenlabsSimilarity').value = data.elevenlabs_similarity_boost ?? 0.75;
+        if (document.getElementById('elevenlabsStyle')) document.getElementById('elevenlabsStyle').value = data.elevenlabs_style ?? 0;
+        if (document.getElementById('elevenlabsSpeakerBoost')) document.getElementById('elevenlabsSpeakerBoost').checked = data.elevenlabs_speaker_boost !== false;
 
         if (statusGrid) {
             statusGrid.innerHTML = `
                 <div style="font-size:12px;padding:6px 12px;border-radius:6px;background:${data.google_api ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'};color:${data.google_api ? '#34d399' : '#f87171'};border:1px solid ${data.google_api ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}">
                     ${data.google_api ? `✅ Google API (${escapeHtml(data.image_model)} & ${escapeHtml(data.video_model)})` : '⚠️ Google API Key chưa có'}
                 </div>
-                <div style="font-size:12px;padding:6px 12px;border-radius:6px;background:${data.omnivoice_api ? 'rgba(168,85,247,0.15)' : 'rgba(56,189,248,0.1)'};color:${data.omnivoice_api ? '#c084fc' : '#38bdf8'};border:1px solid ${data.omnivoice_api ? 'rgba(168,85,247,0.3)' : 'rgba(56,189,248,0.3)'}">
+                <div style="font-size:12px;padding:6px 12px;border-radius:6px;background:${data.elevenlabs_api ? 'rgba(168,85,247,0.15)' : 'rgba(239,68,68,0.1)'};color:${data.elevenlabs_api ? '#c084fc' : '#f87171'};border:1px solid ${data.elevenlabs_api ? 'rgba(168,85,247,0.3)' : 'rgba(239,68,68,0.3)'}">
                     🎙️ Voice: <strong>${voiceLabel}</strong>
                 </div>
                 <div style="font-size:12px;padding:6px 12px;border-radius:6px;background:${data.ffmpeg_ready ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'};color:${data.ffmpeg_ready ? '#34d399' : '#f87171'};border:1px solid rgba(16,185,129,0.3)}">
@@ -123,44 +127,42 @@ async function testGoogleConnection() {
     }
 }
 
-async function testOmniVoiceConnection() {
-    showToast('Đang kiểm tra OmniVoice...', 'info');
+async function testElevenLabsConnection() {
+    showToast('Đang kiểm tra ElevenLabs...', 'info');
     try {
         const res = await fetch('/api/voice/health');
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || data.detail || data.status || `HTTP ${res.status}`);
-        const device = data.device ? ` trên ${data.device}` : '';
-        const promptReady = data.voice_prompt_ready === false ? ' nhưng giọng mẫu chưa sẵn sàng' : '';
-        showToast(`OmniVoice đã sẵn sàng${device}${promptReady}`, data.voice_prompt_ready === false ? 'error' : 'success');
+        showToast(`ElevenLabs đã sẵn sàng: ${data.voice_name || data.voice_id} — ${data.model_id}`, 'success');
     } catch (error) {
-        showToast(`OmniVoice chưa sẵn sàng: ${error.message}`, 'error');
+        showToast(`ElevenLabs chưa sẵn sàng: ${error.message}`, 'error');
     }
 }
 
 async function saveConfig() {
     const googleKey = document.getElementById('googleApiKey').value.trim();
     const wavespeedKey = document.getElementById('wavespeedApiKey').value.trim();
-    const omnivoiceUrl = document.getElementById('omnivoiceUrl') ? document.getElementById('omnivoiceUrl').value.trim() : '';
-    const omnivoiceApiKey = document.getElementById('omnivoiceApiKey') ? document.getElementById('omnivoiceApiKey').value.trim() : '';
-    const omnivoiceNumStep = document.getElementById('omnivoiceNumStep')?.value || '32';
-    const omnivoiceSpeed = document.getElementById('omnivoiceSpeed')?.value || '1.0';
-    const voiceProvider = document.getElementById('voiceProvider')?.value || 'gemini';
-    const geminiTtsModel = document.getElementById('geminiTtsModel')?.value || 'gemini-3.8-flash-tts';
-    const geminiTtsVoice = document.getElementById('geminiTtsVoice')?.value || 'Gacrux';
-    const geminiTtsStyle = document.getElementById('geminiTtsStyle')?.value.trim() || 'warm, clear Vietnamese narration';
+    const elevenlabsApiKey = document.getElementById('elevenlabsApiKey')?.value.trim() || '';
+    const elevenlabsVoiceId = document.getElementById('elevenlabsVoiceId')?.value.trim() || '';
+    const elevenlabsModelId = document.getElementById('elevenlabsModelId')?.value || 'eleven_multilingual_v2';
+    const elevenlabsOutputFormat = document.getElementById('elevenlabsOutputFormat')?.value || 'mp3_44100_128';
+    const elevenlabsStability = document.getElementById('elevenlabsStability')?.value || '0.5';
+    const elevenlabsSimilarity = document.getElementById('elevenlabsSimilarity')?.value || '0.75';
+    const elevenlabsStyle = document.getElementById('elevenlabsStyle')?.value || '0';
+    const elevenlabsSpeakerBoost = document.getElementById('elevenlabsSpeakerBoost')?.checked ?? true;
 
     try {
         const formData = new FormData();
         formData.append('google_api_key', googleKey);
         formData.append('wavespeed_api_key', wavespeedKey);
-        formData.append('omnivoice_url', omnivoiceUrl);
-        formData.append('omnivoice_api_key', omnivoiceApiKey);
-        formData.append('omnivoice_num_step', omnivoiceNumStep);
-        formData.append('omnivoice_speed', omnivoiceSpeed);
-        formData.append('voice_provider', voiceProvider);
-        formData.append('gemini_tts_model', geminiTtsModel);
-        formData.append('gemini_tts_voice', geminiTtsVoice);
-        formData.append('gemini_tts_style', geminiTtsStyle);
+        formData.append('elevenlabs_api_key', elevenlabsApiKey);
+        formData.append('elevenlabs_voice_id', elevenlabsVoiceId);
+        formData.append('elevenlabs_model_id', elevenlabsModelId);
+        formData.append('elevenlabs_output_format', elevenlabsOutputFormat);
+        formData.append('elevenlabs_stability', elevenlabsStability);
+        formData.append('elevenlabs_similarity_boost', elevenlabsSimilarity);
+        formData.append('elevenlabs_style', elevenlabsStyle);
+        formData.append('elevenlabs_speaker_boost', String(elevenlabsSpeakerBoost));
 
         const res = await fetch('/api/config/save', { method: 'POST', body: formData });
         const text = await res.text();
@@ -184,29 +186,25 @@ async function saveConfig() {
 
 async function testVoice() {
     const text = document.getElementById('testVoiceText').value;
-    const gender = document.getElementById('testVoiceGender').value;
 
     showToast('Đang tạo giọng nói...', 'info');
 
     try {
         const formData = new FormData();
         formData.append('text', text);
-        formData.append('gender', gender);
 
         const res = await fetch('/api/voice/test', { method: 'POST', body: formData });
 
         if (res.ok) {
             const method = res.headers.get('X-Voice-Method') || 'unknown';
-            const fallback = res.headers.get('X-Voice-Fallback') === 'true';
             const blob = await res.blob();
             const url = URL.createObjectURL(blob);
             const player = document.getElementById('testAudioPlayer');
             player.src = url;
             player.style.display = 'block';
             player.play();
-            const labels = { gemini_tts: 'Gemini TTS', omnivoice: 'OmniVoice', edge_tts: 'Edge TTS' };
-            const message = `Tạo giọng thành công bằng ${labels[method] || method}${fallback ? ' (đã dùng dự phòng)' : ''}`;
-            showToast(message, fallback ? 'info' : 'success');
+            const message = `Tạo giọng thành công bằng ${method === 'elevenlabs' ? 'ElevenLabs' : method}`;
+            showToast(message, 'success');
         } else {
             let message = `HTTP ${res.status}`;
             try {
@@ -533,17 +531,21 @@ async function createProject() {
 
         currentProjectId = data.project_id;
         currentScript = data.script;
+        localStorage.setItem('toolCreateVideoProjectId', currentProjectId);
+        document.getElementById('btnRestoreProject').style.display = 'none';
 
         showToast(`Project "${data.title}" đã tạo thành công!`, 'success');
 
         // Update characters tab
         renderCharacters();
+        renderLocations();
 
         // Update generate tab
         document.getElementById('generateInfo').style.display = 'none';
         document.getElementById('generateControls').style.display = 'block';
         updateProjectStats();
         renderGenerateSceneCards();
+        connectWebSocket();
 
         // Switch to characters tab
         switchTab('characters');
@@ -602,6 +604,7 @@ async function analyzeVisualPlan() {
         if (!response.ok) throw new Error(data.detail || 'Không thể phân tích bố cục');
         currentScript = data.script;
         renderCharacters();
+        renderLocations();
         updateProjectStats();
         renderGenerateSceneCards();
         if (data.warning) showToast(data.warning, 'error');
@@ -652,9 +655,20 @@ function renderGenerateSceneCards() {
             const isKey = scene.scene_type === 'key';
             const typeLabel = isKey ? '🎬 KEY (Veo 3.1)' : '🖼️ FILLER (Gemini tạo ảnh)';
             const typeClass = isKey ? 'key' : 'filler';
+            const hasMuseVideo = scene.generated_media_provider === 'muse'
+                && scene.generated_media_type === 'video' && scene.generated_media_path;
+            const hasMediaError = scene.media_generation_status === 'error';
+            const needsContentCheck = hasMuseVideo && scene.media_content_check_status !== 'match';
+            const cardState = hasMediaError ? 'error' : (hasMuseVideo && !needsContentCheck ? 'done' : '');
+            const badgeState = hasMediaError ? 'error' : (needsContentCheck ? 'pending' : (hasMuseVideo ? 'done' : 'pending'));
+            const badgeText = hasMediaError ? 'Lỗi' : (needsContentCheck ? 'Chưa kiểm tra' : (hasMuseVideo ? 'Hoàn thành' : 'Đang chờ'));
+            const initialProgress = hasMuseVideo && !needsContentCheck && !hasMediaError ? 100 : 0;
+            const initialMessage = hasMediaError ? scene.media_generation_error
+                : (needsContentCheck ? 'Video cũ cần đối chiếu với kịch bản' : (hasMuseVideo ? 'Đã kiểm tra nội dung video Muse' : 'Sẵn sàng'));
+            const mediaUrl = `/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(scene.id)}/media`;
 
             return `
-            <div class="scene-card" id="scene-card-${escapeAttr(scene.id)}">
+            <div class="scene-card ${cardState}" id="scene-card-${escapeAttr(scene.id)}">
                 <div class="scene-header">
                     <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
                         <span class="scene-title">🎬 Cảnh ${i + 1}: ${escapeHtml(scene.setting.substring(0, 48))}...</span>
@@ -664,26 +678,48 @@ function renderGenerateSceneCards() {
                         <button type="button" class="scene-flow-retry-btn" id="btn-flow-${escapeAttr(scene.id)}" data-flow-scene-id="${escapeAttr(scene.id)}" title="Chỉ tạo lại cảnh này bằng Google Flow">
                             ↻ Tạo lại Flow
                         </button>
+                        <button type="button" class="scene-flow-retry-btn" id="btn-muse-${escapeAttr(scene.id)}" data-muse-scene-id="${escapeAttr(scene.id)}" title="Tạo lại riêng cảnh này bằng Muse Video">
+                            ↻ Tạo lại Muse
+                        </button>
                         <button type="button" class="scene-prompt-btn" data-prompt-scene-id="${escapeAttr(scene.id)}">📝 Prompt</button>
                     </div>
-                    <span class="scene-badge pending" id="badge-${escapeAttr(scene.id)}">Đang chờ</span>
+                    <span class="scene-badge ${badgeState}" id="badge-${escapeAttr(scene.id)}">${badgeText}</span>
                 </div>
+                <label class="scene-location-control">🏠 Địa điểm chuẩn:
+                    <select data-location-scene-id="${escapeAttr(scene.id)}">
+                        <option value="">Chưa gắn địa điểm</option>
+                        ${(currentScript.locations || []).map(location => `
+                            <option value="${escapeAttr(location.id)}" ${scene.location_id === location.id ? 'selected' : ''}>${escapeHtml(location.name)}</option>
+                        `).join('')}
+                    </select>
+                </label>
                 <div class="scene-prompt-panel" id="prompt-panel-${escapeAttr(scene.id)}" style="display:none">
                     <div class="scene-plan-line"><b>Bố cục:</b> ${escapeHtml(scene.composition || 'Chưa phân tích')}</div>
                     <div class="scene-plan-line"><b>Ánh sáng:</b> ${escapeHtml(scene.lighting || 'Chưa phân tích')}</div>
                     <div class="scene-plan-line"><b>Continuity:</b> ${escapeHtml((scene.continuity || []).join('; ') || 'Chưa có')}</div>
-                    <textarea class="scene-prompt-editor" id="prompt-editor-${escapeAttr(scene.id)}" placeholder="Đang tải prompt..."></textarea>
+                    <details class="scene-plan-line"><summary>Xem prompt đầy đủ</summary><pre id="prompt-preview-${escapeAttr(scene.id)}" class="prompt-preview"></pre></details>
+                    <label class="scene-plan-line">Mô tả riêng cho cảnh (khóa nhân vật và bối cảnh được thêm tự động)</label>
+                    <textarea class="scene-prompt-editor" id="prompt-editor-${escapeAttr(scene.id)}" placeholder="Để trống để dùng prompt tự động..."></textarea>
                     <div class="scene-prompt-actions">
                         <button type="button" class="btn btn-secondary btn-sm" data-save-prompt-id="${escapeAttr(scene.id)}">💾 Lưu prompt</button>
                     </div>
                 </div>
                 <div class="progress-container">
                     <div class="progress-bar">
-                        <div class="progress-fill" id="progress-${escapeAttr(scene.id)}" style="width:0%"></div>
+                        <div class="progress-fill" id="progress-${escapeAttr(scene.id)}" style="width:${initialProgress}%"></div>
                     </div>
                     <div class="progress-label">
-                        <span id="msg-${escapeAttr(scene.id)}">Sẵn sàng</span>
-                        <span id="pct-${escapeAttr(scene.id)}">0%</span>
+                        <span id="msg-${escapeAttr(scene.id)}">${escapeHtml(initialMessage)}</span>
+                        <span id="pct-${escapeAttr(scene.id)}">${initialProgress}%</span>
+                    </div>
+                </div>
+                <div class="scene-media-preview" id="media-preview-${escapeAttr(scene.id)}" ${hasMuseVideo ? '' : 'style="display:none"'}>
+                    <video id="media-video-${escapeAttr(scene.id)}" controls preload="metadata" playsinline
+                           src="${hasMuseVideo ? mediaUrl : ''}"></video>
+                    <div class="scene-media-actions">
+                        <span>Video Muse của cảnh ${i + 1}</span>
+                        <a id="media-download-${escapeAttr(scene.id)}" class="scene-media-download"
+                           href="${mediaUrl}?download=true" download>Tải video</a>
                     </div>
                 </div>
             </div>
@@ -693,6 +729,9 @@ function renderGenerateSceneCards() {
                 <div class="scene-header">
                     <span class="scene-title">📦 Ghép timeline video hoàn chỉnh</span>
                     <span class="scene-badge pending" id="badge-final">Đang chờ</span>
+                </div>
+                <div style="margin:10px 0 4px">
+                    <button type="button" class="btn btn-primary btn-sm" onclick="startGeneration()">▶ Tạo giọng & ghép timeline ngay</button>
                 </div>
                 <div class="progress-container">
                     <div class="progress-bar">
@@ -708,8 +747,14 @@ function renderGenerateSceneCards() {
         container.querySelectorAll('.scene-type-btn[data-scene-id]').forEach(button => {
             button.addEventListener('click', () => toggleSceneType(button.dataset.sceneId));
         });
+        container.querySelectorAll('[data-location-scene-id]').forEach(select => {
+            select.addEventListener('change', () => setSceneLocation(select.dataset.locationSceneId, select.value));
+        });
         container.querySelectorAll('.scene-flow-retry-btn[data-flow-scene-id]').forEach(button => {
             button.addEventListener('click', () => retrySceneInFlow(button.dataset.flowSceneId));
+        });
+        container.querySelectorAll('[data-muse-scene-id]').forEach(button => {
+            button.addEventListener('click', () => retrySceneInMuse(button.dataset.museSceneId));
         });
         container.querySelectorAll('.scene-prompt-btn[data-prompt-scene-id]').forEach(button => {
             button.addEventListener('click', () => toggleScenePrompt(button.dataset.promptSceneId));
@@ -731,7 +776,8 @@ async function toggleScenePrompt(sceneId) {
         const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(sceneId)}/prompt`);
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || 'Không tải được prompt');
-        editor.value = data.prompt;
+        editor.value = data.override || '';
+        document.getElementById(`prompt-preview-${sceneId}`).textContent = data.prompt;
         editor.dataset.loaded = 'true';
     } catch (error) {
         showToast(error.message, 'error');
@@ -752,6 +798,11 @@ async function saveScenePrompt(sceneId) {
         if (!response.ok) throw new Error(data.detail || 'Không lưu được prompt');
         const scene = currentScript?.scenes?.find(item => item.id === sceneId);
         if (scene) scene.prompt_override = editor.value.trim();
+        const previewResponse = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(sceneId)}/prompt`);
+        if (previewResponse.ok) {
+            const preview = await previewResponse.json();
+            document.getElementById(`prompt-preview-${sceneId}`).textContent = preview.prompt;
+        }
         showToast(`Đã lưu prompt riêng cho ${sceneId}.`, 'success');
     } catch (error) {
         showToast(error.message, 'error');
@@ -789,6 +840,9 @@ async function generateInFlow() {
             if (scene) {
                 if (item.media_type === 'video') scene.flow_video_path = item.file_path;
                 else scene.flow_image_path = item.file_path;
+                scene.generated_media_path = item.file_path;
+                scene.generated_media_type = item.media_type;
+                scene.generated_media_provider = 'flow';
             }
             updateProgress({
                 scene_id: item.scene_id,
@@ -857,6 +911,9 @@ async function retrySceneInFlow(sceneId) {
                 scene.flow_image_path = data.file_path;
                 scene.flow_video_path = '';
             }
+            scene.generated_media_path = data.file_path;
+            scene.generated_media_type = data.media_type;
+            scene.generated_media_provider = 'flow';
         }
         updateProgress({
             scene_id: sceneId,
@@ -897,14 +954,15 @@ function renderCharacters() {
             <div class="character-avatar">${char.voice_gender === 'male' ? '👨' : '👩'}</div>
             <div class="character-name">${escapeHtml(char.name)}</div>
             <div class="character-desc">${escapeHtml(char.description || 'Không có mô tả')}</div>
-            <div class="character-bible">
-                <div><b>Identity lock:</b> ${escapeHtml(char.appearance_signature || char.description || 'Chưa phân tích')}</div>
-                <div><b>Trang phục:</b> ${escapeHtml(char.wardrobe || 'Chưa phân tích')}</div>
-                <div><b>Đặc điểm khóa:</b> ${escapeHtml((char.identity_markers || []).join('; ') || 'Chưa có')}</div>
-            </div>
+            <form class="character-bible visual-lock-form" data-character-visual-id="${escapeAttr(char.id)}">
+                <label>Ngoại hình cố định<textarea name="appearance_signature" placeholder="Tuổi, khuôn mặt, tóc, dáng người...">${escapeHtml(char.appearance_signature || char.description || '')}</textarea></label>
+                <label>Trang phục cố định<input name="wardrobe" value="${escapeAttr(char.wardrobe || '')}" placeholder="Màu áo, kiểu quần, phụ kiện..."></label>
+                <label>Đặc điểm nhận dạng (ngăn cách bằng ;) <input name="identity_markers" value="${escapeAttr((char.identity_markers || []).join('; '))}" placeholder="Vết sẹo; kính; kiểu tóc..."></label>
+                <button type="submit" class="btn btn-secondary btn-sm">💾 Lưu mô tả</button>
+            </form>
 
             <div class="upload-area" id="img-${escapeAttr(char.id)}" data-upload-id="${escapeAttr(char.id)}" data-upload-type="image">
-                📷 Upload ảnh reference (${(char.reference_images || []).length} ảnh)
+                📷 Ảnh tham chiếu tùy chọn cho Flow/Veo (${(char.reference_images || []).length} ảnh)
             </div>
             <input type="file" id="file-img-${escapeAttr(char.id)}" accept="image/*" style="display:none"
                    data-file-id="${escapeAttr(char.id)}" data-file-type="image">
@@ -923,6 +981,102 @@ function renderCharacters() {
     grid.querySelectorAll('[data-file-id]').forEach(input => {
         input.addEventListener('change', () => handleFileUpload(input.dataset.fileId, input.dataset.fileType, input));
     });
+    grid.querySelectorAll('[data-character-visual-id]').forEach(form => {
+        form.addEventListener('submit', event => saveCharacterVisualDetails(event, form.dataset.characterVisualId));
+    });
+}
+
+async function saveCharacterVisualDetails(event, characterId) {
+    event.preventDefault();
+    try {
+        const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/character/${encodeURIComponent(characterId)}/visual-details`, {
+            method: 'POST', body: new FormData(event.currentTarget),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Không lưu được mô tả nhân vật');
+        Object.assign(currentScript.characters.find(item => item.id === characterId), data.character);
+        showToast('Đã lưu mô tả nhân vật cho các cảnh liên quan.', 'success');
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+function renderLocations() {
+    const grid = document.getElementById('locationGrid');
+    if (!grid) return;
+    const locations = currentScript?.locations || [];
+    grid.innerHTML = locations.length ? locations.map(location => `
+        <div class="character-card">
+            <form class="visual-lock-form" data-location-details-id="${escapeAttr(location.id)}">
+                <label>Tên địa điểm<input name="name" required maxlength="120" value="${escapeAttr(location.name)}"></label>
+                <label>Bố cục, đạo cụ và ánh sáng cố định<textarea name="description" maxlength="2000" placeholder="Ví dụ: sofa xanh bên cửa sổ lớn, bàn gỗ tròn, ánh sáng chiều...">${escapeHtml(location.description || '')}</textarea></label>
+                <button type="submit" class="btn btn-secondary btn-sm">💾 Lưu bối cảnh</button>
+            </form>
+        </div>
+    `).join('') : '<p class="character-desc">Chưa có địa điểm. Thêm địa điểm rồi gắn vào các cảnh liên quan.</p>';
+    grid.querySelectorAll('[data-location-details-id]').forEach(form => {
+        form.addEventListener('submit', event => saveLocationDetails(event, form.dataset.locationDetailsId));
+    });
+}
+
+async function createLocation(event) {
+    event.preventDefault();
+    if (!currentProjectId) return showToast('Hãy tạo project trước', 'error');
+    const form = event.currentTarget;
+    try {
+        const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/locations`, {
+            method: 'POST', body: new FormData(form),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Không thể thêm địa điểm');
+        currentScript.locations = currentScript.locations || [];
+        currentScript.locations.push(data.location);
+        form.reset();
+        renderLocations();
+        renderGenerateSceneCards();
+        showToast('Đã thêm địa điểm. Hãy gắn nó với các cảnh liên quan.', 'success');
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+async function setSceneLocation(sceneId, locationId) {
+    const scene = currentScript.scenes.find(item => item.id === sceneId);
+    try {
+        const form = new FormData();
+        form.append('location_id', locationId);
+        const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(sceneId)}/location`, {
+            method: 'POST', body: form,
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Không thể gắn địa điểm');
+        if (scene) scene.location_id = locationId;
+        if (data.location) {
+            Object.assign(currentScript.locations.find(item => item.id === locationId), data.location);
+            renderLocations();
+        }
+        showToast(`Đã cập nhật địa điểm cho ${sceneId}. Hãy tạo lại video Muse để áp dụng.`, 'success');
+    } catch (error) {
+        const select = document.querySelector(`[data-location-scene-id="${CSS.escape(sceneId)}"]`);
+        if (select) select.value = scene?.location_id || '';
+        showToast(error.message, 'error');
+    }
+}
+
+async function saveLocationDetails(event, locationId) {
+    event.preventDefault();
+    try {
+        const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/location/${encodeURIComponent(locationId)}/details`, {
+            method: 'POST', body: new FormData(event.currentTarget),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Không lưu được bối cảnh');
+        Object.assign(currentScript.locations.find(item => item.id === locationId), data.location);
+        renderGenerateSceneCards();
+        showToast('Đã lưu mô tả bối cảnh cho các cảnh liên quan.', 'success');
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
 }
 
 function uploadAsset(charId, type) {
@@ -948,7 +1102,7 @@ async function handleFileUpload(charId, type, input) {
             const character = currentScript?.characters?.find(item => item.id === charId);
             if (character && type === 'image') {
                 character.reference_images = character.reference_images || [];
-                if (!character.reference_images.includes(data.file_path)) character.reference_images.push(data.file_path);
+                if (!character.reference_images.includes(data.file_path)) character.reference_images.unshift(data.file_path);
             } else if (character && type === 'voice') {
                 character.voice_ref = data.file_path;
             }
@@ -957,6 +1111,7 @@ async function handleFileUpload(charId, type, input) {
             area.classList.add('has-file');
             area.textContent = `✅ ${file.name}`;
             showToast(`Upload ${type} cho ${charId} thành công!`, 'success');
+            if (type === 'image') renderCharacters();
         }
     } catch (e) {
         showToast('Lỗi upload: ' + e.message, 'error');
@@ -976,8 +1131,8 @@ async function startGeneration() {
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Đang tạo video...';
 
-    // Setup WebSocket for progress
-    connectWebSocket();
+    // Setup WebSocket before starting so the first progress events are not lost.
+    await connectWebSocket();
 
     // Render scene progress cards if not already rendered
     const container = document.getElementById('sceneProgress');
@@ -989,7 +1144,9 @@ async function startGeneration() {
     try {
         const res = await fetch(`/api/project/${currentProjectId}/generate`, { method: 'POST' });
         const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || data.message || `HTTP ${res.status}`);
         showToast(data.message, 'info');
+        startGenerationPolling();
     } catch (e) {
         showToast('Lỗi bắt đầu tạo video: ' + e.message, 'error');
         btn.disabled = false;
@@ -997,20 +1154,76 @@ async function startGeneration() {
     }
 }
 
-function connectWebSocket() {
+function stopGenerationPolling() {
+    if (generationPollTimer) clearInterval(generationPollTimer);
+    generationPollTimer = null;
+}
+
+async function pollGenerationStatus() {
     if (!currentProjectId) return;
+    try {
+        const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/status`);
+        if (!response.ok) return;
+        const data = await response.json();
+        Object.entries(data.scenes_status || {}).forEach(([sceneId, status]) => {
+            if (status === 'done') updateProgress({
+                scene_id: sceneId, status: 'done', progress: 100, message: 'Đã hoàn thành',
+            });
+        });
+        if (data.status === 'done' || data.status === 'partial') {
+            stopGenerationPolling();
+            updateProgress({
+                scene_id: 'final', status: data.status, progress: 100,
+                message: data.status === 'done' ? 'Video hoàn thành! 🎬' : 'Đã xuất video phần hoàn thành',
+            });
+        } else if (data.status === 'error') {
+            stopGenerationPolling();
+            updateProgress({
+                scene_id: 'final', status: 'error', progress: 0,
+                message: 'Tạo video thất bại. Kiểm tra cảnh lỗi phía trên.',
+            });
+            const btn = document.getElementById('btnGenerate');
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = '🎬 Tạo lại Video';
+            }
+        }
+    } catch (_) {
+        // Keep polling; a short browser/server disconnect should not become a false error.
+    }
+}
+
+function startGenerationPolling() {
+    stopGenerationPolling();
+    pollGenerationStatus();
+    generationPollTimer = setInterval(pollGenerationStatus, 3000);
+}
+
+function connectWebSocket() {
+    if (!currentProjectId) return Promise.resolve();
+    if (ws && ws.readyState === WebSocket.OPEN &&
+        ws.url.endsWith(`/ws/${encodeURIComponent(currentProjectId)}`)) return Promise.resolve();
+    if (ws) ws.close();
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     ws = new WebSocket(`${protocol}//${window.location.host}/ws/${currentProjectId}`);
 
+    const ready = new Promise(resolve => {
+        ws.onopen = () => resolve();
+        ws.onerror = () => resolve();
+    });
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        if (data.provider === 'muse' && data.status === 'done' && data.file_path) {
+            setMuseResultData(data);
+        }
         updateProgress(data);
     };
 
     ws.onclose = () => {
         console.log('WebSocket closed');
     };
+    return ready;
 }
 
 function updateProgress(data) {
@@ -1050,6 +1263,7 @@ function updateProgress(data) {
 
     // If final scene is done, show result
     if (scene_id === 'final' && (status === 'done' || status === 'partial')) {
+        stopGenerationPolling();
         showResult();
         if (status === 'partial') showToast('Video thiếu một số cảnh; xem trạng thái từng cảnh.', 'error');
     }
@@ -1114,7 +1328,205 @@ function initScriptDropZone() {
     });
 }
 
-window.addEventListener('load', () => {
-    checkStatus();
+async function openMuseWindow() {
+    try {
+        const response = await fetch('/api/muse/browser/start', { method: 'POST' });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Không thể mở Chrome Muse');
+        showToast(data.message, 'success');
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+function setMuseResultData(item) {
+    const scene = currentScript?.scenes?.find(entry => entry.id === item.scene_id);
+    if (scene) {
+        scene.generated_media_path = item.file_path;
+        scene.generated_media_type = 'video';
+        scene.generated_media_provider = 'muse';
+        scene.media_capture_version = 'muse-result-v3';
+        scene.media_generation_status = 'done';
+        scene.media_generation_error = '';
+        scene.media_content_check_status = item.content_check || '';
+    }
+    const preview = document.getElementById(`media-preview-${item.scene_id}`);
+    const video = document.getElementById(`media-video-${item.scene_id}`);
+    const download = document.getElementById(`media-download-${item.scene_id}`);
+    const mediaUrl = `/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(item.scene_id)}/media`;
+    if (video) {
+        video.src = `${mediaUrl}?v=${Date.now()}`;
+        video.load();
+    }
+    if (download) download.href = `${mediaUrl}?download=true`;
+    if (preview) preview.style.display = '';
+}
+
+function attachMuseResult(item) {
+    setMuseResultData(item);
+    updateProgress({
+        scene_id: item.scene_id,
+        status: 'done',
+        progress: 100,
+        message: 'Đã nhận và kiểm tra nội dung video Muse',
+    });
+}
+
+async function generateInMuse() {
+    if (!currentProjectId) return showToast('Hãy tạo project trước', 'error');
+    const projectId = currentProjectId;
+    const targetSceneIds = (currentScript?.scenes || [])
+        .filter(scene => !(scene.generated_media_type === 'video' && scene.generated_media_path))
+        .map(scene => scene.id);
+    try {
+        await connectWebSocket();
+        if (!document.getElementById('sceneProgress')?.innerHTML.trim()) renderGenerateSceneCards();
+        targetSceneIds.forEach(sceneId => updateProgress({
+            scene_id: sceneId,
+            status: 'processing',
+            progress: 1,
+            message: 'Đang xếp hàng gửi sang Muse...',
+        }));
+        showToast('Đang mở Muse và tạo video cho các cảnh chưa có video...', 'info');
+        const response = await fetch(
+            `/api/project/${encodeURIComponent(projectId)}/muse-video-generate`,
+            { method: 'POST' },
+        );
+        const data = await response.json();
+        if (currentProjectId !== projectId) return;
+        if (!response.ok) throw new Error(data.detail || 'Không thể tạo video bằng Muse');
+        const results = data.results || [];
+        const completed = results.filter(item => item.status === 'done' && item.file_path);
+        const failed = results.filter(item => item.status === 'error');
+        completed.forEach(attachMuseResult);
+        failed.forEach(item => updateProgress({
+            scene_id: item.scene_id,
+            status: 'error',
+            progress: 0,
+            message: item.error || 'Muse chưa trả về video. Bấm Tạo lại Muse.',
+        }));
+        failed.forEach(item => {
+            const scene = currentScript?.scenes?.find(entry => entry.id === item.scene_id);
+            if (scene) {
+                scene.media_generation_status = 'error';
+                scene.media_generation_error = item.error || 'Muse chưa trả về video';
+            }
+        });
+        if (failed.length) {
+            showToast(`${failed.length} cảnh lỗi trên Muse. ${completed.length} cảnh đã hoàn thành.`, 'error');
+        } else if (!results.length) {
+            showToast(`${data.message || 'Tất cả cảnh đã có video.'} Đang tạo giọng và ghép timeline...`, 'success');
+            await startGeneration();
+        } else {
+            showToast(`Đã nhận ${completed.length} video từ Muse. Đang tạo giọng và ghép timeline...`, 'success');
+            await startGeneration();
+        }
+    } catch (error) {
+        if (currentProjectId !== projectId) return;
+        targetSceneIds.forEach(sceneId => {
+            const scene = currentScript?.scenes?.find(entry => entry.id === sceneId);
+            if (scene?.media_generation_status !== 'done') updateProgress({
+                scene_id: sceneId,
+                status: 'error',
+                progress: 0,
+                message: `Mất kết nối khi chờ Muse: ${error.message}`,
+            });
+        });
+        showToast(error.message, 'error');
+    }
+}
+
+async function retrySceneInMuse(sceneId) {
+    if (!currentProjectId) return showToast('Hãy tạo project trước', 'error');
+    const projectId = currentProjectId;
+    const button = document.getElementById(`btn-muse-${sceneId}`);
+    const originalLabel = button?.innerHTML || '↻ Tạo lại Muse';
+    if (button) {
+        button.disabled = true;
+        button.innerHTML = '<span class="spinner"></span> Đang tạo...';
+    }
+    updateProgress({
+        scene_id: sceneId,
+        status: 'processing',
+        progress: 10,
+        message: 'Đang tạo riêng cảnh này bằng Muse...',
+    });
+    try {
+        const response = await fetch(
+            `/api/project/${encodeURIComponent(projectId)}/scene/${encodeURIComponent(sceneId)}/muse-video-generate`,
+            { method: 'POST' },
+        );
+        const data = await response.json();
+        if (currentProjectId !== projectId) return;
+        if (!response.ok) throw new Error(data.detail || 'Không thể tạo lại cảnh bằng Muse');
+        attachMuseResult(data);
+        showToast(`Đã tạo lại ${sceneId} bằng Muse.`, 'success');
+    } catch (error) {
+        if (currentProjectId !== projectId) return;
+        updateProgress({scene_id: sceneId, status: 'error', progress: 0, message: error.message});
+        showToast(`Muse lỗi ở ${sceneId}: ${error.message}`, 'error');
+    } finally {
+        if (button) {
+            button.disabled = false;
+            button.innerHTML = originalLabel;
+        }
+    }
+}
+
+async function restoreLastProject({force = false} = {}) {
+    const savedId = localStorage.getItem('toolCreateVideoProjectId');
+    if (savedId === '__new__' && !force) {
+        document.getElementById('btnRestoreProject').style.display = '';
+        return;
+    }
+    const candidates = savedId && savedId !== '__new__'
+        ? [`/api/project/${encodeURIComponent(savedId)}`, '/api/project/latest']
+        : ['/api/project/latest'];
+    for (const url of candidates) {
+        try {
+            const response = await fetch(url);
+            if (!response.ok) continue;
+            const data = await response.json();
+            currentProjectId = data.project_id;
+            currentScript = data.script;
+            localStorage.setItem('toolCreateVideoProjectId', currentProjectId);
+            document.getElementById('btnRestoreProject').style.display = 'none';
+            const editor = document.getElementById('scriptEditor');
+            if (editor && !editor.value.trim()) editor.value = JSON.stringify(currentScript, null, 2);
+            renderCharacters();
+            renderLocations();
+            document.getElementById('generateInfo').style.display = 'none';
+            document.getElementById('generateControls').style.display = 'block';
+            updateProjectStats();
+            renderGenerateSceneCards();
+            Object.entries(data.scenes_status || {}).forEach(([sceneId, status]) => {
+                updateProgress({
+                    scene_id: sceneId,
+                    status,
+                    progress: status === 'done' ? 100 : 0,
+                    message: status === 'done' ? 'Đã hoàn thành' : 'Sẵn sàng tiếp tục',
+                });
+            });
+            if (data.status === 'done' || data.status === 'partial') {
+                updateProgress({
+                    scene_id: 'final', status: data.status, progress: 100,
+                    message: data.status === 'done' ? 'Video hoàn thành! 🎬' : 'Đã xuất video phần hoàn thành',
+                });
+            } else if (data.status === 'generating') {
+                startGenerationPolling();
+            }
+            await connectWebSocket();
+            switchTab('characters');
+            return;
+        } catch (_) {
+            // Try the latest persisted project next.
+        }
+    }
+}
+
+window.addEventListener('load', async () => {
+    document.getElementById('createLocationForm')?.addEventListener('submit', createLocation);
+    await checkStatus();
     initScriptDropZone();
+    await restoreLastProject();
 });

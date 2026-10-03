@@ -1,7 +1,15 @@
-2026/09/26-17:24:56.649 52ec Creating DB D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_www.google.com_0.indexeddb.leveldb since it was missing.
-2026/09/26-17:24:56.651 52ec Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_www.google.com_0.indexeddb.leveldb/MANIFEST-000001
-2026/09/26-17:24:56.655 557c Level-0 table #5: started
-2026/09/26-17:24:56.666 557c Level-0 table #5: 1318 bytes OK
-2026/09/26-17:24:56.667 557c Delete type=0 #3
-2026/09/26-17:24:56.668 52ec Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)
-2026/09/26-17:24:58.115 52ec Manual compaction at level-0 from '\x00\x04\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x05\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/10/03-01:23:44.555 a7bc Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_www.google.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/10/03-01:23:44.563 a7bc Recovering log #10
+2026/10/03-01:23:44.563 a7bc Reusing old log D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_www.google.com_0.indexeddb.leveldb/000010.log 
+2026/10/03-01:23:44.564 a7bc Delete type=2 #8
+2026/10/03-01:23:44.577 16b8 Manual compaction at level-0 from '\x00\x07\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x08\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/10/03-01:23:45.801 16b8 Level-0 table #15: started
+2026/10/03-01:23:45.807 16b8 Level-0 table #15: 1845 bytes OK
+2026/10/03-01:23:45.808 16b8 Delete type=0 #10
+2026/10/03-01:23:45.809 9824 Manual compaction at level-0 from '\x00\x08\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x09\x00\x00\x00' @ 0 : 0; will stop at '\x00\x08\x00\x00\x05' @ 288 : 1
+2026/10/03-01:23:45.809 9824 Compacting 1@0 + 1@1 files
+2026/10/03-01:23:45.818 9824 Generated table #16@0: 62 keys, 1625 bytes
+2026/10/03-01:23:45.818 9824 Compacted 1@0 + 1@1 files => 1625 bytes
+2026/10/03-01:23:45.819 9824 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/10/03-01:23:45.819 9824 Delete type=2 #15
+2026/10/03-01:23:45.820 9824 Manual compaction at level-0 from '\x00\x08\x00\x00\x05' @ 288 : 1 .. '\x00\x09\x00\x00\x00' @ 0 : 0; will stop at (end)

@@ -12,12 +12,15 @@ if sys.platform == "win32":
         pass
 
 import asyncio
+import hashlib
+import io
 import json
 import re
 import os
 import shutil
 import subprocess
 import urllib.request
+import urllib.parse
 import uuid
 import webbrowser
 from pathlib import Path
@@ -32,11 +35,12 @@ from config import config
 from core.script_parser import (
     parse_script,
     Script,
+    Location,
     refine_script_with_ai,
     format_script_to_complete_json,
     FULL_SCRIPT_TEMPLATE,
 )
-from core.prompt_builder import build_scene_prompt, build_image_prompt
+from core.prompt_builder import build_scene_prompt, build_image_prompt, build_character_prompt
 from core.visual_analyzer import analyze_visual_consistency, ensure_visual_defaults
 from core.timeline import build_scene_timeline, get_audio_duration, estimate_duration_from_text
 from services.voice_service import voice_service
@@ -44,6 +48,8 @@ from services.video_service import video_service
 from services.image_service import image_service
 from services.compositor import compositor
 from services.flow_service import flow_service
+from services.muse_service import muse_service
+from services.content_verifier import verify_scene_content, _sample_frames
 
 # ═══════════════════════════════════════════
 #  App Setup
@@ -80,6 +86,30 @@ def _load_projects() -> None:
             if not re.fullmatch(r"[0-9a-f]{12}", project_id):
                 continue
             script = Script.model_validate_json(script_path.read_text(encoding="utf-8"))
+            repaired = False
+            for scene in script.scenes:
+                if scene.generated_media_provider != "muse" or not scene.generated_media_path:
+                    continue
+                if scene.media_capture_version != muse_service.CAPTURE_VERSION:
+                    valid, reason = False, "video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt"
+                else:
+                    valid, reason = muse_service.validate_generated_video(scene.generated_media_path)
+                if valid:
+                    continue
+                scene.generated_media_path = ""
+                scene.generated_media_type = ""
+                scene.generated_media_provider = ""
+                scene.media_capture_version = ""
+                scene.media_content_check_status = ""
+                scene.media_content_check_reason = ""
+                scene.media_content_check_prompt_hash = ""
+                scene.media_generation_status = "error"
+                scene.media_generation_error = (
+                    f"Đã loại video Muse không đúng kết quả ({reason}). Bấm Tạo lại Muse."
+                )
+                repaired = True
+            if repaired:
+                script_path.write_text(script.model_dump_json(indent=2), encoding="utf-8")
             state_path = script_path.parent / "state.json"
             state = json.loads(state_path.read_text(encoding="utf-8")) if state_path.exists() else {}
             status = state.get("status", "created")
@@ -135,6 +165,48 @@ def launch_flow_chrome() -> dict:
     return {"status": "started", "message": "Đã mở Chrome Flow"}
 
 
+def launch_muse_chrome() -> dict:
+    """Start or reuse the controllable Chrome that already owns the Google session."""
+    if not config.MUSE_ENABLED:
+        raise RuntimeError("MUSE_ENABLED=false")
+    try:
+        with urllib.request.urlopen(f"{config.MUSE_CDP_URL}/json/version", timeout=1) as response:
+            if response.status == 200:
+                return {"status": "connected", "message": "Đang dùng Chrome Muse đã mở"}
+    except Exception:
+        pass
+
+    # Reuse the Flow Chrome profile so Muse can see the Google session the user
+    # already authenticated in that controlled browser.
+    if config.MUSE_CDP_URL.rstrip("/") == config.FLOW_CDP_URL.rstrip("/"):
+        result = launch_flow_chrome()
+        return {
+            "status": result["status"],
+            "message": "Đã mở Muse trong Chrome dùng chung với Flow.",
+        }
+
+    chrome_candidates = [
+        shutil.which("chrome.exe"),
+        os.getenv("PROGRAMFILES", "") + r"\Google\Chrome\Application\chrome.exe",
+        os.getenv("LOCALAPPDATA", "") + r"\Google\Chrome\Application\chrome.exe",
+    ]
+    chrome = next((path for path in chrome_candidates if path and Path(path).exists()), None)
+    if not chrome:
+        raise RuntimeError("Không tìm thấy Google Chrome")
+    parsed = urllib.parse.urlparse(config.MUSE_CDP_URL)
+    port = parsed.port or 9223
+    muse_profile = config.BASE_DIR / "storage" / "muse_chrome"
+    muse_profile.mkdir(parents=True, exist_ok=True)
+    subprocess.Popen([
+        chrome,
+        f"--remote-debugging-port={port}",
+        "--remote-allow-origins=*",
+        f"--user-data-dir={muse_profile}",
+        config.MUSE_URL,
+    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return {"status": "started", "message": "Đã mở Chrome Muse. Hãy đăng nhập nếu được yêu cầu."}
+
+
 # ═══════════════════════════════════════════
 #  WebSocket for real-time progress
 # ═══════════════════════════════════════════
@@ -147,21 +219,26 @@ async def websocket_endpoint(websocket: WebSocket, project_id: str):
         while True:
             await websocket.receive_text()
     except WebSocketDisconnect:
-        ws_connections.pop(project_id, None)
+        # A reconnect may already have replaced this socket. Never let the old
+        # socket remove the newer live connection for the same project.
+        if ws_connections.get(project_id) is websocket:
+            ws_connections.pop(project_id, None)
 
 
 async def send_progress(project_id: str, scene_id: str, status: str,
-                        progress: int, message: str):
+                        progress: int, message: str, **extra):
     """Gửi progress update qua WebSocket"""
     ws = ws_connections.get(project_id)
     if ws:
         try:
-            await ws.send_json({
+            payload = {
                 "scene_id": scene_id,
                 "status": status,
                 "progress": progress,
                 "message": message,
-            })
+            }
+            payload.update(extra)
+            await ws.send_json(payload)
         except Exception:
             pass
 
@@ -184,13 +261,6 @@ async def home():
 @app.get("/api/status")
 async def api_status():
     """Kiểm tra trạng thái hệ thống"""
-    provider = config.VOICE_PROVIDER
-    voice_method = "edge_tts"
-    if provider == "gemini" and config.has_google_api():
-        voice_method = "gemini_tts"
-    elif provider in {"gemini", "omnivoice"} and config.has_omnivoice_api():
-        voice_method = "omnivoice"
-
     return {
         "status": "ok",
         "google_api": config.has_google_api(),
@@ -198,18 +268,21 @@ async def api_status():
         "image_model": config.IMAGE_MODEL,
         "video_model": config.VEO_MODEL,
         "gemini_model": getattr(config, "GEMINI_MODEL", "gemini-3.8-flash"),
-        "omnivoice_api": config.has_omnivoice_api(),
-        "omnivoice_url": config.OMNIVOICE_URL,
-        "omnivoice_num_step": config.OMNIVOICE_NUM_STEP,
-        "omnivoice_speed": config.OMNIVOICE_SPEED,
-        "voice_provider": config.VOICE_PROVIDER,
-        "gemini_tts_model": config.GEMINI_TTS_MODEL,
-        "gemini_tts_voice": config.GEMINI_TTS_VOICE,
-        "gemini_tts_style": config.GEMINI_TTS_STYLE,
+        "elevenlabs_api": config.has_elevenlabs_api(),
+        "elevenlabs_voice_id": config.ELEVENLABS_VOICE_ID,
+        "elevenlabs_model_id": config.ELEVENLABS_MODEL_ID,
+        "elevenlabs_output_format": config.ELEVENLABS_OUTPUT_FORMAT,
+        "elevenlabs_stability": config.ELEVENLABS_STABILITY,
+        "elevenlabs_similarity_boost": config.ELEVENLABS_SIMILARITY_BOOST,
+        "elevenlabs_style": config.ELEVENLABS_STYLE,
+        "elevenlabs_speaker_boost": config.ELEVENLABS_SPEAKER_BOOST,
         "wavespeed_api": config.has_wavespeed_api(),
-        "voice_method": voice_method,
+        "voice_method": "elevenlabs",
         "ffmpeg_path": config.FFMPEG_PATH,
         "ffmpeg_ready": bool(shutil.which(config.FFMPEG_PATH) or Path(config.FFMPEG_PATH).is_file()),
+        "muse_enabled": config.MUSE_ENABLED,
+        "muse_url": config.MUSE_URL,
+        "muse_concurrency": 1,
     }
 
 
@@ -238,40 +311,54 @@ async def start_flow_browser():
         raise HTTPException(status_code=503, detail=str(exc))
 
 
+@app.post("/api/muse/browser/start")
+async def start_muse_browser():
+    try:
+        await _ensure_muse_browser()
+        return await muse_service.open_home()
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
 @app.post("/api/config/save")
 async def save_config(
     google_api_key: str = Form(""),
     gemini_model: str = Form(""),
     wavespeed_api_key: str = Form(""),
-    omnivoice_url: str = Form(""),
-    omnivoice_api_key: str = Form(""),
-    omnivoice_num_step: int = Form(32),
-    omnivoice_speed: float = Form(1.0),
-    voice_provider: str = Form("gemini"),
-    gemini_tts_model: str = Form("gemini-3.8-flash-tts"),
-    gemini_tts_voice: str = Form("Gacrux"),
-    gemini_tts_style: str = Form("mature Vietnamese narrator, warm, clear, natural pacing"),
+    elevenlabs_api_key: str = Form(""),
+    elevenlabs_voice_id: str = Form(""),
+    elevenlabs_model_id: str = Form("eleven_multilingual_v2"),
+    elevenlabs_output_format: str = Form("mp3_44100_128"),
+    elevenlabs_stability: float = Form(0.5),
+    elevenlabs_similarity_boost: float = Form(0.75),
+    elevenlabs_style: float = Form(0.0),
+    elevenlabs_speaker_boost: bool = Form(True),
 ):
-    """Lưu API keys và cấu hình OmniVoice / Google"""
+    """Lưu cấu hình Google media và ElevenLabs TTS."""
     for value in (
-        google_api_key, gemini_model, wavespeed_api_key, omnivoice_url, omnivoice_api_key,
-        voice_provider, gemini_tts_model, gemini_tts_voice, gemini_tts_style,
+        google_api_key, gemini_model, wavespeed_api_key, elevenlabs_api_key,
+        elevenlabs_voice_id, elevenlabs_model_id, elevenlabs_output_format,
     ):
         if len(value) > 2048 or "\n" in value or "\r" in value:
             raise HTTPException(status_code=400, detail="Invalid configuration value")
-    if omnivoice_url and not omnivoice_url.startswith(("https://", "http://")):
-        raise HTTPException(status_code=400, detail="OmniVoice URL must start with http:// or https://")
-    if not 4 <= omnivoice_num_step <= 64:
-        raise HTTPException(status_code=400, detail="OmniVoice num_step must be between 4 and 64")
-    if not 0.5 <= omnivoice_speed <= 2.0:
-        raise HTTPException(status_code=400, detail="OmniVoice speed must be between 0.5 and 2.0")
-    voice_provider = voice_provider.strip().lower()
-    if voice_provider not in {"gemini", "omnivoice", "edge_tts"}:
-        raise HTTPException(status_code=400, detail="Invalid voice provider")
-    if not re.fullmatch(r"[A-Za-z0-9._-]{1,128}", gemini_tts_model.strip()):
-        raise HTTPException(status_code=400, detail="Invalid Gemini TTS model")
-    if not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", gemini_tts_voice.strip()):
-        raise HTTPException(status_code=400, detail="Invalid Gemini TTS voice")
+    if elevenlabs_api_key and not elevenlabs_api_key.strip().startswith("sk_"):
+        raise HTTPException(
+            status_code=400,
+            detail="Bạn đang nhập API Key ID. ElevenLabs API Key hợp lệ phải bắt đầu bằng sk_.",
+        )
+    if elevenlabs_voice_id and not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", elevenlabs_voice_id.strip()):
+        raise HTTPException(status_code=400, detail="ElevenLabs Voice ID không hợp lệ")
+    if not re.fullmatch(r"[A-Za-z0-9._-]{1,128}", elevenlabs_model_id.strip()):
+        raise HTTPException(status_code=400, detail="ElevenLabs model không hợp lệ")
+    if not re.fullmatch(r"mp3_\d+_\d+", elevenlabs_output_format.strip()):
+        raise HTTPException(status_code=400, detail="Định dạng ElevenLabs không hợp lệ")
+    for name, value in {
+        "stability": elevenlabs_stability,
+        "similarity_boost": elevenlabs_similarity_boost,
+        "style": elevenlabs_style,
+    }.items():
+        if not 0.0 <= value <= 1.0:
+            raise HTTPException(status_code=400, detail=f"ElevenLabs {name} phải từ 0 đến 1")
     try:
         base_dir = getattr(config, "BASE_DIR", Path(__file__).parent)
         env_path = base_dir / ".env"
@@ -299,34 +386,28 @@ async def save_config(
             clean_wkey = wavespeed_api_key.strip()
             env_dict["WAVESPEED_API_KEY"] = clean_wkey
             config.WAVESPEED_API_KEY = clean_wkey
-        if omnivoice_url is not None:
-            clean_url = omnivoice_url.strip().rstrip("/")
-            env_dict["OMNIVOICE_URL"] = clean_url
-            config.OMNIVOICE_URL = clean_url
-            voice_service.omnivoice_url = clean_url
-        if omnivoice_api_key:
-            clean_okey = omnivoice_api_key.strip()
-            env_dict["OMNIVOICE_API_KEY"] = clean_okey
-            config.OMNIVOICE_API_KEY = clean_okey
-            voice_service.omnivoice_api_key = clean_okey
-        env_dict["OMNIVOICE_NUM_STEP"] = str(omnivoice_num_step)
-        config.OMNIVOICE_NUM_STEP = omnivoice_num_step
-        voice_service.omnivoice_num_step = omnivoice_num_step
-        env_dict["OMNIVOICE_SPEED"] = str(omnivoice_speed)
-        config.OMNIVOICE_SPEED = omnivoice_speed
-        voice_service.omnivoice_speed = omnivoice_speed
-        env_dict["VOICE_PROVIDER"] = voice_provider
-        config.VOICE_PROVIDER = voice_provider
-        voice_service.voice_provider = voice_provider
-        env_dict["GEMINI_TTS_MODEL"] = gemini_tts_model.strip()
-        config.GEMINI_TTS_MODEL = gemini_tts_model.strip()
-        voice_service.gemini_tts_model = gemini_tts_model.strip()
-        env_dict["GEMINI_TTS_VOICE"] = gemini_tts_voice.strip()
-        config.GEMINI_TTS_VOICE = gemini_tts_voice.strip()
-        voice_service.gemini_tts_voice = gemini_tts_voice.strip()
-        env_dict["GEMINI_TTS_STYLE"] = gemini_tts_style.strip()
-        config.GEMINI_TTS_STYLE = gemini_tts_style.strip()
-        voice_service.gemini_tts_style = gemini_tts_style.strip()
+        if elevenlabs_api_key:
+            clean_key = elevenlabs_api_key.strip()
+            env_dict["ELEVENLABS_API_KEY"] = clean_key
+            config.ELEVENLABS_API_KEY = clean_key
+            voice_service.api_key = clean_key
+        clean_voice = elevenlabs_voice_id.strip()
+        clean_model = elevenlabs_model_id.strip()
+        clean_format = elevenlabs_output_format.strip()
+        env_dict["ELEVENLABS_VOICE_ID"] = clean_voice
+        env_dict["ELEVENLABS_MODEL_ID"] = clean_model
+        env_dict["ELEVENLABS_OUTPUT_FORMAT"] = clean_format
+        env_dict["ELEVENLABS_STABILITY"] = str(elevenlabs_stability)
+        env_dict["ELEVENLABS_SIMILARITY_BOOST"] = str(elevenlabs_similarity_boost)
+        env_dict["ELEVENLABS_STYLE"] = str(elevenlabs_style)
+        env_dict["ELEVENLABS_SPEAKER_BOOST"] = str(elevenlabs_speaker_boost).lower()
+        config.ELEVENLABS_VOICE_ID = voice_service.voice_id = clean_voice
+        config.ELEVENLABS_MODEL_ID = voice_service.model_id = clean_model
+        config.ELEVENLABS_OUTPUT_FORMAT = voice_service.output_format = clean_format
+        config.ELEVENLABS_STABILITY = voice_service.stability = elevenlabs_stability
+        config.ELEVENLABS_SIMILARITY_BOOST = voice_service.similarity_boost = elevenlabs_similarity_boost
+        config.ELEVENLABS_STYLE = voice_service.style = elevenlabs_style
+        config.ELEVENLABS_SPEAKER_BOOST = voice_service.use_speaker_boost = elevenlabs_speaker_boost
 
         with open(env_path, "w", encoding="utf-8") as f:
             for k, v in env_dict.items():
@@ -547,6 +628,42 @@ async def create_project(script_json: str = Form(...)):
     }
 
 
+def _project_payload(project_id: str) -> dict:
+    project = projects[project_id]
+    return {
+        "project_id": project_id,
+        "title": project["script"].title,
+        "script": project["script"].model_dump(),
+        "status": project["status"],
+        "scenes_status": project["scenes_status"],
+        "output_path": project.get("output_path", ""),
+    }
+
+
+@app.get("/api/project/latest")
+async def get_latest_project():
+    """Restore the most recently saved project after a page refresh."""
+    if not projects:
+        raise HTTPException(status_code=404, detail="Chưa có dự án")
+    candidates = [
+        project_id for project_id, project in projects.items()
+        if not project["script"].title.strip().lower().startswith(("test ", "regression "))
+    ] or list(projects)
+    project_id = max(
+        candidates,
+        key=lambda value: (config.OUTPUT_DIR / value / "state.json").stat().st_mtime
+        if (config.OUTPUT_DIR / value / "state.json").exists() else 0,
+    )
+    return _project_payload(project_id)
+
+
+@app.get("/api/project/{project_id}")
+async def get_project(project_id: str):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    return _project_payload(project_id)
+
+
 @app.post("/api/project/{project_id}/visual-analyze")
 async def analyze_project_visuals(project_id: str):
     """Create the Visual Bible, Character Bible and per-scene continuity plan."""
@@ -574,11 +691,12 @@ async def get_scene_prompt(project_id: str, scene_id: str):
     if not scene:
         raise HTTPException(status_code=404, detail="Không tìm thấy cảnh")
     prompt = build_scene_prompt(scene, script) if scene.scene_type == "key" else build_image_prompt(scene, script)
-    return {"scene_id": scene_id, "prompt": prompt, "is_override": bool(scene.prompt_override.strip())}
+    return {"scene_id": scene_id, "prompt": prompt,
+            "override": scene.prompt_override, "is_override": bool(scene.prompt_override.strip())}
 
 
 @app.post("/api/project/{project_id}/scene/{scene_id}/prompt")
-async def save_scene_prompt(project_id: str, scene_id: str, prompt: str = Form(...)):
+async def save_scene_prompt(project_id: str, scene_id: str, prompt: str = Form("")):
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project không tồn tại")
     if len(prompt) > 20000:
@@ -644,13 +762,199 @@ async def upload_asset(
     # Update character in project
     if asset_type == "image":
         if str(file_path) not in char.reference_images:
-            char.reference_images.append(str(file_path))
+            char.reference_images.insert(0, str(file_path))
     else:
         char.voice_ref = str(file_path)
     (config.OUTPUT_DIR / project_id / "script.json").write_text(
         script.model_dump_json(indent=2), encoding="utf-8")
 
     return {"status": "ok", "file_path": str(file_path), "asset_type": asset_type}
+
+
+@app.post("/api/project/{project_id}/character/{character_id}/generate-reference")
+async def generate_character_reference(project_id: str, character_id: str):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    character = next((item for item in script.characters if item.id == character_id), None)
+    if character is None:
+        raise HTTPException(status_code=404, detail="Không tìm thấy nhân vật")
+    safe_character_id = re.sub(r"[^A-Za-z0-9_-]", "_", character.id)[:80]
+    result = await image_service.generate_scene_image(
+        build_character_prompt(character), f"{safe_character_id}_reference", aspect_ratio="4:3",
+    )
+    if result.get("status") != "ok" or result.get("method") == "fallback_local":
+        raise HTTPException(status_code=502, detail=result.get("error") or "Không tạo được ảnh nhân vật chuẩn")
+    source = Path(result["file_path"])
+    if not source.is_file():
+        raise HTTPException(status_code=502, detail="Ảnh tạo ra không tồn tại")
+    assets = config.OUTPUT_DIR / project_id / "assets"
+    assets.mkdir(parents=True, exist_ok=True)
+    target = (assets / f"{safe_character_id}_image_{uuid.uuid4().hex[:8]}.jpg").resolve()
+    shutil.copyfile(source, target)
+    character.reference_images = [str(target), *character.reference_images[:3]]
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    return {"status": "ok", "file_path": str(target), "method": result.get("method")}
+
+
+@app.get("/api/project/{project_id}/character/{character_id}/reference")
+async def get_character_reference(project_id: str, character_id: str):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    character = next((item for item in projects[project_id]["script"].characters if item.id == character_id), None)
+    if not character or not character.reference_images:
+        raise HTTPException(status_code=404, detail="Nhân vật chưa có ảnh chuẩn")
+    path = Path(character.reference_images[0]).resolve()
+    assets = (config.OUTPUT_DIR / project_id / "assets").resolve()
+    if not path.is_relative_to(assets) or not path.is_file():
+        raise HTTPException(status_code=404, detail="Không tìm thấy ảnh chuẩn")
+    return FileResponse(path)
+
+
+@app.post("/api/project/{project_id}/locations")
+async def create_location(project_id: str, name: str = Form(...), description: str = Form("")):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    name, description = name.strip(), description.strip()
+    if not name or len(name) > 120 or len(description) > 2000:
+        raise HTTPException(status_code=400, detail="Tên hoặc mô tả địa điểm không hợp lệ")
+    script: Script = projects[project_id]["script"]
+    location = Location(id=f"loc_{uuid.uuid4().hex[:12]}", name=name, description=description)
+    script.locations.append(location)
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    return {"status": "ok", "location": location.model_dump()}
+
+
+@app.post("/api/project/{project_id}/character/{character_id}/visual-details")
+async def update_character_visual_details(
+    project_id: str, character_id: str,
+    appearance_signature: str = Form(""), wardrobe: str = Form(""),
+    identity_markers: str = Form(""),
+):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    character = next((item for item in script.characters if item.id == character_id), None)
+    if character is None:
+        raise HTTPException(status_code=404, detail="Không tìm thấy nhân vật")
+    if any(len(value) > 2000 for value in (appearance_signature, wardrobe, identity_markers)):
+        raise HTTPException(status_code=400, detail="Mô tả nhân vật quá dài")
+    character.appearance_signature = appearance_signature.strip()
+    character.wardrobe = wardrobe.strip()
+    character.identity_markers = [value.strip() for value in identity_markers.split(";") if value.strip()]
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    return {"status": "ok", "character": character.model_dump()}
+
+
+@app.post("/api/project/{project_id}/scene/{scene_id}/location")
+async def set_scene_location(project_id: str, scene_id: str, location_id: str = Form("")):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    scene = next((item for item in script.scenes if item.id == scene_id), None)
+    if scene is None:
+        raise HTTPException(status_code=404, detail="Không tìm thấy cảnh")
+    location = script.get_location(location_id) if location_id else None
+    if location_id and not location:
+        raise HTTPException(status_code=404, detail="Không tìm thấy địa điểm")
+    if location and not location.description:
+        location.description = scene.setting
+    scene.location_id = location_id
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    return {"status": "ok", "scene_id": scene_id, "location_id": location_id,
+            "location": location.model_dump() if location else None}
+
+
+@app.post("/api/project/{project_id}/location/{location_id}/details")
+async def update_location_details(
+    project_id: str, location_id: str, name: str = Form(...), description: str = Form(""),
+):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    location = script.get_location(location_id)
+    if location is None:
+        raise HTTPException(status_code=404, detail="Không tìm thấy địa điểm")
+    name, description = name.strip(), description.strip()
+    if not name or len(name) > 120 or len(description) > 2000:
+        raise HTTPException(status_code=400, detail="Tên hoặc mô tả địa điểm không hợp lệ")
+    location.name = name
+    location.description = description
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    return {"status": "ok", "location": location.model_dump()}
+
+
+@app.post("/api/project/{project_id}/location/{location_id}/reference")
+async def upload_location_reference(project_id: str, location_id: str, file: UploadFile = File(...)):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    location = script.get_location(location_id)
+    if location is None:
+        raise HTTPException(status_code=404, detail="Không tìm thấy địa điểm")
+    ext = Path(file.filename or "").suffix.lower()
+    if ext not in {".jpg", ".jpeg", ".png", ".webp"}:
+        raise HTTPException(status_code=400, detail="Chỉ nhận ảnh JPG, PNG hoặc WebP")
+    content = await file.read(20 * 1024 * 1024 + 1)
+    if not content or len(content) > 20 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="Ảnh rỗng hoặc quá 20 MB")
+    import io
+    try:
+        with Image.open(io.BytesIO(content)) as img:
+            img.verify()
+    except Exception:
+        raise HTTPException(status_code=400, detail="Tệp ảnh không hợp lệ")
+    assets = (config.OUTPUT_DIR / project_id / "assets").resolve()
+    assets.mkdir(parents=True, exist_ok=True)
+    target = assets / f"{location.id}_reference_{uuid.uuid4().hex[:8]}{ext}"
+    target.write_bytes(content)
+    location.reference_images = [str(target)]
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    return {"status": "ok", "file_path": str(target)}
+
+
+@app.post("/api/project/{project_id}/location/{location_id}/generate-reference")
+async def generate_location_reference(project_id: str, location_id: str):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    location = script.get_location(location_id)
+    if location is None:
+        raise HTTPException(status_code=404, detail="Không tìm thấy địa điểm")
+    bible = script.visual_bible
+    prompt = (
+        f"Empty establishing shot of {location.name}. {location.description}. "
+        f"Keep a fixed, reusable layout, architecture, furniture and landmarks. "
+        f"{bible.style}; {bible.color_palette}; {bible.lighting_language}. "
+        "No people, no text, no watermark."
+    )
+    result = await image_service.generate_scene_image(prompt, f"{location.id}_reference")
+    if result.get("status") != "ok" or result.get("method") == "fallback_local":
+        raise HTTPException(status_code=502, detail=result.get("error") or "Không tạo được ảnh địa điểm chuẩn")
+    source = Path(result["file_path"])
+    if not source.is_file():
+        raise HTTPException(status_code=502, detail="Ảnh tạo ra không tồn tại")
+    assets = config.OUTPUT_DIR / project_id / "assets"
+    assets.mkdir(parents=True, exist_ok=True)
+    target = (assets / f"{location.id}_reference_{uuid.uuid4().hex[:8]}.jpg").resolve()
+    shutil.copyfile(source, target)
+    location.reference_images = [str(target)]
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    return {"status": "ok", "file_path": str(target), "method": result.get("method")}
+
+
+@app.get("/api/project/{project_id}/location/{location_id}/reference")
+async def get_location_reference(project_id: str, location_id: str):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    location = projects[project_id]["script"].get_location(location_id)
+    if not location or not location.reference_images:
+        raise HTTPException(status_code=404, detail="Địa điểm chưa có ảnh chuẩn")
+    path = Path(location.reference_images[0]).resolve()
+    assets = (config.OUTPUT_DIR / project_id / "assets").resolve()
+    if not path.is_relative_to(assets) or not path.is_file():
+        raise HTTPException(status_code=404, detail="Không tìm thấy ảnh chuẩn")
+    return FileResponse(path)
 
 
 @app.post("/api/project/{project_id}/flow-generate")
@@ -716,13 +1020,312 @@ def _attach_flow_result(script: Script, result: dict) -> bool:
         scene.flow_video_path, scene.flow_image_path = result["file_path"], ""
     else:
         scene.flow_image_path, scene.flow_video_path = result["file_path"], ""
+    scene.generated_media_path = result["file_path"]
+    scene.generated_media_type = result.get("media_type") or "image"
+    scene.generated_media_provider = "flow"
     return True
 
 
+def _media_digest(path: Path) -> str:
+    value = hashlib.sha256()
+    with path.open("rb") as media:
+        for chunk in iter(lambda: media.read(1024 * 1024), b""):
+            value.update(chunk)
+    return value.hexdigest()
+
+
+def _video_visual_signature(path: Path) -> tuple[bytes, ...] | None:
+    """Use small RGB samples to catch the same clip after Muse re-encodes it."""
+    try:
+        samples = []
+        for frame in _sample_frames(str(path)):
+            with Image.open(io.BytesIO(frame)) as image:
+                samples.append(image.convert("RGB").resize((32, 18)).tobytes())
+        return tuple(samples) if len(samples) == 3 else None
+    except (OSError, RuntimeError, ValueError):
+        return None
+
+
+def _same_muse_video(first: Path, second: Path, digest_cache: dict,
+                     visual_cache: dict) -> bool:
+    def digest(path: Path) -> str:
+        if path not in digest_cache:
+            digest_cache[path] = _media_digest(path)
+        return digest_cache[path]
+
+    if digest(first) == digest(second):
+        return True
+
+    def signature(path: Path) -> tuple[bytes, ...] | None:
+        if path not in visual_cache:
+            visual_cache[path] = _video_visual_signature(path)
+        return visual_cache[path]
+
+    first_frames, second_frames = signature(first), signature(second)
+    if not first_frames or not second_frames or len(first_frames) != len(second_frames):
+        return False
+    # Require each sampled moment to be almost identical; this avoids treating
+    # different actions at one location as the same video.
+    return all(
+        sum(abs(a - b) for a, b in zip(left, right)) / len(left) <= 5
+        for left, right in zip(first_frames, second_frames)
+    )
+
+
+def _clear_duplicate_muse_assignments(script: Script) -> bool:
+    """Mark old duplicate assignments for regeneration on the next Muse batch."""
+    seen: list[tuple[str, Path]] = []
+    digest_cache: dict[Path, str] = {}
+    visual_cache: dict[Path, tuple[bytes, ...] | None] = {}
+    changed = False
+    for scene in script.scenes:
+        path = Path(scene.generated_media_path) if scene.generated_media_path else None
+        if scene.generated_media_type != "video" or not path or not path.is_file():
+            continue
+        try:
+            first_scene_id = next(
+                (id for id, previous in seen if _same_muse_video(path, previous, digest_cache, visual_cache)),
+                None,
+            )
+        except OSError:
+            continue
+        if first_scene_id is None:
+            seen.append((scene.id, path))
+            continue
+        if scene.generated_media_provider != "muse":
+            continue
+        scene.generated_media_path = ""
+        scene.generated_media_type = ""
+        scene.generated_media_provider = ""
+        scene.media_capture_version = ""
+        scene.media_content_check_status = ""
+        scene.media_content_check_reason = ""
+        scene.media_content_check_prompt_hash = ""
+        scene.media_generation_status = "error"
+        scene.media_generation_error = f"Video trùng với cảnh {first_scene_id}; cần tạo lại từ Muse."
+        changed = True
+    return changed
+
+
+def _attach_muse_result(script: Script, result: dict) -> bool:
+    """Attach a Muse video without overwriting legacy Flow fields."""
+    if result.get("status") != "done" or not result.get("file_path"):
+        return False
+    if result.get("content_check") != "match":
+        result["error"] = "Video Muse chưa được xác minh là đúng nội dung kịch bản"
+        return False
+    media_path = Path(result["file_path"])
+    if not media_path.is_file() or media_path.stat().st_size < 1024:
+        return False
+    scene = next((item for item in script.scenes if item.id == result.get("scene_id")), None)
+    if not scene:
+        return False
+    # Different filenames do not mean different Muse results. Compare bytes
+    # with every video already assigned in this project before accepting one.
+    try:
+        digest_cache: dict[Path, str] = {}
+        visual_cache: dict[Path, tuple[bytes, ...] | None] = {}
+        for other in script.scenes:
+            previous = Path(other.generated_media_path) if other.generated_media_path else None
+            if (other.id != scene.id and other.generated_media_type == "video" and previous
+                    and previous.is_file()
+                    and _same_muse_video(media_path, previous, digest_cache, visual_cache)):
+                result["error"] = (
+                    f"Muse trả về video trùng với cảnh {other.id}; hãy tạo lại cảnh {scene.id}."
+                )
+                return False
+    except OSError as exc:
+        result["error"] = f"Không đọc được video Muse: {exc}"
+        return False
+    scene.generated_media_path = result["file_path"]
+    scene.generated_media_type = "video"
+    scene.generated_media_provider = "muse"
+    scene.media_capture_version = muse_service.CAPTURE_VERSION
+    scene.media_generation_status = "done"
+    scene.media_generation_error = ""
+    scene.media_content_check_status = "match"
+    scene.media_content_check_reason = result.get("content_check_reason", "")
+    scene.media_content_check_prompt_hash = result.get("content_check_prompt_hash") or hashlib.sha256(
+        build_scene_prompt(scene, script).encode("utf-8")
+    ).hexdigest()
+    return True
+
+
+async def _ensure_muse_browser() -> None:
+    """Start the Muse Chrome profile and wait for its CDP endpoint."""
+    try:
+        await asyncio.to_thread(launch_muse_chrome)
+        connected = False
+        for _ in range(60):
+            try:
+                await asyncio.to_thread(
+                    lambda: urllib.request.urlopen(
+                        f"{config.MUSE_CDP_URL}/json/version", timeout=1
+                    ).close()
+                )
+                connected = True
+                break
+            except Exception:
+                await asyncio.sleep(0.5)
+        if not connected:
+            raise RuntimeError(
+                "Chrome Muse đã được yêu cầu mở nhưng cổng điều khiển chưa sẵn sàng. "
+                "Hãy đóng cửa sổ Chrome Muse do ứng dụng mở rồi thử lại."
+            )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+
+
+@app.post("/api/project/{project_id}/muse-video-generate")
+async def generate_videos_in_muse(project_id: str):
+    """Generate missing scene videos through the signed-in Muse web session."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    await _ensure_muse_browser()
+    script: Script = projects[project_id]["script"]
+    changed = _clear_duplicate_muse_assignments(script)
+    for scene in script.scenes:
+        current = Path(scene.generated_media_path) if scene.generated_media_path else None
+        expected_prompt = build_scene_prompt(scene, script)
+        expected_hash = hashlib.sha256(expected_prompt.encode("utf-8")).hexdigest()
+        if (scene.generated_media_provider != "muse" or scene.generated_media_type != "video"
+                or not current or not current.is_file()
+                or (scene.media_content_check_status == "match"
+                    and scene.media_content_check_prompt_hash == expected_hash)):
+            continue
+        await send_progress(project_id, scene.id, "processing", 5,
+                            "Đang đối chiếu video đã lưu với kịch bản...", provider="muse")
+        try:
+            verdict = await verify_scene_content(str(current), expected_prompt)
+        except Exception as exc:
+            raise HTTPException(status_code=502, detail=f"Không kiểm tra được video cảnh {scene.id}: {exc}")
+        scene.media_content_check_status = verdict.status
+        scene.media_content_check_reason = verdict.reason
+        scene.media_content_check_prompt_hash = expected_hash
+        changed = True
+        if verdict.status != "match":
+            scene.generated_media_path = ""
+            scene.generated_media_type = ""
+            scene.generated_media_provider = ""
+            scene.media_generation_status = "error"
+            scene.media_generation_error = f"Video không khớp kịch bản: {verdict.reason}"
+    if changed:
+        (config.OUTPUT_DIR / project_id / "script.json").write_text(
+            script.model_dump_json(indent=2), encoding="utf-8"
+        )
+    prompts = []
+    for scene in script.scenes:
+        current = Path(scene.generated_media_path) if scene.generated_media_path else None
+        if scene.generated_media_type == "video" and current and current.is_file():
+            continue
+        prompts.append({
+            "scene_id": scene.id,
+            "prompt": build_scene_prompt(scene, script),
+            "reference_images": [],
+        })
+    if not prompts:
+        return {"status": "ok", "results": [], "message": "Tất cả cảnh đã có video"}
+    script_path = config.OUTPUT_DIR / project_id / "script.json"
+    save_lock = asyncio.Lock()
+
+    async def report_progress(event: dict):
+        await send_progress(
+            project_id, event["scene_id"], event.get("status", "processing"),
+            event.get("progress", 0), event.get("message", "Muse đang xử lý..."),
+            provider="muse",
+        )
+
+    async def persist_result(result: dict):
+        scene = next((item for item in script.scenes if item.id == result.get("scene_id")), None)
+        async with save_lock:
+            attached = _attach_muse_result(script, result)
+            if not attached:
+                error = result.get("error") or "Muse chưa trả về tệp video hợp lệ"
+                result.update(status="error", error=error)
+                if scene:
+                    scene.media_generation_status = "error"
+                    scene.media_generation_error = error
+            script_path.write_text(script.model_dump_json(indent=2), encoding="utf-8")
+        if attached:
+            await send_progress(
+                project_id, result["scene_id"], "done", 100, "Đã nhận và kiểm tra nội dung video Muse",
+                provider="muse", file_path=result["file_path"], media_type="video",
+                content_check=result["content_check"],
+            )
+        else:
+            await send_progress(
+                project_id, result.get("scene_id", ""), "error", 0, result["error"],
+                provider="muse", error=result["error"],
+            )
+
+    results = await muse_service.submit_many(
+        prompts, on_result=persist_result, on_progress=report_progress,
+    )
+    completed = sum(item.get("status") == "done" for item in results)
+    return {
+        "status": "ok", "results": results, "concurrency": 1,
+        "completed": completed, "failed": len(results) - completed,
+    }
+
+
+@app.post("/api/project/{project_id}/scene/{scene_id}/muse-video-generate")
+async def regenerate_scene_in_muse(project_id: str, scene_id: str):
+    """Generate or retry one scene through Muse."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    scene = next((item for item in script.scenes if item.id == scene_id), None)
+    if not scene:
+        raise HTTPException(status_code=404, detail="Không tìm thấy cảnh")
+    await _ensure_muse_browser()
+    try:
+        result = await muse_service.submit_prompt(
+            scene.id,
+            build_scene_prompt(scene, script),
+            reference_images=[],
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail=str(exc))
+    if not _attach_muse_result(script, result):
+        raise HTTPException(status_code=502, detail=result.get("error") or "Muse chưa trả về video")
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(
+        script.model_dump_json(indent=2), encoding="utf-8"
+    )
+    return result
+
+
+@app.get("/api/project/{project_id}/scene/{scene_id}/media")
+async def get_scene_media(project_id: str, scene_id: str, download: bool = False):
+    """Preview or download the media currently attached to one scene."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    scene = next((item for item in script.scenes if item.id == scene_id), None)
+    if not scene:
+        raise HTTPException(status_code=404, detail="Không tìm thấy cảnh")
+    media_path = Path(scene.generated_media_path) if scene.generated_media_path else None
+    if not media_path or not media_path.is_file():
+        raise HTTPException(status_code=404, detail="Cảnh chưa có media để xem")
+    media_types = {
+        ".mp4": "video/mp4", ".webm": "video/webm", ".mov": "video/quicktime",
+        ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+        ".webp": "image/webp",
+    }
+    media_type = media_types.get(media_path.suffix.lower(), "application/octet-stream")
+    return FileResponse(
+        path=media_path,
+        media_type=media_type,
+        filename=media_path.name,
+        content_disposition_type="attachment" if download else "inline",
+    )
+
+
 def _scene_reference_images(scene, script: Script) -> list[str]:
-    """Return de-duplicated reference images for visible speaking characters."""
+    """Return optional character images for the providers that support them."""
     paths = []
-    character_ids = list(scene.visible_character_ids) or [dialogue.character for dialogue in scene.dialogues]
+    character_ids = list(dict.fromkeys([
+        *scene.visible_character_ids, *(dialogue.character for dialogue in scene.dialogues),
+    ]))
     for character_id in character_ids:
         character = script.get_character(character_id)
         if not character:
@@ -814,6 +1417,7 @@ async def _generate_project_video(project_id: str):
     """Background task: tạo video cho toàn bộ project"""
     project = projects[project_id]
     script: Script = project["script"]
+    active_scene_id = None
 
     try:
         all_scene_videos = []
@@ -822,9 +1426,42 @@ async def _generate_project_video(project_id: str):
 
         for scene_idx, scene in enumerate(script.scenes):
             scene_id = scene.id
+            active_scene_id = scene_id
             subtitle_start_index = len(all_subtitles)
             project["scenes_status"][scene_id] = "processing"
             _save_project_state(project_id)
+
+            if (scene.generated_media_provider == "muse" and scene.generated_media_path
+                    and Path(scene.generated_media_path).is_file()):
+                expected_prompt = build_scene_prompt(scene, script)
+                expected_hash = hashlib.sha256(expected_prompt.encode("utf-8")).hexdigest()
+                if (scene.media_content_check_status != "match"
+                        or scene.media_content_check_prompt_hash != expected_hash):
+                    await send_progress(project_id, scene_id, "processing", 5,
+                                        "Đang kiểm tra video Muse với kịch bản trước khi ghép...")
+                    try:
+                        verdict = await verify_scene_content(scene.generated_media_path, expected_prompt)
+                    except Exception as exc:
+                        scene.media_generation_status = "error"
+                        scene.media_generation_error = f"Chưa kiểm tra được nội dung video: {exc}"
+                        (config.OUTPUT_DIR / project_id / "script.json").write_text(
+                            script.model_dump_json(indent=2), encoding="utf-8"
+                        )
+                        raise
+                    scene.media_content_check_status = verdict.status
+                    scene.media_content_check_reason = verdict.reason
+                    scene.media_content_check_prompt_hash = expected_hash
+                    if verdict.status != "match":
+                        scene.generated_media_path = ""
+                        scene.generated_media_type = ""
+                        scene.generated_media_provider = ""
+                        scene.media_generation_status = "error"
+                        scene.media_generation_error = f"Video không khớp kịch bản: {verdict.reason}"
+                    (config.OUTPUT_DIR / project_id / "script.json").write_text(
+                        script.model_dump_json(indent=2), encoding="utf-8"
+                    )
+                    if verdict.status != "match":
+                        raise RuntimeError(f"Video Muse cảnh {scene_id} không khớp kịch bản: {verdict.reason}")
 
             await send_progress(project_id, scene_id, "voice", 0,
                                 f"Cảnh {scene_idx + 1}/{len(script.scenes)}: Đang tạo giọng nói...")
@@ -935,8 +1572,20 @@ async def _generate_project_video(project_id: str):
             raw_video_path = ""
             img_result = {}
 
-            # Prefer media returned from Google Flow when the scene already has one.
-            if scene.flow_video_path and Path(scene.flow_video_path).exists():
+            # Prefer the newest media returned by Muse, Flow, or another provider.
+            generated_path = scene.generated_media_path
+            generated_type = scene.generated_media_type
+            if generated_type == "video" and generated_path and Path(generated_path).exists():
+                raw_video_path = generated_path
+            elif generated_type == "image" and generated_path and Path(generated_path).exists():
+                raw_video_path = await asyncio.to_thread(
+                    image_service.create_ken_burns_video,
+                    image_path=generated_path,
+                    duration=target_duration,
+                    scene_id=scene_id,
+                    effect="auto",
+                )
+            elif scene.flow_video_path and Path(scene.flow_video_path).exists():
                 raw_video_path = scene.flow_video_path
             elif scene.flow_image_path and Path(scene.flow_image_path).exists():
                 raw_video_path = await asyncio.to_thread(
@@ -1075,9 +1724,44 @@ async def _generate_project_video(project_id: str):
                                 "Không có scene nào được tạo thành công")
 
     except Exception as e:
-        project["status"] = "error"
+        if active_scene_id and project["scenes_status"].get(active_scene_id) == "processing":
+            project["scenes_status"][active_scene_id] = "pending"
+        # Export the completed prefix so a quota failure does not make finished
+        # scenes unavailable. The project can still resume later from its caches.
+        partial_path = ""
+        if all_scene_videos:
+            try:
+                stitched = await asyncio.to_thread(compositor.build_timeline_video, all_scene_videos)
+                if all_subtitles and stitched:
+                    srt_path = str(config.TEMP_DIR / f"{project_id}_partial_subs.srt")
+                    await asyncio.to_thread(compositor.generate_srt, all_subtitles, srt_path)
+                    stitched = await asyncio.to_thread(compositor.add_subtitles, stitched, srt_path)
+                if stitched:
+                    partial_path = await asyncio.to_thread(
+                        compositor.export_final,
+                        stitched,
+                        project_id,
+                        f"{script.title} - phần đã hoàn thành",
+                    )
+            except Exception as partial_error:
+                print(f"[WARN] Partial video export failed: {partial_error}")
+
+        if partial_path:
+            project["output_path"] = partial_path
+            project["status"] = "partial"
+        else:
+            project["status"] = "error"
         _save_project_state(project_id)
-        await send_progress(project_id, "final", "error", 0, f"Lỗi: {str(e)}")
+        if partial_path:
+            await send_progress(
+                project_id,
+                "final",
+                "partial",
+                100,
+                f"Đã xuất {len(all_scene_videos)} cảnh hoàn thành. Có thể tải bản tạm và tiếp tục sau. Lỗi: {e}",
+            )
+        else:
+            await send_progress(project_id, "final", "error", 0, f"Lỗi: {str(e)}")
         print(f"[ERROR] Generate failed: {e}")
         import traceback
         traceback.print_exc()
@@ -1117,10 +1801,10 @@ async def download_video(project_id: str):
 
 
 @app.get("/api/voice/health")
-async def omnivoice_health():
-    """Kiểm tra server OmniVoice và voice clone đã sẵn sàng."""
-    result = await voice_service.check_omnivoice_health()
-    if result.get("status") in {"ready", "ok"}:
+async def elevenlabs_health():
+    """Kiểm tra API Key và Voice ID ElevenLabs."""
+    result = await voice_service.check_health()
+    if result.get("status") == "ok":
         return result
     status_code = 400 if result.get("status") == "not_configured" else 503
     return JSONResponse(status_code=status_code, content=result)

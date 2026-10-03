@@ -11,40 +11,48 @@ from core.script_parser import Script
 
 
 class VisualBiblePlan(BaseModel):
-    style: str
-    color_palette: str
-    lighting_language: str
-    camera_language: str
-    texture: str
-    global_negative_prompt: str
+    style: str = ""
+    color_palette: str = ""
+    lighting_language: str = ""
+    camera_language: str = ""
+    texture: str = ""
+    global_negative_prompt: str = ""
 
 
 class CharacterPlan(BaseModel):
     id: str
-    appearance_signature: str
-    wardrobe: str
+    appearance_signature: str = ""
+    wardrobe: str = ""
     identity_markers: list[str] = Field(default_factory=list)
     consistency_rules: list[str] = Field(default_factory=list)
 
 
 class GlobalVisualPlan(BaseModel):
-    visual_bible: VisualBiblePlan
-    characters: list[CharacterPlan]
+    visual_bible: VisualBiblePlan = Field(default_factory=VisualBiblePlan)
+    characters: list[CharacterPlan] = Field(default_factory=list)
 
 
 class ScenePlan(BaseModel):
     id: str
     visible_character_ids: list[str] = Field(default_factory=list)
-    shot_type: str
-    composition: str
-    lighting: str
+    shot_type: str = ""
+    composition: str = ""
+    lighting: str = ""
     action_beats: list[str] = Field(default_factory=list)
     continuity: list[str] = Field(default_factory=list)
-    negative_prompt: str
+    negative_prompt: str = ""
 
 
 class SceneBatchPlan(BaseModel):
-    scenes: list[ScenePlan]
+    scenes: list[ScenePlan] = Field(default_factory=list)
+
+
+def _is_network_failure(value: object) -> bool:
+    message = str(value).lower()
+    return any(marker in message for marker in (
+        "cannot connect", "connection attempts failed", "clientconnectorerror",
+        "access is denied", "name resolution", "dns", "network is unreachable",
+    ))
 
 
 def ensure_visual_defaults(script: Script) -> Script:
@@ -129,6 +137,10 @@ async def _generate_structured(client, contents: dict, instruction: str, schema:
             last_error = exc
             print(f"[VISUAL AI] Model {model} failed: {type(exc).__name__}: {exc}")
             message = str(exc).lower()
+            if _is_network_failure(exc):
+                raise RuntimeError(
+                    "Không thể kết nối Google Gemini. Hãy kiểm tra mạng, tường lửa hoặc cách ứng dụng được khởi động."
+                ) from exc
             if any(value in message for value in ("429", "503", "unavailable", "high demand")):
                 await asyncio.sleep(1)
                 continue
@@ -141,6 +153,7 @@ def _scene_source(scene) -> dict:
         "scene_type": scene.scene_type,
         "setting": scene.setting,
         "camera": scene.camera,
+        "action_beats": scene.action_beats,
         "dialogues": [
             {"character": d.character, "emotion": d.emotion, "action": d.action, "text": d.text}
             for d in scene.dialogues
@@ -176,7 +189,10 @@ def _merge_scene_batch(script: Script, plan: SceneBatchPlan, expected_ids: set[s
         scene.shot_type = item.shot_type.strip() or scene.shot_type
         scene.composition = item.composition.strip() or scene.composition
         scene.lighting = item.lighting.strip() or scene.lighting
-        scene.action_beats = [value.strip() for value in item.action_beats if value.strip()]
+        # Preserve beats explicitly written in the script. AI may fill gaps,
+        # but must not replace the author's sequence with an invented one.
+        if not scene.action_beats:
+            scene.action_beats = [value.strip() for value in item.action_beats if value.strip()]
         scene.continuity = [value.strip() for value in item.continuity if value.strip()]
         scene.negative_prompt = item.negative_prompt.strip() or scene.negative_prompt
         merged.add(item.id)
@@ -228,6 +244,13 @@ Create one coherent project-wide visual bible suitable for photorealistic cinema
             _merge_global(script, global_plan)
         except Exception as exc:
             failures.append(f"Character/Visual Bible: {exc}")
+            if _is_network_failure(exc) or "không thể kết nối google gemini" in str(exc).lower():
+                return (
+                    ensure_visual_defaults(script),
+                    True,
+                    "Không thể kết nối Google Gemini; đã dùng bố cục mặc định. "
+                    "Hãy chạy ứng dụng bằng python app.py và kiểm tra tường lửa/mạng.",
+                )
 
         locked_context = {
             "visual_bible": script.visual_bible.model_dump(),
@@ -247,6 +270,8 @@ Create one coherent project-wide visual bible suitable for photorealistic cinema
         scene_instruction = """
 You are a cinematographer and continuity supervisor. Return the required JSON schema for every supplied scene ID.
 Do not change IDs, dialogue, narration, story facts, locked character appearance or wardrobe.
+Preserve supplied action_beats exactly and in order. If none are supplied, infer only actions directly
+supported by the scene setting, dialogue actions or narration; never add unrelated events or flashbacks.
 Choose visible_character_ids only from the supplied character IDs; a narration voice alone is not visible.
 Write precise English shot size/lens, screen positions, foreground/background, motivated lighting,
 ordered visible action beats, and concrete continuity inherited from earlier scenes.
@@ -277,7 +302,13 @@ Vary shot composition while preserving spatial logic, props, time, weather and c
         ensure_visual_defaults(script)
         if failures:
             overload = any(any(code in item.lower() for code in ("503", "429", "unavailable", "quota")) for item in failures)
-            reason = "Gemini đang quá tải" if overload else "Một phần phản hồi Gemini chưa đúng schema"
+            network = any(_is_network_failure(item) or "không thể kết nối google gemini" in item.lower() for item in failures)
+            if network:
+                reason = "Không thể kết nối Google Gemini"
+            elif overload:
+                reason = "Gemini đang quá tải"
+            else:
+                reason = "Một phần phản hồi Gemini chưa đúng schema"
             return script, True, f"{reason}; đã dùng bố cục mặc định cho các phần chưa phân tích ({len(failures)} nhóm)."
         return script, False, ""
     finally:

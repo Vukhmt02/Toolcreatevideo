@@ -1,80 +1,106 @@
-"""
-Voice Service — Tạo giọng nói từ text
-- Primary: OmniVoice TTS Service API (self-host trên Colab GPU)
-  Repo: github.com/Le-Ngoc-Tu/OmniVoice_TTS_Service_api
-  API: POST /synthesize  {text, num_step, speed}
-       Header: X-TTS-API-Key: <TTS_API_KEY>
-- Fallback: Edge TTS (miễn phí, không cần GPU)
-"""
+"""ElevenLabs-only text-to-speech service."""
 
 import asyncio
-import base64
 import hashlib
 import re
-import uuid
-import wave
 from pathlib import Path
-from typing import Optional
 
-import edge_tts
 import httpx
 
 from config import config
 
 
 class VoiceService:
-    """Service quản lý tạo giọng nói"""
+    """Generate and cache narration through ElevenLabs."""
 
-    # Edge TTS voices cho tiếng Việt (fallback)
-    EDGE_VOICES = {
-        "female": "vi-VN-HoaiMyNeural",
-        "male": "vi-VN-NamMinhNeural",
-    }
+    API_BASE = "https://api.elevenlabs.io/v1"
 
     def __init__(self):
         self.output_dir = config.TEMP_DIR / "voices"
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.api_key = getattr(config, "ELEVENLABS_API_KEY", "")
+        self.voice_id = getattr(config, "ELEVENLABS_VOICE_ID", "")
+        self.model_id = getattr(config, "ELEVENLABS_MODEL_ID", "eleven_multilingual_v2")
+        self.output_format = getattr(config, "ELEVENLABS_OUTPUT_FORMAT", "mp3_44100_128")
+        self.stability = getattr(config, "ELEVENLABS_STABILITY", 0.5)
+        self.similarity_boost = getattr(config, "ELEVENLABS_SIMILARITY_BOOST", 0.75)
+        self.style = getattr(config, "ELEVENLABS_STYLE", 0.0)
+        self.use_speaker_boost = getattr(config, "ELEVENLABS_SPEAKER_BOOST", True)
 
-        # OmniVoice server URL và API key (từ .env)
-        self.omnivoice_url = getattr(config, "OMNIVOICE_URL", "").rstrip("/")
-        self.omnivoice_api_key = getattr(config, "OMNIVOICE_API_KEY", "")
-        self.omnivoice_num_step = getattr(config, "OMNIVOICE_NUM_STEP", 32)
-        self.omnivoice_speed = getattr(config, "OMNIVOICE_SPEED", 1.0)
-        self.voice_provider = getattr(config, "VOICE_PROVIDER", "gemini")
-        self.gemini_tts_model = getattr(config, "GEMINI_TTS_MODEL", "gemini-3.8-flash-tts")
-        self.gemini_tts_voice = getattr(config, "GEMINI_TTS_VOICE", "Gacrux")
-        self.gemini_tts_style = getattr(config, "GEMINI_TTS_STYLE", "warm, clear Vietnamese narration")
+    def is_configured(self) -> bool:
+        return bool(self.api_key and self.voice_id)
 
-    def _omnivoice_headers(self) -> dict[str, str]:
-        headers = {}
-        if self.omnivoice_api_key:
-            headers["X-TTS-API-Key"] = self.omnivoice_api_key
-        return headers
+    def _headers(self) -> dict[str, str]:
+        return {
+            "xi-api-key": self.api_key,
+            "Content-Type": "application/json",
+            "Accept": "audio/mpeg",
+        }
 
-    def has_omnivoice(self) -> bool:
-        """Kiểm tra OmniVoice server đã được cấu hình chưa"""
-        return bool(self.omnivoice_url)
+    @staticmethod
+    def _retry_after_seconds(response: httpx.Response, message: str) -> float:
+        header = response.headers.get("retry-after", "").strip()
+        if header:
+            try:
+                return min(max(float(header), 1.0), 60.0)
+            except ValueError:
+                pass
+        match = re.search(r"(?:retry|try again).*?(\d+(?:\.\d+)?)\s*s", message, re.I)
+        return min(float(match.group(1)) + 1.0, 60.0) if match else 5.0
 
-    async def check_omnivoice_health(self) -> dict:
-        """
-        Kiểm tra trạng thái OmniVoice server.
-        GET /health
-        """
-        if not self.has_omnivoice():
-            return {"status": "not_configured"}
+    @staticmethod
+    def _error_message(response: httpx.Response) -> str:
         try:
-            async with httpx.AsyncClient(timeout=10) as client:
-                resp = await client.get(
-                    f"{self.omnivoice_url}/health",
-                    headers=self._omnivoice_headers(),
+            payload = response.json()
+            detail = payload.get("detail", payload) if isinstance(payload, dict) else payload
+            if isinstance(detail, dict):
+                message = detail.get("message") or detail.get("status") or str(detail)
+            else:
+                message = str(detail)
+        except Exception:
+            message = response.text[:500]
+        lowered = message.lower()
+        if "missing the permission" in lowered:
+            permission_match = re.search(r"permission\s+([a-z0-9_]+)", message, re.I)
+            permission = permission_match.group(1) if permission_match else "cần thiết"
+            return (
+                f"API Key ElevenLabs thiếu quyền `{permission}`. "
+                "Hãy mở ElevenLabs → Developers → API Keys, sửa khóa và bật "
+                "Voices: Read cùng Text to Speech: Access."
+            )
+        if response.status_code in {401, 403}:
+            return f"ElevenLabs từ chối API Key hoặc Voice ID ({response.status_code}): {message}"
+        if response.status_code == 402:
+            return f"Tài khoản ElevenLabs không đủ credit hoặc gói hiện tại không hỗ trợ yêu cầu này: {message}"
+        if response.status_code == 429:
+            return f"ElevenLabs đang giới hạn tốc độ hoặc đã hết quota: {message}"
+        if response.status_code == 422:
+            return f"Cấu hình ElevenLabs không hợp lệ: {message}"
+        return f"ElevenLabs API lỗi {response.status_code}: {message}"
+
+    async def check_health(self) -> dict:
+        if not self.api_key:
+            return {"status": "not_configured", "error": "Chưa nhập ElevenLabs API Key"}
+        if not self.voice_id:
+            return {"status": "not_configured", "error": "Chưa nhập ElevenLabs Voice ID"}
+        try:
+            async with httpx.AsyncClient(timeout=20) as client:
+                response = await client.get(
+                    f"{self.API_BASE}/voices/{self.voice_id}",
+                    headers={"xi-api-key": self.api_key},
                 )
-                resp.raise_for_status()
-                result = resp.json()
-                if not isinstance(result, dict):
-                    return {"status": "error", "error": "OmniVoice health response is not an object"}
-                return result
-        except Exception as e:
-            return {"status": "error", "error": str(e)}
+            if response.status_code != 200:
+                return {"status": "error", "error": self._error_message(response)}
+            voice = response.json()
+            return {
+                "status": "ok",
+                "voice_id": self.voice_id,
+                "voice_name": voice.get("name", ""),
+                "category": voice.get("category", ""),
+                "model_id": self.model_id,
+            }
+        except Exception as exc:
+            return {"status": "error", "error": f"Không thể kết nối ElevenLabs: {exc}"}
 
     async def synthesize(
         self,
@@ -85,369 +111,84 @@ class VoiceService:
         voice_ref_path: str = "",
         use_clone: bool = False,
     ) -> dict:
-        """
-        Tạo audio từ text.
+        del character_id, gender, voice_ref_path, use_clone
+        clean_text = (text or "").strip()
+        if not clean_text:
+            raise RuntimeError("Nội dung tạo giọng đang trống")
+        if not self.is_configured():
+            raise RuntimeError("Chưa cấu hình ElevenLabs API Key và Voice ID")
 
-        Thứ tự ưu tiên:
-        1. OmniVoice server (nếu OMNIVOICE_URL đã cấu hình)
-        2. Edge TTS (fallback miễn phí)
-
-        Returns: {"file_path": str, "duration_estimate": float, "method": str}
-        """
-        # Ưu tiên OmniVoice nếu đã cấu hình
-        provider = (self.voice_provider or "gemini").lower()
-        failures = []
-        if provider == "gemini":
-            if config.has_google_api():
-                try:
-                    return await self._synthesize_gemini_tts(text, emotion, character_id)
-                except Exception as exc:
-                    failures.append(f"Gemini TTS: {exc}")
-                    print(f"[VOICE] Gemini TTS failed: {exc}, trying fallback")
-                    if "per day on Free Tier" in str(exc) and not self.has_omnivoice():
-                        raise RuntimeError(
-                            "Gemini TTS đã hết giới hạn Free Tier (10 yêu cầu/ngày). "
-                            "Dự án nhiều cảnh cần bật billing/nâng quota Gemini hoặc chọn OmniVoice. "
-                            f"Chi tiết: {exc}"
-                        ) from exc
-            else:
-                failures.append("Gemini TTS: Google API key is not configured")
-
-        if provider == "edge_tts":
-            return await self._synthesize_edge_tts(text, gender, emotion, character_id)
-
-        if self.has_omnivoice():
-            try:
-                result = await self._synthesize_omnivoice(text, character_id)
-                if failures:
-                    result["warning"] = "; ".join(failures)
-                return result
-            except Exception as e:
-                failures.append(f"OmniVoice: {e}")
-                print(f"[VOICE] OmniVoice failed: {e}, falling back to Edge TTS")
-
-        # Fallback: Edge TTS
-        try:
-            result = await self._synthesize_edge_tts(text, gender, emotion, character_id)
-        except Exception as edge_error:
-            if failures:
-                raise RuntimeError(
-                    "Gemini/OmniVoice failed: " + "; ".join(failures)
-                    + f"; Edge TTS fallback failed: {edge_error}"
-                ) from edge_error
-            raise
-        if failures:
-            result["warning"] = "; ".join(failures)
-        return result
-
-    def _gemini_style_for_emotion(self, emotion: str) -> str:
-        styles = {
-            "neutral": "natural and balanced",
-            "happy": "warm and cheerful",
-            "sad": "soft, reflective and slightly slower",
-            "angry": "firm and tense without shouting",
-            "excited": "energetic with a slightly faster pace",
-            "calm": "calm, measured and reassuring",
-            "nostalgic": "warm, reflective and nostalgic",
-            "gentle": "gentle and intimate",
-            "contemplative": "thoughtful with natural pauses",
-        }
-        selected = "natural and balanced"
-        lowered = (emotion or "neutral").lower()
-        for key, value in styles.items():
-            if key in lowered:
-                selected = value
-                break
-        return f"{self.gemini_tts_style.strip().strip(',')}, {selected}"
-
-    @staticmethod
-    def _ensure_wav(audio: bytes, output_path: Path) -> None:
-        if audio.startswith(b"RIFF"):
-            output_path.write_bytes(audio)
-            return
-        with wave.open(str(output_path), "wb") as wav_file:
-            wav_file.setnchannels(1)
-            wav_file.setsampwidth(2)
-            wav_file.setframerate(24000)
-            wav_file.writeframes(audio)
-
-    @staticmethod
-    def _wav_duration(path: Path) -> float:
-        with wave.open(str(path), "rb") as wav_file:
-            return wav_file.getnframes() / max(wav_file.getframerate(), 1)
-
-    @staticmethod
-    def _retry_after_seconds(message: str) -> float:
-        match = re.search(r"retry in\s+(\d+(?:\.\d+)?)s", message, re.IGNORECASE)
-        if match:
-            return min(float(match.group(1)) + 1.0, 60.0)
-        return 15.0
-
-    @staticmethod
-    def _find_audio_data(value):
-        if isinstance(value, dict):
-            direct_audio = value.get("output_audio")
-            if isinstance(direct_audio, dict) and direct_audio.get("data"):
-                return direct_audio["data"]
-            value_type = str(value.get("type", "")).lower()
-            mime_type = str(value.get("mime_type", value.get("mimeType", ""))).lower()
-            if value.get("data") and (value_type in {"audio", "output_audio"} or mime_type.startswith("audio/")):
-                return value["data"]
-            for child in value.values():
-                found = VoiceService._find_audio_data(child)
-                if found:
-                    return found
-        elif isinstance(value, list):
-            for child in value:
-                found = VoiceService._find_audio_data(child)
-                if found:
-                    return found
-        return None
-
-    async def _synthesize_gemini_tts(
-        self,
-        text: str,
-        emotion: str = "neutral",
-        character_id: str = "default",
-    ) -> dict:
-        """Create exact Vietnamese narration with Gemini single-speaker TTS."""
         cache_source = "|".join([
-            self.gemini_tts_model,
-            self.gemini_tts_voice,
-            self.gemini_tts_style,
+            self.voice_id,
+            self.model_id,
+            self.output_format,
+            str(self.stability),
+            str(self.similarity_boost),
+            str(self.style),
+            str(self.use_speaker_boost),
             emotion or "neutral",
-            text,
+            clean_text,
         ])
         cache_key = hashlib.sha256(cache_source.encode("utf-8")).hexdigest()[:24]
-        output_path = self.output_dir / f"gemini_{cache_key}.wav"
-        if output_path.exists() and output_path.stat().st_size > 44:
-            try:
-                return {
-                    "file_path": str(output_path),
-                    "duration_estimate": max(self._wav_duration(output_path), 1.0),
-                    "method": "gemini_tts",
-                    "model": self.gemini_tts_model,
-                    "voice": self.gemini_tts_voice,
-                    "cached": True,
-                }
-            except (OSError, wave.Error):
-                output_path.unlink(missing_ok=True)
-        models = []
-        for model in (self.gemini_tts_model, "gemini-3.8-flash-lite-tts"):
-            if model and model not in models:
-                models.append(model)
-
-        last_error = None
-        async with httpx.AsyncClient(timeout=180) as client:
-            for model in models:
-                for attempt in range(3):
-                    try:
-                        payload = {
-                            "model": model,
-                            "input": [{
-                                "type": "user_input",
-                                "content": [{
-                                    "type": "text",
-                                    "text": text,
-                                    "annotations": [{
-                                        "type": "speech_metadata",
-                                        "style": self._gemini_style_for_emotion(emotion),
-                                    }],
-                                }],
-                            }],
-                            "response_format": {"type": "audio"},
-                            "generation_config": {
-                                "speech_config": [{"voice": self.gemini_tts_voice}],
-                            },
-                        }
-                        response = await client.post(
-                            "https://generativelanguage.googleapis.com/v1beta/interactions",
-                            headers={
-                                "x-goog-api-key": config.GOOGLE_API_KEY,
-                                "Content-Type": "application/json",
-                            },
-                            json=payload,
-                        )
-                        if response.status_code != 200:
-                            raise RuntimeError(f"HTTP {response.status_code}: {response.text[:500]}")
-                        interaction = response.json()
-                        data = self._find_audio_data(interaction)
-                        if not data:
-                            steps = interaction.get("steps") or []
-                            step_keys = [sorted(step.keys()) for step in steps if isinstance(step, dict)]
-                            raise RuntimeError(
-                                f"Gemini TTS returned no audio; status={interaction.get('status')}; "
-                                f"step_keys={step_keys}"
-                            )
-                        audio = base64.b64decode(data) if isinstance(data, str) else bytes(data)
-                        if len(audio) <= 44:
-                            raise RuntimeError("Gemini TTS returned an empty audio file")
-                        self._ensure_wav(audio, output_path)
-                        duration = self._wav_duration(output_path)
-                        return {
-                            "file_path": str(output_path),
-                            "duration_estimate": max(duration, 1.0),
-                            "method": "gemini_tts",
-                            "model": model,
-                            "voice": self.gemini_tts_voice,
-                            "cached": False,
-                        }
-                    except Exception as exc:
-                        last_error = exc
-                        output_path.unlink(missing_ok=True)
-                        message = str(exc)
-                        print(f"[VOICE] Gemini TTS model {model} attempt {attempt + 1} failed: {message}")
-                        daily_free_limit = "per day on Free Tier" in message
-                        if not daily_free_limit and ("HTTP 429" in message or "HTTP 503" in message) and attempt < 2:
-                            await asyncio.sleep(self._retry_after_seconds(message))
-                            continue
-                        break
-        raise RuntimeError(str(last_error or "Gemini TTS failed"))
-
-    async def _synthesize_omnivoice(
-        self,
-        text: str,
-        character_id: str = "default",
-    ) -> dict:
-        """
-        Tạo giọng nói bằng OmniVoice TTS Service API.
-
-        Endpoint: POST /synthesize
-        Headers:  X-TTS-API-Key: <key>
-        Body:     {"text": "...", "num_step": 32, "speed": 1.0}
-        Response: audio/wav binary
-
-        Ref: github.com/Le-Ngoc-Tu/OmniVoice_TTS_Service_api
-        """
-        file_id = f"{character_id}_{uuid.uuid4().hex[:8]}"
-        output_path = self.output_dir / f"{file_id}.wav"
-
-        headers = {"Content-Type": "application/json", **self._omnivoice_headers()}
+        output_path = self.output_dir / f"elevenlabs_{cache_key}.mp3"
+        if output_path.exists() and output_path.stat().st_size > 1024:
+            return {
+                "file_path": str(output_path),
+                "duration_estimate": max(len(clean_text) / 14.0, 1.0),
+                "method": "elevenlabs",
+                "model": self.model_id,
+                "voice": self.voice_id,
+                "cached": True,
+            }
 
         payload = {
-            "text": text,
-            "num_step": self.omnivoice_num_step,
-            "speed": self.omnivoice_speed,
+            "text": clean_text,
+            "model_id": self.model_id,
+            "voice_settings": {
+                "stability": self.stability,
+                "similarity_boost": self.similarity_boost,
+                "style": self.style,
+                "use_speaker_boost": self.use_speaker_boost,
+            },
         }
-
+        url = f"{self.API_BASE}/text-to-speech/{self.voice_id}"
+        last_error = ""
         async with httpx.AsyncClient(timeout=180) as client:
-            response = await client.post(
-                f"{self.omnivoice_url}/synthesize",
-                headers=headers,
-                json=payload,
-            )
-
-            if response.status_code != 200:
-                raise Exception(
-                    f"OmniVoice API error {response.status_code}: {response.text[:200]}"
-                )
-
-            # Response là binary audio (WAV)
-            content_type = response.headers.get("content-type", "").lower()
-            if "audio" not in content_type and "octet-stream" not in content_type:
-                raise Exception(f"OmniVoice returned unexpected content type: {content_type or 'unknown'}")
-            if len(response.content) <= 44:
-                raise Exception("OmniVoice returned an empty audio file")
-
-            with open(output_path, "wb") as f:
-                f.write(response.content)
-
-        # Tính thời lượng từ kích thước file WAV
-        # WAV 24kHz mono 16-bit: duration = filesize / (24000 * 2)
-        wav_size = output_path.stat().st_size
-        # Header WAV ~44 bytes, còn lại là audio data
-        audio_data_size = max(0, wav_size - 44)
-        duration_estimate = max(audio_data_size / (24000 * 2), 1.0)
-
-        # Fallback estimate nếu file quá nhỏ
-        if duration_estimate < 0.5:
-            duration_estimate = max(len(text) / 8.0, 1.0)
-
-        return {
-            "file_path": str(output_path),
-            "duration_estimate": duration_estimate,
-            "method": "omnivoice",
-        }
-
-    async def _synthesize_edge_tts(
-        self,
-        text: str,
-        gender: str = "female",
-        emotion: str = "neutral",
-        character_id: str = "default",
-    ) -> dict:
-        """Tạo giọng nói bằng Edge TTS (miễn phí, fallback)"""
-        voice = self.EDGE_VOICES.get(gender, self.EDGE_VOICES["female"])
-        file_id = f"{character_id}_{uuid.uuid4().hex[:8]}"
-        output_path = self.output_dir / f"{file_id}.mp3"
-
-        # Điều chỉnh rate/pitch theo emotion
-        rate, pitch = self._emotion_to_params(emotion)
-
-        last_error = None
-        for attempt in range(3):
-            try:
-                communicate = edge_tts.Communicate(
-                    text=text,
-                    voice=voice,
-                    rate=rate,
-                    pitch=pitch,
-                )
-                await communicate.save(str(output_path))
-                if output_path.exists() and output_path.stat().st_size > 1024:
-                    break
-                raise RuntimeError("Edge TTS trả về tệp âm thanh rỗng")
-            except Exception as exc:
-                last_error = exc
-                output_path.unlink(missing_ok=True)
-                if attempt < 2:
-                    await asyncio.sleep(1.5 * (attempt + 1))
-        else:
-            message = str(last_error)
-            if "403" in message or "Invalid response status" in message:
-                raise RuntimeError(
-                    "Edge TTS bị từ chối kết nối (403). Hãy cập nhật edge-tts và thử lại."
-                ) from last_error
-            raise RuntimeError(f"Không thể tạo giọng đọc bằng Edge TTS: {message}") from last_error
-
-        # Ước tính duration (tiếng Việt ~4 chars/sec với Edge TTS)
-        duration_estimate = max(len(text) / 4.0, 1.0)
-
-        return {
-            "file_path": str(output_path),
-            "duration_estimate": duration_estimate,
-            "method": "edge_tts",
-            "voice": voice,
-        }
-
-    def _emotion_to_params(self, emotion: str) -> tuple[str, str]:
-        """Chuyển emotion thành rate/pitch cho Edge TTS"""
-        emotion_map = {
-            "neutral": ("+0%", "+0Hz"),
-            "happy": ("+10%", "+20Hz"),
-            "sad": ("-15%", "-15Hz"),
-            "angry": ("+5%", "+10Hz"),
-            "excited": ("+15%", "+25Hz"),
-            "calm": ("-10%", "-5Hz"),
-            "nostalgic": ("-10%", "-10Hz"),
-            "gentle": ("-5%", "-5Hz"),
-            "contemplative": ("-10%", "-8Hz"),
-            "warm": ("+0%", "+5Hz"),
-        }
-
-        emotion_lower = emotion.lower()
-        for key, params in emotion_map.items():
-            if key in emotion_lower:
-                return params
-
-        return ("+0%", "+0Hz")  # Default neutral
-
-    async def list_available_voices(self) -> list[dict]:
-        """Liệt kê các giọng có sẵn (Edge TTS)"""
-        voices = await edge_tts.list_voices()
-        vi_voices = [v for v in voices if v["Locale"].startswith("vi")]
-        return vi_voices
+            for attempt in range(3):
+                try:
+                    response = await client.post(
+                        url,
+                        params={"output_format": self.output_format},
+                        headers=self._headers(),
+                        json=payload,
+                    )
+                    if response.status_code == 200:
+                        if len(response.content) <= 1024:
+                            raise RuntimeError("ElevenLabs trả về tệp âm thanh rỗng")
+                        output_path.write_bytes(response.content)
+                        return {
+                            "file_path": str(output_path),
+                            "duration_estimate": max(len(clean_text) / 14.0, 1.0),
+                            "method": "elevenlabs",
+                            "model": self.model_id,
+                            "voice": self.voice_id,
+                            "cached": False,
+                        }
+                    last_error = self._error_message(response)
+                    if response.status_code == 429 and attempt < 2:
+                        await asyncio.sleep(self._retry_after_seconds(response, last_error))
+                        continue
+                    raise RuntimeError(last_error)
+                except httpx.RequestError as exc:
+                    last_error = f"Không thể kết nối ElevenLabs: {exc}"
+                    if attempt < 2:
+                        await asyncio.sleep(2.0 * (attempt + 1))
+                        continue
+                    raise RuntimeError(last_error) from exc
+                finally:
+                    if output_path.exists() and output_path.stat().st_size <= 1024:
+                        output_path.unlink(missing_ok=True)
+        raise RuntimeError(last_error or "Không thể tạo giọng bằng ElevenLabs")
 
 
-# Singleton instance
 voice_service = VoiceService()

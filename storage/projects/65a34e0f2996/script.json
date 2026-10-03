@@ -1,0 +1,616 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic historical documentary style with rich textures and dramatic lighting.",
+    "color_palette": "Deep ocean blues, warm golden sunset tones, earthy terracotta, and rich spice ambers.",
+    "lighting_language": "Chiaroscuro lighting with dramatic directional sunbeams, natural maritime daylight, and warm candle-lit interiors.",
+    "camera_language": "Anamorphic lenses, shallow depth of field for emotional close-ups, sweeping panoramic drone shots, and stable medium tracking shots.",
+    "texture": "Fine grain film stock texture, weathered wood, salt-crusted canvas sails, rough linen fabrics, and dry desert dust.",
+    "global_negative_prompt": "cartoon, illustration, animation, low resolution, modern clothing, plastic texture, bright neon colors, digital watermark"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Age 45, Vietnamese ethnicity, medium build, oval face shape, warm olive skin tone, deep brown eyes, and neatly styled short black hair.",
+      "wardrobe": "Dark charcoal tailored modern blazer over a simple black crewneck shirt.",
+      "identity_markers": [
+        "Calm and clear vocal cadence",
+        "Subtle knowing expression"
+      ],
+      "consistency_rules": [
+        "Never appear on screen as a visible on-camera narrator",
+        "Maintain consistent lighting tone when referenced"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "In 1498, a Portuguese explorer named Vasco da Gama sailed into the port of",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide establishing shot on 35mm anamorphic lens",
+      "composition": "A massive 15th-century Portuguese carrack ship anchored in a hazy blue harbor, salt-crusted canvas sails furled, distant hazy Indian coastline in the background with terracotta rooftops.",
+      "lighting": "Harsh, dramatic midday tropical sun casting hard shadows on weathered wood decks, natural maritime daylight with fine haze.",
+      "action_beats": [
+        "The massive ship rocks gently on calm turquoise ocean swells.",
+        "Seals and gulls circle above the rigging in the salty sea air.",
+        "The camera slowly pushes in toward the bow of the ship facing the Indian port."
+      ],
+      "continuity": [
+        "Establishes the historic 1498 voyage setting off the coast of India.",
+        "Matches the deep ocean blues and weathered wood texture from the visual bible."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern boats, bright neon colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Calicut on the southwestern coast of India. He had spent nearly a year at sea.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium tracking shot on 50mm anamorphic lens",
+      "composition": "A crew member in rough linen garments walks along the wooden deck of the ship, holding a knotted rope. In the background, the bustling port of Calicut is visible with small wooden fishing boats.",
+      "lighting": "Warm golden sunset tones washing over the port and highlighting the texture of the ship's rigging and the crewman's weathered face.",
+      "action_beats": [
+        "A crewman steps across the wooden planks, his canvas trousers stained with salt.",
+        "The camera pans right following his movement toward the edge of the ship.",
+        "Smoke rises faintly from distant huts on the shoreline."
+      ],
+      "continuity": [
+        "Continues chronologically from scene_01 arriving at Calicut.",
+        "Maintains the golden sunset and rough linen clothing textures."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern clothing, clean plastic surfaces",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "He had lost a third of his crew to scurvy and storms.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Close-up macro shot on 85mm anamorphic lens with shallow depth of field",
+      "composition": "A weathered wooden railing covered in salt crust, with a frayed hemp rope running through an iron pulley block in sharp focus.",
+      "lighting": "Chiaroscuro lighting with dramatic directional sunbeams cutting across the grain of the aged timber.",
+      "action_beats": [
+        "Fine dust motes and salt crystals dance in a sharp shaft of golden sunlight.",
+        "The camera slowly pushes in closer to the weathered texture of the wood.",
+        "A drop of condensation rolls down the iron fitting."
+      ],
+      "continuity": [
+        "Follows the hardship of the journey mentioned in narration regarding scurvy and storms.",
+        "Matches the fine film grain and salt-crusted textures."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern plastic, bright neon colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "And when the local rulers of Calicut asked him what he had come all this way",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide cinematic shot on 35mm anamorphic lens",
+      "composition": "Local Indian rulers in traditional rich silk and cotton garments stand on an open stone pavilion overlooking the harbor, backed by lush green palm trees.",
+      "lighting": "Warm tropical daylight diffusing through high coastal clouds, casting soft shadows on ornate carved stone pillars.",
+      "action_beats": [
+        "Local dignitaries converse quietly, gazing out toward the anchored European ships.",
+        "An attendant holds a traditional bronze vessel filled with exotic spices.",
+        "The camera remains static, emphasizing the cultural divide and scale."
+      ],
+      "continuity": [
+        "Transitions from the sea voyage to the local rulers of Calicut.",
+        "Incorporates earthy terracotta and spice amber tones."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern buildings, digital artifacts",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "for, his answer was simple: pepper, cinnamon, cloves. That was it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot on 50mm lens",
+      "composition": "Close-up arrangement of ceramic bowls filled with dark peppercorns, cinnamon sticks, and dried cloves resting on a rustic wooden table.",
+      "lighting": "Warm candle-lit interior style mixed with soft directional side light highlighting the dry, textured spices.",
+      "action_beats": [
+        "A hand reaches into the frame to pick up a single cinnamon stick.",
+        "Spice dust drifts gently in the warm air.",
+        "The camera tilts up slightly to reveal the rich amber tones of the spices."
+      ],
+      "continuity": [
+        "Directly illustrates the narration listing pepper, cinnamon, and cloves.",
+        "Matches the spice amber and earthy terracotta palette."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, plastic props, modern bowls",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Three dried plants, three ingredients you can buy today at any grocery store for a few dollars.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Eye-level medium close-up on 65mm lens",
+      "composition": "A modern rustic wooden market stall surface displaying small modern glass jars next to old dried spices, creating a bridge between past and present.",
+      "lighting": "Soft ambient natural daylight with shallow focus blurring the background.",
+      "action_beats": [
+        "A shopper's hand gently brushes past the everyday ingredients.",
+        "The camera holds a steady eye-level focus on the textures.",
+        "Dust motes settle around the spice containers."
+      ],
+      "continuity": [
+        "Connects historical spices to modern grocery store availability.",
+        "Maintains shallow depth of field and fine film grain."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, futuristic UI, neon colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Da Gama had risked everything, crossed 17,000 miles of open ocean,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Aerial panoramic establishing shot",
+      "composition": "A sweeping drone shot over vast, deep blue ocean swells transitioning into a golden sunset horizon with dramatic cloud formations.",
+      "lighting": "Rich golden sunset tones reflecting off rolling ocean waves with deep blue shadows in the troughs.",
+      "action_beats": [
+        "The camera glides smoothly forward over the vast, empty expanse of open water.",
+        "Sunlight glints off white-capped wave crests.",
+        "The horizon stretches endlessly in all directions."
+      ],
+      "continuity": [
+        "Visualizes crossing 17,000 miles of open ocean.",
+        "Matches deep ocean blues and warm golden sunset tones."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, digital terrain, modern ships",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "and watched dozens of men die, all for seasoning.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Intimate close-up on 85mm anamorphic lens",
+      "composition": "A rough linen sailcloth draped in semi-darkness, illuminated by a single warm flickering light source from below.",
+      "lighting": "Warm candle-lit interior feel with deep chiaroscuro shadows and high contrast.",
+      "action_beats": [
+        "The fabric ripples gently as if moved by a faint sea breeze.",
+        "The camera remains static, focusing on the rough woven texture of the linen.",
+        "Shadows shift across the canvas surface."
+      ],
+      "continuity": [
+        "Reflects the heavy toll and loss of crew members on the voyage.",
+        "Matches rough linen fabrics and chiaroscuro lighting."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, synthetic fabric, bright lighting",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "That was 1498, but by 1502,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Slow zoom out to wide shot on anamorphic lens",
+      "composition": "An aged parchment map of the world lying on a dark wooden table, marked with ink routes and faint compass roses.",
+      "lighting": "Warm, focused overhead lamp light creating a dramatic pool of illumination on the center of the map.",
+      "action_beats": [
+        "The camera slowly zooms out from a close section of the Indian coastline on the map.",
+        "Ink lines and faded calligraphy are revealed as the frame widens.",
+        "A fine layer of dust rests on the paper edges."
+      ],
+      "continuity": [
+        "Bridges the transition from the 1498 expedition to the 1502 return.",
+        "Matches weathered wood textures and earthy color tones."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, clean modern paper, digital print",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "da Gama returned to the same coast with 20 warships and cannons.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Cinematic wide establishing shot on 35mm anamorphic lens",
+      "composition": "A massive fleet of twenty menacing Portuguese warships with billowing white sails and dark iron cannons protruding from their gunports, approaching the Calicut coastline.",
+      "lighting": "Epic dramatic directional sunlight breaking through heavy storm clouds, casting intense highlights on the fleet.",
+      "action_beats": [
+        "Multiple warships cut through the deep blue water in formation.",
+        "Cannons gleam darkly along the wooden hulls.",
+        "The camera slowly zooms in on the lead flagship as the coastline looms ahead."
+      ],
+      "continuity": [
+        "Directly follows scene_01 and the return in 1502 with 20 warships and cannons.",
+        "Matches the maritime daylight, deep ocean blues, and weathered wood textures."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern navy ships, bright neon colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "And he burned an entire merchant vessel full of Muslim traders alive in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot on 50mm anamorphic lens",
+      "composition": "A large wooden merchant vessel engulfed in bright roaring flames and heavy black smoke against the dark blue sea, framed on the right side.",
+      "lighting": "Intense flickering orange firelight illuminating billowing smoke and casting harsh reflections on the water.",
+      "action_beats": [
+        "Flames spread rapidly across the salt-crusted canvas sails of the merchant ship.",
+        "Thick dark smoke billows into the sky, obscuring the horizon.",
+        "Debris falls from the rigging into the sea as the camera gently pans right."
+      ],
+      "continuity": [
+        "Follows the Portuguese fleet's arrival in Calicut from scene_10.",
+        "Maintains deep ocean blues contrasted with fierce fire tones."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern boats, bright neon colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "harbor of Calicut. Over 400 men, women, and children were killed.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Close-up shot on 85mm lens with shallow depth of field",
+      "composition": "Water surface in the Calicut harbor, showing floating charred wood fragments and scattered personal belongings drifting in the glowing, smoke-hazy water.",
+      "lighting": "Muted, somber golden hour light heavily filtered through thick grey smoke and soot.",
+      "action_beats": [
+        "Charred debris bobs gently on the surface of the darkened water.",
+        "Ash settles slowly onto the ripples.",
+        "The camera pushes in slowly on a floating piece of weathered wood."
+      ],
+      "continuity": [
+        "Directly follows the burning ship in scene_11.",
+        "Maintains the atmospheric soot and maritime setting."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern plastic debris, bright colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "His reason was the same as before: spices.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide cinematic shot on 35mm anamorphic lens",
+      "composition": "An array of clay jars and burlap sacks filled with dark cinnamon bark and cloves, resting on a rustic dock with the Calicut harbor blurred in the background.",
+      "lighting": "Warm directional afternoon sunlight hitting the textured spice sacks and rough wooden dock planks.",
+      "action_beats": [
+        "A grain of dust floats through a sunbeam onto a pile of dried dark brown cinnamon sticks.",
+        "The camera remains static, emphasizing the heavy stillness of the cargo.",
+        "Smoke from the distant harbor lingers faintly at the edge of the frame."
+      ],
+      "continuity": [
+        "Connects the violence of the harbor attack in scene_12 with the motivation of spices.",
+        "Matches earth tones, spice ambers, and weathered wood textures."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern plastic packaging, digital graphics",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "So, how did a handful of dried bark and flower buds become valuable enough to",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot on 50mm lens with subtle upward tilt",
+      "composition": "A close-up view of dried cloves and star anise being meticulously measured out on an aged brass scale against a dark, richly textured wooden background.",
+      "lighting": "Soft warm indoor ambient lighting with a gentle side key light highlighting the rough textures of the spices.",
+      "action_beats": [
+        "A hand drops a few dried flower buds onto the brass scale pan.",
+        "The scale arm tips slightly under the weight.",
+        "The camera tilts up slowly to capture the ambient shadows of the room."
+      ],
+      "continuity": [
+        "Follows the introduction of spices in scene_13.",
+        "Maintains rich spice ambers and dark wooden textures."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, digital scale, modern objects",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "justify mass murder, fund entire empires, and redraw the map of the world?",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Dramatic low angle shot on 35mm anamorphic lens",
+      "composition": "A towering stone facade of an ancient European treasury or royal court, with heavy carved wooden doors and dramatic shadows stretching across stone pavers.",
+      "lighting": "High-contrast chiaroscuro lighting with sharp directional sunlight cutting across deep, mysterious shadows.",
+      "action_beats": [
+        "Dust motes dance in the dramatic shaft of sunlight hitting the stone floor.",
+        "The heavy doors remain firmly shut, exuding power and wealth.",
+        "The camera holds its low, imposing angle."
+      ],
+      "continuity": [
+        "Builds on the theme of empire-funding and wealth established in scene_14.",
+        "Maintains historical texture and dramatic lighting language."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern architecture, glass building",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The answer starts thousands of years before da Gama was born,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Eye-level medium shot on 50mm lens",
+      "composition": "An ancient stone carving of a lotus flower and hieroglyphs on a weathered temple wall, softly lit by natural sunlight.",
+      "lighting": "Soft, diffused natural daylight accentuating the carved crevices of the ancient stone.",
+      "action_beats": [
+        "Sunlight shifts slowly across the deeply etched stone surface.",
+        "The camera holds a steady, reflective gaze on the ancient markings.",
+        "Fine dust settles into the carved grooves."
+      ],
+      "continuity": [
+        "Transitions the narrative back in time before da Gama, bridging from scene_15.",
+        "Matches earthy terracotta and stone texture palettes."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern graffiti, neon light",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "in the deserts of ancient Egypt along the banks of the Nile River.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Aerial establishing shot on wide-angle anamorphic lens",
+      "composition": "The sweeping, winding Nile River cutting through the vast golden sand dunes of the Egyptian desert under a warm sunset sky.",
+      "lighting": "Rich golden sunset tones with long shadows stretching across the desert dunes and glowing reflections on the river water.",
+      "action_beats": [
+        "The camera sweeps slowly over the ancient riverbanks.",
+        "Small clusters of palm trees sway gently near the water's edge.",
+        "The fading sun casts a brilliant amber glow across the entire landscape."
+      ],
+      "continuity": [
+        "Follows the historical flashback setup in scene_16.",
+        "Employs warm golden sunset tones, dry desert dust, and rich landscape textures."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, modern city skyline, bright neon colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

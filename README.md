@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # ToolCreateVideo
 
 ToolCreateVideo là ứng dụng tạo video từ kịch bản. Ứng dụng hỗ trợ phân tích kịch bản JSON/TXT/Markdown/DOCX, chia cảnh KEY/FILLER, gửi prompt sang Google Flow, nhận media từ Flow, tạo giọng đọc, phụ đề, chuyển động Ken Burns và ghép video bằng FFmpeg.
@@ -78,64 +79,29 @@ VEO_MODEL=veo-3.1-generate-preview
 
 Trong giao diện, bấm **Kiểm tra Google API** để kiểm tra khóa và model. Việc tạo nội dung còn phụ thuộc quyền truy cập, quota và billing của project Google.
 
-## Gemini TTS: một giọng đọc cho toàn bộ video
+## ElevenLabs: một giọng đọc cho toàn bộ video
 
-Gemini TTS là provider giọng mặc định. Ứng dụng gửi nguyên văn từng lời dẫn hoặc câu thoại, còn phong cách đọc được đặt riêng trong `speech_metadata` để mô hình không đọc thành tiếng phần chỉ dẫn.
-
-```env
-VOICE_PROVIDER=gemini
-GEMINI_TTS_MODEL=gemini-3.8-flash-tts
-GEMINI_TTS_VOICE=Gacrux
-GEMINI_TTS_STYLE=mature Vietnamese narrator, warm, clear, natural pacing, restrained emotion
-```
-
-Trong tab **Cài đặt**, chọn model, giọng và phong cách rồi bấm **Lưu Cấu Hình**. Nút **Nghe thử** trả về đúng provider đã dùng. Gemini TTS xuất WAV 24 kHz để ứng dụng đo thời lượng và ghép trực tiếp vào timeline.
-
-Chuỗi dự phòng khi chọn Gemini là:
-
-```text
-Gemini TTS → OmniVoice (nếu đã cấu hình) → Edge TTS
-```
-
-`gemini-3.8-flash-tts` ưu tiên chất lượng và khả năng diễn đạt. `gemini-3.8-flash-lite-tts` phù hợp khi cần xử lý nhanh hoặc số lượng lớn.
-
-## OmniVoice: một giọng đọc cho toàn bộ video
-
-Ứng dụng dùng một voice clone đã được nạp trên OmniVoice server cho toàn bộ lời dẫn và lời thoại. Nếu OmniVoice không kết nối được, ứng dụng tự chuyển sang Edge TTS và hiển thị cảnh báo khi nghe thử.
-
-### Chuẩn bị OmniVoice server
-
-Theo hướng dẫn của `OmniVoice_TTS_Service_api`, đặt file giọng mẫu trên server và cấu hình:
+ElevenLabs là dịch vụ tạo giọng duy nhất. Mỗi đoạn âm thanh được cache theo nội dung, Voice ID, model và thông số giọng. Chạy lại timeline sẽ dùng cache nếu cấu hình và lời thoại không đổi.
 
 ```env
-TTS_API_KEY=your-secret-key
-TTS_REF_AUDIO=./voice_sample.wav
-TTS_REF_TEXT=Nội dung chính xác được nói trong file mẫu
+ELEVENLABS_API_KEY=your_api_key
+ELEVENLABS_VOICE_ID=your_voice_id
+ELEVENLABS_MODEL_ID=eleven_multilingual_v2
+ELEVENLABS_OUTPUT_FORMAT=mp3_44100_128
+ELEVENLABS_STABILITY=0.5
+ELEVENLABS_SIMILARITY_BOOST=0.75
+ELEVENLABS_STYLE=0.0
+ELEVENLABS_SPEAKER_BOOST=true
 ```
-
-File mẫu nên là WAV rõ tiếng, một người nói, ít tạp âm. Khởi động server và chờ `GET /health` trả về `status: ready` cùng `voice_prompt_ready: true`.
-
-### Kết nối ToolCreateVideo
 
 Trong tab **Cài đặt**:
 
-1. Nhập URL OmniVoice, ví dụ `http://127.0.0.1:8100` hoặc URL HTTPS của Colab/Ngrok.
-2. Nhập API key trùng với `TTS_API_KEY` trên server.
-3. Đặt `num_step`: 16 để ưu tiên tốc độ, 32 để cân bằng, hoặc 48–64 để tăng chất lượng.
-4. Đặt tốc độ đọc, mặc định `1.0`.
-5. Bấm **Lưu Cấu Hình**, sau đó **Kiểm tra OmniVoice**.
-6. Dùng **Nghe thử** và kiểm tra thông báo xác nhận audio được tạo bằng OmniVoice.
+1. Nhập ElevenLabs API Key và Voice ID.
+2. Chọn `Multilingual v2` cho lời dẫn dài và ổn định.
+3. Bấm **Lưu Cấu Hình** rồi **Kiểm tra ElevenLabs**.
+4. Dùng **Nghe thử** trước khi chạy toàn bộ dự án.
 
-Cấu hình tương ứng trong `.env`:
-
-```env
-OMNIVOICE_URL=http://127.0.0.1:8100
-OMNIVOICE_API_KEY=your-secret-key
-OMNIVOICE_NUM_STEP=32
-OMNIVOICE_SPEED=1.0
-```
-
-Client gọi `POST /synthesize` với header `X-TTS-API-Key`. Voice clone được quản lý ở OmniVoice server; ToolCreateVideo chỉ gửi nội dung cần đọc và nhận WAV để ghép timeline.
+Nếu API dừng giữa chừng, các tệp đã tạo vẫn nằm trong cache. Ứng dụng xuất video tạm từ các cảnh hoàn thành và có thể tiếp tục sau.
 
 ## Xử lý lỗi thường gặp
 
@@ -173,3 +139,6 @@ python -m pytest -q
 python -m compileall -q app.py core services
 node --check static\js\app.js
 ```
+=======
+# Toolcreatevideo
+>>>>>>> b28934b7cbb272bfd36305e66809638cb3b7924c

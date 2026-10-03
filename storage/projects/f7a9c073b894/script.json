@@ -1,0 +1,633 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic historical documentary style, 4k resolution, highly detailed textures",
+    "color_palette": "Rich earthy tones, deep oceanic blues, warm golden hour hues, and dramatic contrast shadows",
+    "lighting_language": "Dramatic chiaroscuro lighting, natural sun rays, warm torchlight, and soft ambient coastal glow",
+    "camera_language": "Anamorphic lenses, shallow depth of field, sweeping establishing pans, and intimate close-ups",
+    "texture": "Gritty historical realism, weathered wood, coarse canvas, damp sea salt, and dry desert sand",
+    "global_negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Age 40, Vietnamese, average build, oval face shape, warm olive skin tone, dark brown eyes, short black hair",
+      "wardrobe": "Dark grey woolen vintage jacket over a clean white linen shirt",
+      "identity_markers": [
+        "calm demeanor",
+        "authoritative posture"
+      ],
+      "consistency_rules": [
+        "Maintain consistent facial structure across all scenes",
+        "Keep wardrobe colors muted and professional"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "In 1498, a Portuguese explorer named Vasco da Gama sailed into the port of",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Wide establishing shot, 35mm anamorphic lens, shallow depth of field",
+      "composition": "Sweeping horizontal pan across a vast historical port with anchored 15th-century Portuguese sailing ships in the background.",
+      "lighting": "Natural harsh midday sun casting strong highlights on oceanic blue water and deep shadows on weathered wooden docks.",
+      "action_beats": [
+        "Waves gently lap against the wooden hulls of the large historical ships.",
+        "A distant flock of sea birds flies across the bright coastal horizon."
+      ],
+      "continuity": [
+        "Establish 1498 historical period aesthetics with period-accurate rigging and architecture."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "Calicut on the southwestern coast of India. He had spent nearly a year at sea.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Medium cinematic shot, 50mm lens",
+      "composition": "Gentle pan right revealing bustling Indian coastal marketplace activity along the shoreline of Calicut.",
+      "lighting": "Warm golden hour sunlight bathing the scene in rich orange hues and long dramatic shadows.",
+      "action_beats": [
+        "Local traders move along the shoreline carrying woven baskets.",
+        "Exotic spices and fabrics are displayed on wooden tables."
+      ],
+      "continuity": [
+        "Maintain the southwestern coast of India coastal geography and warm atmospheric tone."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "He had lost a third of his crew to scurvy and storms.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Close-up cinematic shot, 85mm portrait lens",
+      "composition": "Tightly framed shot focusing on a weather-beaten ship's wooden railing encrusted with dried sea salt.",
+      "lighting": "Dramatic chiaroscuro lighting with a strong directional sunbeam highlighting grain and texture.",
+      "action_beats": [
+        "A sudden gust of wind brushes coarse canvas fabric hanging in the background.",
+        "Dust particles dance in the intense beam of light."
+      ],
+      "continuity": [
+        "Reflect the harsh conditions of a nearly year-long voyage at sea with weathered and worn props."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "And when the local rulers of Calicut asked him what he had come all this way",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Wide cinematic shot, 28mm lens",
+      "composition": "Static wide frame featuring ornate historical South Indian palace architecture, with local rulers seated on stone steps.",
+      "lighting": "Atmospheric soft daylight filtering through tropical palm fronds, creating dappled shadow patterns.",
+      "action_beats": [
+        "Local dignitaries converse quietly amongst themselves in the background.",
+        "Intricate stone carvings are subtly illuminated by ambient light."
+      ],
+      "continuity": [
+        "Maintain authentic historical South Indian setting and architectural details."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "for, his answer was simple: pepper, cinnamon, cloves. That was it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Medium shot with a slight upward tilt, 50mm lens",
+      "composition": "A collection of ancient clay jars and open burlap sacks filled with colorful spices placed on a dark wooden table.",
+      "lighting": "Soft ambient coastal glow mixed with warm natural light filtering from the side.",
+      "action_beats": [
+        "A hand reaches into frame to touch dark peppercorns and cinnamon sticks.",
+        "A subtle puff of cinnamon dust rises into the air."
+      ],
+      "continuity": [
+        "Feature realistic textures of dry spices, coarse canvas, and weathered wood."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Three dried plants, three ingredients you can buy today at any grocery store for a few dollars.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Eye-level medium shot, shallow focus",
+      "composition": "Macro shot focusing on three distinct dried spices arranged neatly on an aged wooden tabletop.",
+      "lighting": "Soft focus natural indoor lighting highlighting the rich earthy tones of pepper, cinnamon, and cloves.",
+      "action_beats": [
+        "The background softly blurs while the foreground spices remain pin-sharp.",
+        "A warm light source gently tracks across the texture of the cloves."
+      ],
+      "continuity": [
+        "Consistent continuity with the spices introduced in the previous scene."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "Da Gama had risked everything, crossed 17,000 miles of open ocean,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Aerial establishing shot, wide angle lens",
+      "composition": "A sweeping high-angle view of a lonely 15th-century caravel sailing across a massive, deep blue ocean.",
+      "lighting": "Dramatic sunset lighting casting a fiery golden path across the rolling ocean waves.",
+      "action_beats": [
+        "Ocean swells gently push the wooden ship forward across the frame.",
+        "Clouds glow with vibrant orange and purple sunset hues."
+      ],
+      "continuity": [
+        "Emphasize the immense scale of the 17,000-mile ocean journey."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "and watched dozens of men die, all for seasoning.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Intimate close-up, static, 85mm lens",
+      "composition": "A single navigational compass and a weathered leather journal resting on a wooden captain's desk.",
+      "lighting": "Warm indoor torchlight and flickering candlelight casting dancing shadows across the page.",
+      "action_beats": [
+        "A candle wick flickers slightly, causing the shadows to shift.",
+        "Ink dried on old parchment is visible under the warm glow."
+      ],
+      "continuity": [
+        "Maintain maritime exploration theme and intimate, somber mood."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "That was 1498, but by 1502,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Slow zoom out to wide shot, 35mm lens",
+      "composition": "Transition frame showing the coastline fading into dusk as the year 1498 concludes.",
+      "lighting": "Fading twilight casting a deep blue hue over the landscape with distant torchlights turning on.",
+      "action_beats": [
+        "The camera slowly pulls back to reveal the vast expanse of the historical harbor at twilight.",
+        "Small lights flicker on along the distant shoreline."
+      ],
+      "continuity": [
+        "Bridge the timeline seamlessly to the year 1502 in the subsequent scene."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "da Gama returned to the same coast with 20 warships and cannons.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Slow zoom in, starting wide, cinematic 4k",
+      "composition": "An imposing fleet of heavily armed 16th-century warships with cannons protruding from their wooden hulls.",
+      "lighting": "Epic, menacing natural daylight with dramatic dark storm clouds gathering on the horizon.",
+      "action_beats": [
+        "Warships cut aggressively through the choppy oceanic blue water.",
+        "Cannons are lined up along the reinforced decks, ready for action."
+      ],
+      "continuity": [
+        "Return to the same coast as scene 01, but now transformed into an aggressive military armada."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "And he burned an entire merchant vessel full of Muslim traders alive in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Medium shot, 50mm lens",
+      "composition": "A large wooden merchant vessel engulfed in bright roaring flames in the foreground, dark choppy ocean surrounding it.",
+      "lighting": "Intense flickering orange firelight illuminating the wooden hull, casting deep shadows across the turbulent water and smoke.",
+      "action_beats": [
+        "Flames aggressively consume the upper deck and sails of the merchant vessel.",
+        "Thick black smoke billows into the twilight sky, reflecting off the ocean waves."
+      ],
+      "continuity": [
+        "Follows directly from the aggressive naval armada established in scene 10, focusing now on the destruction of a specific ship."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "harbor of Calicut. Over 400 men, women, and children were killed.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Close-up, 85mm lens",
+      "composition": "Detailed focus on weathered, charred wooden debris floating on the water surface, with distant glowing embers.",
+      "lighting": "Warm, harsh flickering fire glow from off-screen, creating high contrast against the dark water.",
+      "action_beats": [
+        "Charred remnants of cargo drift slowly across the frame.",
+        "Embers hiss as they touch the dark ocean water."
+      ],
+      "continuity": [
+        "Maintains the grim aftermath of the burning ship depicted in scene 11."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "His reason was the same as before: spices.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Wide shot, 35mm lens",
+      "composition": "The harbor of Calicut viewed from a distance, with the burning wreckage silhouetted against the dark shoreline.",
+      "lighting": "Distant fire glow contrasting with the deep blue ambient moonlight of the harbor.",
+      "action_beats": [
+        "The camera remains static, capturing the scale of the harbor disaster.",
+        "Smoke slowly drifts across the wide horizon."
+      ],
+      "continuity": [
+        "Sets the broader geographic context of the massacre in Calicut from scenes 11 and 12."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "So, how did a handful of dried bark and flower buds become valuable enough to",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Medium shot, 50mm lens",
+      "composition": "Close-up arrangement of exotic spices, cinnamon bark, and cloves spilling from a weathered burlap sack on a wooden table.",
+      "lighting": "Soft, warm ambient morning light streaming in from a side window, highlighting textures.",
+      "action_beats": [
+        "A stray beam of light moves slowly across the pile of dried bark and flower buds.",
+        "Dust motes gently float in the air above the spices."
+      ],
+      "continuity": [
+        "Shifts the narrative focus from violence to the coveted commodity of spices."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "justify mass murder, fund entire empires, and redraw the map of the world?",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Dramatic low angle shot, 24mm lens",
+      "composition": "Towering stone pillars of an ancient merchant warehouse, with sacks of precious cargo stacked high into the shadows.",
+      "lighting": "Dramatic chiaroscuro lighting with strong directional sun rays cutting through dusty air.",
+      "action_beats": [
+        "The camera tilts up majestically along the stone pillars.",
+        "Dust particles dance in the intense shafts of light."
+      ],
+      "continuity": [
+        "Maintains the thematic weight of global trade and empire building from scene 14."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The answer starts thousands of years before da Gama was born,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Eye-level medium shot, 50mm lens",
+      "composition": "An antique parchment map unfurled on a wooden desk, showing early trade routes sketched in faded ink.",
+      "lighting": "Soft natural side lighting creating a gentle sepia warmth across the parchment.",
+      "action_beats": [
+        "The camera holds steady on the intricate hand-drawn cartography.",
+        "A faint shadow passes over the edge of the map."
+      ],
+      "continuity": [
+        "Transitions the historical scope backward in time as noted by the narrator."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "in the deserts of ancient Egypt along the banks of the Nile River.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_capture_version": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video được nhận bằng bộ đồng bộ Muse cũ, không khóa theo prompt). Bấm Tạo lại Muse.",
+      "shot_type": "Aerial establishing shot, 35mm lens",
+      "composition": "The vast, sun-drenched desert landscape meeting the lush green strip of the Nile River at sunset.",
+      "lighting": "Rich golden hour hues casting long dramatic shadows across the sand dunes and the winding river.",
+      "action_beats": [
+        "The camera sweeps slowly over the ancient riverbanks.",
+        "The warm sun dips lower toward the desert horizon, painting the sky in deep orange and purple."
+      ],
+      "continuity": [
+        "Establishes the ancient Egyptian setting along the Nile River to begin the historical flashback."
+      ],
+      "negative_prompt": "cartoon, illustration, animation, low resolution, modern elements, plastic textures, blurry",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

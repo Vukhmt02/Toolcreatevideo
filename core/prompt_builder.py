@@ -13,7 +13,7 @@ def _visible_characters(scene: Scene, script: Script) -> list[Character]:
 
 def _character_lock(character: Character) -> str:
     identity = character.appearance_signature or character.description
-    parts = [f"IDENTITY LOCK — {character.name}: {identity}"]
+    parts = [f"IDENTITY LOCK — {character.name} (ID {character.id}): {identity}"]
     if character.wardrobe:
         parts.append(f"Wardrobe lock: {character.wardrobe}")
     if character.identity_markers:
@@ -43,18 +43,49 @@ def _negative_prompt(scene: Scene, script: Script) -> str:
     return "; ".join(value.strip(" ;") for value in values if value)
 
 
-def _story_context(scene: Scene, script: Script) -> str:
-    """Preserve the scene's actual narrative meaning in every generated prompt."""
-    moments = []
-    if scene.narration and scene.narration.text.strip():
-        moments.append(f'Narration: "{scene.narration.text.strip()}"')
+def _script_requirements(scene: Scene, script: Script) -> list[str]:
+    """Keep the video's visible story anchored to this scene's source text."""
+    characters = _visible_characters(scene, script)
+    names = ", ".join(character.name for character in characters) or "none specified"
+    blocks = [
+        f"SCRIPT FIDELITY FOR {scene.id}: depict this scene's actual story, setting and events. "
+        "The requirements below take priority over decorative camera or style suggestions.",
+        f"REQUIRED SETTING AND STORY TIME: {scene.setting}.",
+        f"ON-SCREEN NAMED CHARACTERS: {names}. Do not add people or characters absent from this scene.",
+    ]
+    actions = list(scene.action_beats)
     for dialogue in scene.dialogues:
+        if dialogue.action:
+            character = script.get_character(dialogue.character)
+            action = f"{character.name if character else dialogue.character}: {dialogue.action}"
+            if action not in actions:
+                actions.append(action)
+    if actions:
+        blocks.append("REQUIRED VISIBLE ACTIONS IN ORDER: " + " → ".join(actions) + ".")
+    if scene.narration and scene.narration.text.strip():
+        blocks.append(
+            f'SCRIPT NARRATION TO REPRESENT VISUALLY WHERE CONCRETE: "{scene.narration.text.strip()}". '
+            "Keep the shot in the stated setting and story time unless the script explicitly changes them."
+        )
+    for dialogue in scene.dialogues:
+        if not dialogue.text.strip():
+            continue
         character = script.get_character(dialogue.character)
         name = character.name if character else dialogue.character
-        text = dialogue.text.strip()
-        if text:
-            moments.append(f'{name} ({dialogue.emotion}): "{text}"')
-    return " ".join(moments)
+        blocks.append(
+            f'DIALOGUE CONTEXT — {name} ({dialogue.emotion}): "{dialogue.text.strip()}". '
+            "Show the character and emotion in the current scene; dialogue audio is added later."
+        )
+    if not actions:
+        blocks.append(
+            "When no explicit physical action is written, show the concrete setting and the visible "
+            "change or reaction implied by this scene; do not invent a new plot event."
+        )
+    blocks.append(
+        "EXCLUDE unrelated actions, flashbacks, locations, props, people and story events. "
+        "Do not render script text or subtitles on screen."
+    )
+    return blocks
 
 
 def _base_blocks(scene: Scene, script: Script) -> list[str]:
@@ -65,12 +96,9 @@ def _base_blocks(scene: Scene, script: Script) -> list[str]:
         f"SCENE: {scene.setting}.",
         f"SHOT AND CAMERA: {scene.shot_type or scene.camera}. {scene.camera}.",
     ]
-    story_context = _story_context(scene, script)
-    if story_context:
-        blocks.append(
-            "STORY MOMENT TO VISUALIZE (semantic context only; do not render this text as captions): "
-            + story_context
-        )
+    location = script.get_location(scene.location_id)
+    if location:
+        blocks.insert(-1, f"LOCATION LOCK — {location.name} (ID {location.id}): {location.description or scene.setting}. Preserve the same layout, architecture, furniture and fixed props across scenes at this location.")
     if scene.composition:
         blocks.append(f"COMPOSITION: {scene.composition}.")
     if scene.lighting:
@@ -83,17 +111,15 @@ def _base_blocks(scene: Scene, script: Script) -> list[str]:
 def build_scene_prompt(scene: Scene, script: Script, audio_duration: float = 0) -> str:
     """Build a motion-focused Veo prompt while keeping identity blocks verbatim."""
     if scene.prompt_override.strip():
-        return scene.prompt_override.strip()
+        return "\n\n".join([
+            f"Cinematic GLOBAL VISUAL BIBLE: {_visual_style(script)}.",
+            *(_character_lock(character) for character in _visible_characters(scene, script)),
+            *([f"LOCATION LOCK — {location.name} (ID {location.id}): {location.description or scene.setting}. Preserve the same layout and fixed props."] if (location := script.get_location(scene.location_id)) else []),
+            f"USER SHOT DIRECTION: {scene.prompt_override.strip()}",
+            *_script_requirements(scene, script),
+        ])
     parts = _base_blocks(scene, script)
-    action_beats = list(scene.action_beats)
-    for dialogue in scene.dialogues:
-        character = script.get_character(dialogue.character)
-        name = character.name if character else dialogue.character
-        if dialogue.action:
-            action_beats.append(f"{name} {dialogue.action}")
-        action_beats.append(f"{name} speaks with a {dialogue.emotion} expression and natural restrained body movement")
-    if action_beats:
-        parts.append("ACTION BEATS IN ORDER: " + " → ".join(action_beats) + ".")
+    parts.extend(_script_requirements(scene, script))
     parts.append("MOTION: stable facial identity, natural human motion, coherent hands, no sudden pose or wardrobe changes.")
     duration = f"{audio_duration:.1f} seconds" if audio_duration > 0 else (scene.duration_hint or "8 seconds")
     parts.append(f"DURATION: approximately {duration}.")
@@ -104,18 +130,15 @@ def build_scene_prompt(scene: Scene, script: Script, audio_duration: float = 0) 
 def build_image_prompt(scene: Scene, script: Script) -> str:
     """Build a still-image prompt with locked identity and composition."""
     if scene.prompt_override.strip():
-        return scene.prompt_override.strip()
+        return "\n\n".join([
+            f"Cinematic GLOBAL VISUAL BIBLE: {_visual_style(script)}.",
+            *(_character_lock(character) for character in _visible_characters(scene, script)),
+            *([f"LOCATION LOCK — {location.name} (ID {location.id}): {location.description or scene.setting}. Preserve the same layout and fixed props."] if (location := script.get_location(scene.location_id)) else []),
+            f"USER SHOT DIRECTION: {scene.prompt_override.strip()}",
+            *_script_requirements(scene, script),
+        ])
     parts = _base_blocks(scene, script)
-    actions = list(scene.action_beats)
-    for dialogue in scene.dialogues:
-        character = script.get_character(dialogue.character)
-        name = character.name if character else dialogue.character
-        if dialogue.action:
-            actions.append(f"{name} {dialogue.action}")
-        if dialogue.emotion:
-            actions.append(f"{name} has a {dialogue.emotion} expression")
-    if actions:
-        parts.append("CAPTURED MOMENT: " + "; ".join(actions) + ".")
+    parts.extend(_script_requirements(scene, script))
     parts.append("OUTPUT: one coherent cinematic still, realistic anatomy, detailed faces, natural depth of field.")
     parts.append("No text, no captions, no watermark.")
     parts.append(f"AVOID: {_negative_prompt(scene, script)}.")

@@ -58,7 +58,7 @@ class Compositor:
     def swap_audio(self, video_path: str, audio_path: str, output_path: str = "") -> str:
         """
         Thay audio track của video bằng audio mới.
-        Giữ nguyên video track, thay audio từ OmniVoice/Edge TTS.
+        Giữ nguyên video track, thay audio từ ElevenLabs.
         """
         if not output_path:
             output_path = str(self.output_dir / f"swapped_{uuid.uuid4().hex[:8]}.mp4")

@@ -51,6 +51,7 @@ class Scene(BaseModel):
     """Một cảnh trong kịch bản"""
     id: str = Field(default="", description="ID cảnh (ví dụ: scene_01)")
     setting: str = Field(..., description="Mô tả bối cảnh")
+    location_id: str = Field(default="", description="ID địa điểm dùng chung giữa các cảnh")
     camera: str = Field(default="Medium shot", description="Góc quay camera")
     dialogues: list[DialogueLine] = Field(default_factory=list)
     narration: Optional[Narration] = None
@@ -59,6 +60,15 @@ class Scene(BaseModel):
     duration_hint: str = Field(default="", description="Gợi ý thời lượng (ví dụ: 15s)")
     flow_video_path: str = Field(default="", description="Video đã tạo trong Google Flow")
     flow_image_path: str = Field(default="", description="Ảnh đã tạo trong Google Flow")
+    generated_media_path: str = Field(default="", description="Media mới nhất từ nhà cung cấp đã chọn")
+    generated_media_type: str = Field(default="", description="Loại media: image hoặc video")
+    generated_media_provider: str = Field(default="", description="Nhà cung cấp media")
+    media_capture_version: str = Field(default="", description="Phiên bản bộ đồng bộ media")
+    media_generation_status: str = Field(default="", description="Trạng thái tạo media gần nhất")
+    media_generation_error: str = Field(default="", description="Lỗi tạo media gần nhất")
+    media_content_check_status: str = Field(default="", description="Kết quả đối chiếu nội dung Muse với kịch bản")
+    media_content_check_reason: str = Field(default="", description="Giải thích kết quả đối chiếu nội dung")
+    media_content_check_prompt_hash: str = Field(default="", description="Dấu vân tay prompt đã đối chiếu")
     shot_type: str = Field(default="", description="Cỡ cảnh đã khóa")
     composition: str = Field(default="", description="Bố cục và vị trí nhân vật")
     lighting: str = Field(default="", description="Ánh sáng của cảnh")
@@ -91,6 +101,13 @@ class Character(BaseModel):
     consistency_rules: list[str] = Field(default_factory=list, description="Quy tắc giữ nhân vật đồng nhất")
 
 
+class Location(BaseModel):
+    id: str
+    name: str
+    description: str = ""
+    reference_images: list[str] = Field(default_factory=list)
+
+
 class VisualBible(BaseModel):
     """Phong cách hình ảnh dùng chung cho toàn bộ project."""
     style: str = Field(default="photorealistic cinematic film")
@@ -116,6 +133,7 @@ class Script(BaseModel):
     settings: ScriptSettings = Field(default_factory=ScriptSettings)
     visual_bible: VisualBible = Field(default_factory=VisualBible)
     characters: list[Character] = Field(default_factory=list)
+    locations: list[Location] = Field(default_factory=list)
     scenes: list[Scene] = Field(default_factory=list)
 
     @field_validator("scenes")
@@ -132,6 +150,9 @@ class Script(BaseModel):
             if char.id.lower() == char_id_clean or char.name.lower() == char_id_clean:
                 return char
         return None
+
+    def get_location(self, location_id: str) -> Optional[Location]:
+        return next((item for item in self.locations if item.id == location_id), None)
 
     def get_all_dialogue_texts(self) -> list[dict]:
         """Lấy tất cả lời thoại kèm thông tin nhân vật"""
@@ -294,7 +315,7 @@ def parse_narrative_story(text: str, max_scenes: int = 10) -> dict:
 
     # === Tách văn bản thành các cảnh ===
     # Quy tắc: mỗi cảnh tối đa 8 giây → tối đa ~80 ký tự narration
-    # (Edge TTS tiếng Việt ~10 ký tự/giây)
+    # Ước lượng sơ bộ; thời lượng thật được đo từ âm thanh ElevenLabs.
     MAX_CHARS_PER_SCENE = 80  # 8 giây × 10 ký tự/giây
 
     scenes = []
@@ -917,6 +938,7 @@ def normalize_script_data(data: dict) -> dict:
             "id": scene_id,
             "scene_type": scene_type,
             "setting": setting,
+            "location_id": s.get("location_id", ""),
             "camera": camera,
             "dialogues": normalized_dialogues,
             "narration": normalized_narration,
@@ -924,6 +946,15 @@ def normalize_script_data(data: dict) -> dict:
             "duration_hint": s.get("duration_hint", ""),
             "flow_video_path": s.get("flow_video_path", ""),
             "flow_image_path": s.get("flow_image_path", ""),
+            "generated_media_path": s.get("generated_media_path", ""),
+            "generated_media_type": s.get("generated_media_type", ""),
+            "generated_media_provider": s.get("generated_media_provider", ""),
+            "media_capture_version": s.get("media_capture_version", ""),
+            "media_generation_status": s.get("media_generation_status", ""),
+            "media_generation_error": s.get("media_generation_error", ""),
+            "media_content_check_status": s.get("media_content_check_status", ""),
+            "media_content_check_reason": s.get("media_content_check_reason", ""),
+            "media_content_check_prompt_hash": s.get("media_content_check_prompt_hash", ""),
             "shot_type": s.get("shot_type", ""),
             "composition": s.get("composition", ""),
             "lighting": s.get("lighting", ""),

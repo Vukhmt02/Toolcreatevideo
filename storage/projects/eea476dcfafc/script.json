@@ -1,0 +1,734 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic documentary, rich historical texture, 4k resolution, highly detailed archival aesthetic",
+    "color_palette": "Warm golden hour hues, deep charcoal blacks, terracotta ochre, muted earth tones, dusty ash gray",
+    "lighting_language": "Dramatic chiaroscuro, natural sunlight filtering through dust, warm indoor flame and torch light, high contrast cinematic shadows",
+    "camera_language": "Anamorphic lenses, shallow depth of field, steady tracking shots, intimate macro close-ups on artifacts, wide sweeping establishing panoramas",
+    "texture": "Ancient stone, weathered plaster, fine volcanic ash, crumbling charcoal, woven rough fabrics, aged metallic patina",
+    "global_negative_prompt": "visible narrator, modern elements, cartoonish, low quality, distorted anatomy, oversaturated colors"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Voice-only entity, no physical on-screen representation exists",
+      "wardrobe": "None",
+      "identity_markers": [],
+      "consistency_rules": [
+        "Never invent a visible narrator or human host on screen",
+        "Maintain audio-only presence for all narration"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "In October 2018, in a house on the Via del Vasuvio that was being excavated for the first time,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Medium shot",
+      "composition": "Framed slightly off-center to emphasize the rough, ancient wall texture; gentle pan right revealing crumbling plaster in Via del Vasuvio.",
+      "lighting": "Warm golden hour sunlight filtering through dust motes, casting long cinematic shadows.",
+      "action_beats": [
+        "Excavated house interior is revealed",
+        "Camera gently pans right across ancient Roman wall remnants"
+      ],
+      "continuity": [
+        "Establishes the newly excavated house on Via del Vasuvio in October 2018",
+        "Maintains warm golden hour lighting and dusty atmosphere"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "a workman had written a line in charcoal on a wall.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Close-up",
+      "composition": "Tight macro frame focusing on a patch of weathered stone with faint, dark residue.",
+      "lighting": "Low-key directional light skimming across the surface to highlight the powdery charcoal texture.",
+      "action_beats": [
+        "Camera slowly pushes in on the faded handwritten line",
+        "Focus shifts to the porous texture of the ancient wall"
+      ],
+      "continuity": [
+        "Maintains the setting of the excavated house interior from scene_01",
+        "Focuses specifically on the charcoal inscription mentioned in narration"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Charcoal fades within weeks in the open air.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Wide shot",
+      "composition": "Static wide frame capturing the entire chamber under excavation, framing ruined walls against the open sky.",
+      "lighting": "Harsh natural daylight highlighting the exposed outdoor elements acting upon the ruins.",
+      "action_beats": [
+        "Static wide view showing the vulnerability of the unsealed archaeological site",
+        "Dust particles settling in the open air"
+      ],
+      "continuity": [
+        "Follows scene_02 by demonstrating the environmental vulnerability of unprotected charcoal"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "This had survived because it was sealed almost immediately.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Medium shot",
+      "composition": "Framed inside a partially collapsed alcove, camera executing a slight upward tilt.",
+      "lighting": "Soft ambient natural light diffusing through protective overhead scaffolding and volcanic debris.",
+      "action_beats": [
+        "Camera tilts up to show the protective volcanic layer",
+        "Highlights the barrier that preserved the inner room"
+      ],
+      "continuity": [
+        "Builds on the survival context established in scene_03",
+        "Maintains the dusty ash gray color palette"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "It was a date, the 16th day before the calendars of November,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "Looking up at a high section of the inscribed wall, emphasizing the historic weight of the text.",
+      "lighting": "High contrast chiaroscuro lighting accentuating the chiseled cracks and the ancient script.",
+      "action_beats": [
+        "Camera holds a low angle on the Roman date inscription",
+        "Shadows shift across the stone as dust settles"
+      ],
+      "continuity": [
+        "Continues the focus on the specific wall inscription from scene_02",
+        "Maintains dramatic high-contrast lighting"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the 17th of October.\nSomebody wrote that on a wall in a house that was still",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Eye-level medium shot",
+      "composition": "Balanced composition centering a patch of ancient lime plaster covered in faint Roman numerals.",
+      "lighting": "Soft, diffused natural daylight with a touch of warm amber reflection.",
+      "action_beats": [
+        "Close inspection of the calendar markings on the wall",
+        "Subtle play of light over the rough plaster surface"
+      ],
+      "continuity": [
+        "Translates the 17th of October date reference visually onto the ancient plaster",
+        "Maintains consistent texture of aged stone and plaster"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "being renovated. And then the mountain came down on top of it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Sweeping high-angle panorama of the ancient ruins beneath the looming shadow of Mount Vesuvius.",
+      "lighting": "Rich sunset hues casting long terracotta ochre and deep charcoal shadows across the entire excavated city.",
+      "action_beats": [
+        "Camera surveys the sprawling archaeological site",
+        "Golden hour light transitions into darker, ash-gray shadows hinting at the cataclysm"
+      ],
+      "continuity": [
+        "Brings in the wider geographical context of the mountain descending on the city",
+        "Maintains the historical documentary aesthetic"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "It fits everything else.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Intimate close-up",
+      "composition": "Static macro shot of a single preserved artifact resting undisturbed in the ash.",
+      "lighting": "Warm indoor flame-like directional light illuminating fine metallic and ceramic patinas.",
+      "action_beats": [
+        "Camera remains locked on the small artifact",
+        "Highlights fine details of ancient craftsmanship preserved in the debris"
+      ],
+      "continuity": [
+        "Reinforces the thematic fit of the archaeological evidence",
+        "Maintains warm indoor lighting tone"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The brazers found in the houses set up for heating in a city where August",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Begins tight on an ancient bronze brazier, slowly pulling back to reveal the surrounding room architecture.",
+      "lighting": "Epic cinematic lighting with warm embers casting flickering highlights against cold ash-gray stone.",
+      "action_beats": [
+        "Camera slowly zooms out from the brazier",
+        "Reveals the full layout of the domestic heating arrangement"
+      ],
+      "continuity": [
+        "Introduces the heating brazier referenced in the narration",
+        "Maintains continuity with the room interior from earlier excavation scenes"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "afternoons run to 35°.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Cinematic establishing shot",
+      "composition": "Wide, slowly zooming-in shot of the sun-baked Roman streetscape under a heavy, dusty atmosphere.",
+      "lighting": "Bright, harsh midday simulation softened by a dusty atmospheric haze and terracotta tones.",
+      "action_beats": [
+        "Camera slowly pushes inward down the ancient stone street",
+        "Evokes the stifling heat of a Pompeian summer afternoon"
+      ],
+      "continuity": [
+        "Concludes the sequence by referencing the extreme seasonal temperatures",
+        "Maintains high historical texture and 4k resolution aesthetic"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "The heavier clothing on the bodies,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Medium cinematic shot",
+      "composition": "Centered medium shot of heavy woolen and woven garments draped over ancient furniture, with a gentle pan to the right.",
+      "lighting": "Warm golden hour sunlight filtering through dust motes, highlighting the heavy texture of the fabrics.",
+      "action_beats": [
+        "Camera gently pans right across the folded heavier garments",
+        "Emphasizes the thick, winter-weight textile fibers"
+      ],
+      "continuity": [
+        "Maintains historical wardrobe texture and warm color palette",
+        "Connects to the previous discussion of climate and domestic life"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "the pomegranates and the walnuts and the chestnuts in the storooms,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Close-up cinematic shot",
+      "composition": "Macro close-up on a weathered wooden storeroom shelf filled with carbonized pomegranates, walnuts, and chestnuts.",
+      "lighting": "Dramatic side-lighting creating high contrast shadows and highlighting the rough, aged surfaces of the produce.",
+      "action_beats": [
+        "Camera slowly pushes in on the collection of autumn fruits and nuts",
+        "Reveals the carbonized cellular detail of the ancient food items"
+      ],
+      "continuity": [
+        "Follows the garment details with specific seasonal agricultural goods",
+        "Maintains ancient artifact texture and shallow depth of field"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "which are October food,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Wide cinematic shot",
+      "composition": "Static wide view of a dimly lit Roman pantry storeroom surrounded by rough volcanic stone walls.",
+      "lighting": "Atmospheric, muted earth-tone lighting with dust motes drifting in shafts of pale light.",
+      "action_beats": [
+        "Camera holds steady on the static wide composition of the storeroom",
+        "Evokes the specific seasonal timing indicated by the stored provisions"
+      ],
+      "continuity": [
+        "Builds on the close-up of the produce by placing them in the full room context",
+        "Maintains consistent dark charcoal blacks and dusty ash gray tones"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "the wine that had already been pressed and sealed into jars,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight tilt up, framing large terracotta amphorae lined up against a plastered wall.",
+      "lighting": "Soft ambient natural light washing over the terracotta surfaces, revealing fine cracks and dust.",
+      "action_beats": [
+        "Camera executes a slight tilt up along the height of a sealed amphora",
+        "Highlights the resin seal on the mouth of the wine jar"
+      ],
+      "continuity": [
+        "Follows the storeroom scene with a focus on wine production artifacts",
+        "Maintains terracotta ochre and aged metallic patina textures"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "which happens after the harvest and never before it.\nA coin found in the house",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "Close-up macro framing of an ancient Roman coin resting on rough volcanic ash, lit from the side.",
+      "lighting": "Contrasted cinematic lighting casting sharp shadows across the stamped metallic relief of the coin.",
+      "action_beats": [
+        "Camera stays locked on the fine details of the discovered coin",
+        "Shifts focus slightly to reveal the surrounding dark volcanic ash"
+      ],
+      "continuity": [
+        "Transitions from agricultural stores to precise archaeological dating evidence",
+        "Maintains anamorphic lens aesthetic and sharp macro focus"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "of the golden bracelet carries a title that the emperor Titus took up in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Eye-level medium shot",
+      "composition": "Medium shot of an ornate golden bracelet resting on a dark stone pedestal, with soft-focus background architecture.",
+      "lighting": "Soft, natural directional light catching the polished gold curves of the bracelet.",
+      "action_beats": [
+        "Camera remains steady, framing the intricate gold artifact alongside the coin context",
+        "Highlights the fine craftsmanship and historical engraving"
+      ],
+      "continuity": [
+        "Directly connects the coin discovery to the house of the golden bracelet",
+        "Maintains rich historical texture and warm metallic tones"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "second half of September 79. It was in circulation before the ash fell.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Wide panoramic aerial view sweeping across the excavated ruins of Pompeii under a hazy sunset sky.",
+      "lighting": "Warm sunset lighting casting long shadows across the ancient stone streets and rooftops.",
+      "action_beats": [
+        "Camera slowly tracks across the expansive archaeological site",
+        "Captures the vast scale of the ruined city at twilight"
+      ],
+      "continuity": [
+        "Expands the scope from interior artifacts to the overarching historical timeline",
+        "Maintains color palette of terracotta ochre and dusty ash gray"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_18",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "So the eruption almost certainly happened in late October,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Intimate close-up",
+      "composition": "Static intimate macro shot of an unrolled ancient papyrus scroll fragment with fading Latin characters.",
+      "lighting": "Warm indoor flame-like directional lighting casting gentle amber highlights on the brittle surface.",
+      "action_beats": [
+        "Camera holds an ultra-close steady frame on the fragile manuscript fragment",
+        "Emphasizes the fragile state of the historical record"
+      ],
+      "continuity": [
+        "Reinforces the chronological deduction discussed in the narration",
+        "Maintains high-detail archival aesthetic and shallow depth of field"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_19",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "most likely on the 24th,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Begins tight on a stone marker inscribed with Roman numerals, slowly pulling back to reveal the ancient courtyard.",
+      "lighting": "Epic cinematic lighting with strong directional sunlight creating high contrast against deep shadows.",
+      "action_beats": [
+        "Camera slowly zooms out from the date marker",
+        "Reveals the wider stone courtyard setting of the final deduction"
+      ],
+      "continuity": [
+        "Ties together the date evidence with the physical setting of the disaster",
+        "Maintains steady tracking movement and warm golden hour hues"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_20",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "2 months after the date that every one of us was taught.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "media_generation_status": "error",
+      "media_generation_error": "Đã loại video Muse không đúng kết quả (video 480x480 là avatar/placeholder, không phải kết quả 16:9). Bấm Tạo lại Muse.",
+      "shot_type": "Slow zoom in, starting wide",
+      "composition": "Wide cinematic establishing shot of Mount Vesuvius looming in the background, slowly pushing inward toward the foreground ruins.",
+      "lighting": "Natural daylight under a heavy, dusty atmospheric haze, balancing high contrast mountain silhouettes.",
+      "action_beats": [
+        "Camera slowly pushes in from a wide landscape view toward the ruined city foreground",
+        "Concludes the documentary sequence with a powerful historical perspective shift"
+      ],
+      "continuity": [
+        "Concludes the narrative arc by contrasting traditional teachings with new evidence",
+        "Maintains consistent visual language, 4k resolution, and photorealistic documentary texture"
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoonish, low quality, oversaturated colors",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

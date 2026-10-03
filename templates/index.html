@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToolCreateVideo — Tạo Video từ Kịch Bản</title>
     <meta name="description" content="Tool tạo video tự động từ kịch bản với AI voice và Veo 3.1">
-    <link rel="stylesheet" href="/static/css/style.css?v=20260930-2">
+    <link rel="stylesheet" href="/static/css/style.css?v=20261003-1">
 </head>
 <body>
 
@@ -14,6 +14,10 @@
     <div class="logo">
         <span class="logo-icon">🎬</span>
         <h1>ToolCreateVideo</h1>
+    </div>
+    <div class="header-project-actions">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="startNewProject()">＋ Dự án mới</button>
+        <button type="button" class="btn btn-secondary btn-sm" id="btnRestoreProject" onclick="restoreLastProject({force:true})" style="display:none">↩ Mở dự án gần nhất</button>
     </div>
     <div class="header-status">
         <span class="status-dot" id="statusDot"></span>
@@ -49,66 +53,53 @@
                     </span>
                 </div>
                 <div class="config-item">
-                    <label>Dịch vụ giọng đọc toàn video</label>
-                    <select id="voiceProvider">
-                        <option value="gemini">Gemini TTS (khuyên dùng)</option>
-                        <option value="omnivoice">OmniVoice</option>
-                        <option value="edge_tts">Edge TTS miễn phí</option>
+                    <label>ElevenLabs API Key</label>
+                    <input type="password" id="elevenlabsApiKey" placeholder="Nhập khóa bí mật bắt đầu bằng sk_">
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        Dùng API Key bí mật bắt đầu bằng sk_, không dùng Key ID. Bật Voices: Read và Text to Speech: Access.
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>ElevenLabs Voice ID</label>
+                    <input type="text" id="elevenlabsVoiceId" placeholder="Ví dụ: JBFqnCBsd6RMkjVDRZzb">
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        Mở giọng trong My Voices và sao chép Voice ID.
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>Model ElevenLabs</label>
+                    <select id="elevenlabsModelId">
+                        <option value="eleven_multilingual_v2">Multilingual v2 — ổn định cho video dài</option>
+                        <option value="eleven_flash_v2_5">Flash v2.5 — nhanh và tiết kiệm</option>
+                        <option value="eleven_turbo_v2_5">Turbo v2.5 — cân bằng</option>
+                        <option value="eleven_v3">Eleven v3 — biểu cảm cao</option>
                     </select>
                 </div>
                 <div class="config-item">
-                    <label>Model Gemini TTS</label>
-                    <select id="geminiTtsModel">
-                        <option value="gemini-3.8-flash-tts">Gemini 3.8 Flash TTS — chất lượng cao</option>
-                        <option value="gemini-3.8-flash-lite-tts">Gemini 3.8 Flash-Lite TTS — nhanh, tiết kiệm</option>
+                    <label>Định dạng âm thanh</label>
+                    <select id="elevenlabsOutputFormat">
+                        <option value="mp3_44100_128">MP3 44.1 kHz — 128 kbps</option>
+                        <option value="mp3_44100_192">MP3 44.1 kHz — 192 kbps</option>
+                        <option value="mp3_22050_32">MP3 22.05 kHz — tiết kiệm</option>
                     </select>
                 </div>
                 <div class="config-item">
-                    <label>Giọng Gemini TTS</label>
-                    <select id="geminiTtsVoice">
-                        <option value="Gacrux">Gacrux — trưởng thành</option>
-                        <option value="Charon">Charon — thuyết minh</option>
-                        <option value="Sulafat">Sulafat — ấm áp</option>
-                        <option value="Iapetus">Iapetus — rõ ràng</option>
-                        <option value="Achernar">Achernar — nhẹ nhàng</option>
-                        <option value="Rasalgethi">Rasalgethi — kiến thức</option>
-                        <option value="Schedar">Schedar — đều đặn</option>
-                        <option value="Kore">Kore — chắc chắn</option>
-                        <option value="Achird">Achird — thân thiện</option>
-                        <option value="Vindemiatrix">Vindemiatrix — dịu dàng</option>
-                    </select>
+                    <label>Độ ổn định (Stability)</label>
+                    <input type="number" id="elevenlabsStability" min="0" max="1" step="0.05" value="0.5">
                 </div>
                 <div class="config-item">
-                    <label>Phong cách đọc Gemini</label>
-                    <input type="text" id="geminiTtsStyle" value="mature Vietnamese narrator, warm, clear, natural pacing, restrained emotion">
-                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
-                        Chỉ mô tả cách đọc; nội dung kịch bản sẽ được gửi riêng để tránh đọc luôn chỉ dẫn.
-                    </span>
+                    <label>Độ giống giọng (Similarity)</label>
+                    <input type="number" id="elevenlabsSimilarity" min="0" max="1" step="0.05" value="0.75">
                 </div>
                 <div class="config-item">
-                    <label>OmniVoice Server URL (Colab GPU Ngrok)</label>
-                    <input type="text" id="omnivoiceUrl" placeholder="Ví dụ: https://xxxx.ngrok-free.app">
-                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
-                        Để trống nếu muốn dùng Edge TTS miễn phí
-                    </span>
+                    <label>Mức biểu cảm (Style)</label>
+                    <input type="number" id="elevenlabsStyle" min="0" max="1" step="0.05" value="0">
                 </div>
                 <div class="config-item">
-                    <label>OmniVoice API Key (tùy chọn)</label>
-                    <input type="password" id="omnivoiceApiKey" placeholder="TTS_API_KEY nếu đã cài đặt trên Colab">
-                </div>
-                <div class="config-item">
-                    <label>Chất lượng OmniVoice (num_step)</label>
-                    <input type="number" id="omnivoiceNumStep" min="4" max="64" step="1" value="32">
-                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
-                        16 nhanh hơn; 32 cân bằng; 48–64 chất lượng cao nhưng chậm hơn.
-                    </span>
-                </div>
-                <div class="config-item">
-                    <label>Tốc độ đọc OmniVoice</label>
-                    <input type="number" id="omnivoiceSpeed" min="0.5" max="2" step="0.05" value="1.0">
-                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
-                        1.0 là tốc độ gốc; 0.9 chậm hơn; 1.1 nhanh hơn.
-                    </span>
+                    <label style="display:flex;align-items:center;gap:8px">
+                        <input type="checkbox" id="elevenlabsSpeakerBoost" checked style="width:auto">
+                        Tăng độ giống giọng (Speaker Boost)
+                    </label>
                 </div>
                 <div class="config-item">
                     <label>WaveSpeed API Key (legacy / tùy chọn)</label>
@@ -118,7 +109,7 @@
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="saveConfig()">💾 Lưu Cấu Hình</button>
                 <button class="btn btn-secondary" onclick="testGoogleConnection()">🔍 Kiểm tra Google API</button>
-                <button class="btn btn-secondary" onclick="testOmniVoiceConnection()">🎙️ Kiểm tra OmniVoice</button>
+                <button class="btn btn-secondary" onclick="testElevenLabsConnection()">🎙️ Kiểm tra ElevenLabs</button>
             </div>
             <div id="serviceStatusGrid" style="display:flex;gap:10px;margin-top:16px;flex-wrap:wrap"></div>
         </div>
@@ -129,13 +120,6 @@
                 <div class="config-item">
                     <label>Nội dung test</label>
                     <input type="text" id="testVoiceText" value="Xin chào, đây là giọng nói thử nghiệm từ ToolCreateVideo.">
-                </div>
-                <div class="config-item">
-                    <label>Giọng Edge TTS dự phòng</label>
-                    <select id="testVoiceGender">
-                        <option value="female">Nữ (HoaiMy)</option>
-                        <option value="male">Nam (NamMinh)</option>
-                    </select>
                 </div>
             </div>
             <div class="btn-group">
@@ -224,7 +208,7 @@ Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi
         <div class="card">
             <div class="card-title"><span class="icon">👥</span> Nhân Vật</div>
             <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
-                Upload ảnh reference và audio giọng mẫu cho từng nhân vật (tùy chọn).
+                Khóa ngoại hình và trang phục bằng mô tả dùng chung cho mọi cảnh. Ảnh tham chiếu là tùy chọn cho các luồng khác; Muse dùng mô tả chữ.
             </p>
             <div class="character-grid" id="characterGrid">
                 <div class="empty-state">
@@ -232,6 +216,18 @@ Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi
                     <p>Chưa có nhân vật. Hãy tạo project từ kịch bản trước.</p>
                 </div>
             </div>
+        </div>
+        <div class="card">
+            <div class="card-title"><span class="icon">🏠</span> Bối cảnh dùng chung</div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">
+                Mô tả cố định bố cục, kiến trúc, đạo cụ và ánh sáng; gắn cùng địa điểm cho các cảnh liên quan. Không cần tạo ảnh chuẩn.
+            </p>
+            <form id="createLocationForm" class="location-create-form">
+                <input name="name" required maxlength="120" placeholder="Tên địa điểm, ví dụ: Phòng khách nhà An">
+                <input name="description" maxlength="2000" placeholder="Bố cục, vật dụng cố định, màu sắc, ánh sáng">
+                <button type="submit" class="btn btn-secondary btn-sm">+ Thêm địa điểm</button>
+            </form>
+            <div class="character-grid" id="locationGrid"></div>
         </div>
     </div>
 
@@ -278,8 +274,13 @@ Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi
                     </button>
                     <button class="btn btn-secondary" type="button" onclick="openFlowWindows()">🌐 Mở các cửa sổ Flow</button>
                     <button class="btn btn-secondary" type="button" onclick="generateInFlow()">⚡ Gửi prompt vào Flow (3 luồng)</button>
+                    <button class="btn btn-secondary" type="button" onclick="openMuseWindow()">🌐 Mở Muse</button>
+                    <button class="btn btn-secondary" type="button" onclick="generateInMuse()">🎞️ Tạo video bằng Muse</button>
                     <span style="font-size:12px;color:var(--text-secondary)">
                         💡 Nhấp vào nút <b>KEY / FILLER</b> tại từng cảnh bên dưới để đổi loại cảnh nếu muốn.
+                    </span>
+                    <span style="font-size:12px;color:var(--text-secondary)">
+                        Muse dùng chung Chrome Flow và phiên Google đã đăng nhập. Tài khoản vẫn cần được Meta cấp quyền dùng Muse Video.
                     </span>
                 </div>
                 <div id="visualBibleSummary" class="visual-bible-summary"></div>
@@ -305,6 +306,6 @@ Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi
 
 </main>
 
-<script src="/static/js/app.js?v=20260930-2"></script>
+<script src="/static/js/app.js?v=20261003-1"></script>
 </body>
 </html>

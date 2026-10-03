@@ -1,0 +1,698 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic documentary, ultra-detailed historical reconstruction, 35mm film grain, 4k resolution",
+    "color_palette": "Warm golden hour hues, deep terracotta reds, charcoal blacks, muted ochres, ash grays",
+    "lighting_language": "Dramatic chiaroscuro, warm subterranean candlelight, soft volumetric sunlight filtering through volcanic dust",
+    "camera_language": "Anamorphic lenses, shallow depth of field, slow deliberate tracking shots, intimate macro close-ups on historical artifacts",
+    "texture": "Ancient weathered stone, rough charcoal dust, crumbling fresco plaster, coarse woolen fabric, polished terracotta",
+    "global_negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Non-visible voiceover entity, strictly voice narration with zero on-screen physical presence.",
+      "wardrobe": "None",
+      "identity_markers": [
+        "Voice-only",
+        "Calm and clear cadence"
+      ],
+      "consistency_rules": [
+        "Never render any physical narrator on screen",
+        "Maintain atmospheric audio separation"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "In October 2018, in a house on the Via del Vasuvio that was being excavated for the first time,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot",
+      "composition": "Anamorphic 35mm medium shot with a gentle pan right, framing a weathered ancient Roman wall inside an excavation site on Via del Vasuvio.",
+      "lighting": "Warm golden hour volumetric sunlight filtering through volcanic dust and excavation tenting, casting long soft shadows.",
+      "action_beats": [
+        "Camera slowly pans right across a newly exposed crumbling fresco plaster wall.",
+        "Dust motes dance in the shafts of warm sunlight hitting the ancient stone."
+      ],
+      "continuity": [
+        "Establishes the October 2018 archaeological excavation site.",
+        "Maintains consistent warm golden lighting and ancient weathered stone textures."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "a workman had written a line in charcoal on a wall.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Macro close-up shot",
+      "composition": "Intimate macro close-up with a slow push in on rough charcoal graffiti scrawled onto the ancient plaster.",
+      "lighting": "Focused directional LED work light combined with warm ambient dust-filled air.",
+      "action_beats": [
+        "Camera slowly pushes into the precise handwritten charcoal inscription on the wall.",
+        "Texture of the coarse carbon strokes against the rough white plaster is revealed in sharp detail."
+      ],
+      "continuity": [
+        "Follows scene 01, focusing directly on the workman's inscription discovered in the house on Via del Vasuvio.",
+        "Consistent charcoal dust texture and ancient wall surface."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Charcoal fades within weeks in the open air.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide shot",
+      "composition": "Static wide cinematic shot capturing a darkened subterranean room being excavated, with archaeological tools resting near the wall.",
+      "lighting": "Muted ochres and ash grays with a single stark shaft of harsh daylight piercing from above.",
+      "action_beats": [
+        "Dust settles quietly in the undisturbed subterranean air.",
+        "Subtle shift in atmospheric haze highlights the fragility of the open-air environment."
+      ],
+      "continuity": [
+        "Follows the close-up of the charcoal inscription, showing the wider context of the exposed room.",
+        "Maintains ash grays and muted ochre color palette."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "This had survived because it was sealed almost immediately.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot",
+      "composition": "Medium shot with a slight upward tilt, focusing on a partially intact protective partition sealing the ancient layer.",
+      "lighting": "Soft ambient natural light bouncing off terracotta debris and damp earth.",
+      "action_beats": [
+        "Camera tilts up slowly to reveal the thick volcanic ash layer that preserved the wall below.",
+        "Pumice stones and hardened ash form a protective geological barrier."
+      ],
+      "continuity": [
+        "Maintains the excavation site setting from previous scenes.",
+        "Shows the physical barrier that prevented the charcoal writing from fading."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "It was a date, the 16th day before the calendars of November,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Low angle shot",
+      "composition": "Dramatic low angle shot looking up at the high plastered wall where the inscription is positioned.",
+      "lighting": "High-contrast chiaroscuro lighting, deep terracotta reds and charcoal blacks dominating the shadows.",
+      "action_beats": [
+        "Camera holds steady at a dramatic low angle emphasizing the monumental weight of the history.",
+        "Light rakes sharply across the carved and plastered surface, highlighting the Roman calendar date."
+      ],
+      "continuity": [
+        "Directly references the date inscription mentioned in the narration.",
+        "Maintains the dramatic chiaroscuro lighting language."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the 17th of October.\nSomebody wrote that on a wall in a house that was still",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot",
+      "composition": "Eye-level medium shot with a shallow depth of field, framing the detailed texture of the ancient Roman plaster wall.",
+      "lighting": "Soft, warm directional light accentuating the microscopic fissures in the fresco plaster.",
+      "action_beats": [
+        "Camera remains stable, focusing on the specific section of the wall where the hand wrote the date months before the disaster.",
+        "Subtle interplay of light and shadow across the crumbling surface."
+      ],
+      "continuity": [
+        "Seamless continuation from the date inscription discussion in scene 05.",
+        "Consistent shallow depth of field and warm subterranean candlelight hues."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "being renovated. And then the mountain came down on top of it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Wide aerial establishing shot sweeping over the vast, ruined expanse of Pompeii with Mount Vesuvius looming in the background.",
+      "lighting": "Golden hour sunset lighting casting long shadows across the ancient stone ruins and volcanic slopes.",
+      "action_beats": [
+        "Camera slowly tracks across the ancient villa rooftops towards the distant looming silhouette of Vesuvius.",
+        "Atmospheric haze rolls gently over the ancient ruins."
+      ],
+      "continuity": [
+        "Transitions from the micro-level wall inscription to the macro-level destruction of the mountain.",
+        "Consistent golden hour hues and ash-gray mountain tones."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "It fits everything else.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Close-up",
+      "composition": "Intimate close-up static shot of a weathered bronze and terracotta brazier artifact recovered from the ruins.",
+      "lighting": "Warm indoor museum-style lighting casting soft, deep amber reflections off the polished terracotta.",
+      "action_beats": [
+        "Camera holds a steady, quiet framing on the artifact, emphasizing its material reality.",
+        "Fine ash dust particles rest undisturbed in the crevices of the metal."
+      ],
+      "continuity": [
+        "Connects the historical narrative to physical surviving artifacts like heating braziers.",
+        "Maintains polished terracotta texture and warm lighting."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The brazers found in the houses set up for heating in a city where August",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide shot",
+      "composition": "Slow zoom out to a wide cinematic shot of a excavated atrium surrounded by peristyle columns.",
+      "lighting": "Epic directional sunlight cutting through the unroofed ancient rooms, creating striking contrast.",
+      "action_beats": [
+        "Camera slowly zooms out from the central heating brazier to reveal the grand scale of the excavated domus.",
+        "Dust swirls in the expansive air columns of the ancient atrium."
+      ],
+      "continuity": [
+        "Follows the mention of braziers used in houses during unseasonably cold autumn weather.",
+        "Consistent historical reconstruction aesthetic and 35mm film grain."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "afternoons run to 35°.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide shot",
+      "composition": "Slow zoom in starting wide on the sun-baked streets and terracotta tile roofs of the ancient ruined city.",
+      "lighting": "Intense, blinding natural Mediterranean sunlight simulating a scorching August afternoon.",
+      "action_beats": [
+        "Camera slowly zooms in towards the heat-shimmering stone pavement of an ancient Roman street.",
+        "Atmospheric heat haze creates a subtle distortion over the ancient masonry."
+      ],
+      "continuity": [
+        "Concludes the sequence by contrasting the sudden October chill with the memory of intense summer heat.",
+        "Maintains the overarching photorealistic cinematic documentary style."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "The heavier clothing on the bodies,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot",
+      "composition": "Gentle pan right across a rustic wooden table displaying heavy woolen tunics and coarse cloaks.",
+      "lighting": "Warm golden hour illumination casting soft shadows across the thick fabric folds.",
+      "action_beats": [
+        "Camera pans slowly from left to right across neatly folded autumn garments.",
+        "Dust motes drift lazily through the volumetric light rays touching the heavy woolen textures."
+      ],
+      "continuity": [
+        "Transitions from the summer heat to evidence of seasonal clothing shifts.",
+        "Maintains 35mm film grain and historical documentary aesthetic."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "the pomegranates and the walnuts and the chestnuts in the storooms,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Close-up",
+      "composition": "Slow push in on a weathered wooden storage crate filled with dried fruits and nuts.",
+      "lighting": "Subterranean candlelight mixed with soft side light highlighting the rough textures.",
+      "action_beats": [
+        "Camera slowly pushes in on clusters of ripe pomegranates, shelled walnuts, and dark chestnuts.",
+        "A faint shadow shifts across the produce as ambient air currents move."
+      ],
+      "continuity": [
+        "Follows the visual theme of seasonal provisions found in excavated storerooms.",
+        "Consistent warm terracotta and ochre color palette."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "which are October food,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide shot",
+      "composition": "Static wide shot of a deep storage cellar lined with earthenware amphorae in neat rows.",
+      "lighting": "Atmospheric, low-key lighting with dim ambient sources reflecting off clay surfaces.",
+      "action_beats": [
+        "Camera remains static, framing the quiet geometry of ancient storage jars stacked against stone walls.",
+        "A subtle play of light emphasizes the rough-hewn mortar of the cellar architecture."
+      ],
+      "continuity": [
+        "Connects directly to the October food stores mentioned in the narration.",
+        "Preserves the charcoal blacks and muted ochres of the underground space."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "the wine that had already been pressed and sealed into jars,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot",
+      "composition": "Slight tilt up from the base of a large terracotta amphora, sealed with resin and clay.",
+      "lighting": "Soft ambient light filtering down from a high cellar vent, illuminating dust in the air.",
+      "action_beats": [
+        "Camera executes a slight upward tilt focusing on the preserved seal of a wine jar.",
+        "The ancient resin mark on the amphora lip catches a stray beam of light."
+      ],
+      "continuity": [
+        "Follows the depiction of harvested wine sealed into jars post-harvest.",
+        "Maintains the consistent 35mm film grain and texture of ancient pottery."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "which happens after the harvest and never before it.\nA coin found in the house",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Low angle macro shot",
+      "composition": "Dramatic low angle macro shot focusing on an ancient Roman coin resting on a stone slab.",
+      "lighting": "High-contrast chiaroscuro lighting casting sharp highlights along the embossed metal edges.",
+      "action_beats": [
+        "Camera holds steady on the weathered coin as fine ash particles settle around it.",
+        "Light glints off the metallic relief details of the imperial engraving."
+      ],
+      "continuity": [
+        "Brings together the harvest timeline and the archaeological artifact discovery.",
+        "Adheres strictly to the close-up macro standards of historical documentary style."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "of the golden bracelet carries a title that the emperor Titus took up in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot",
+      "composition": "Eye-level medium shot framing an ornate golden bracelet resting on an ash-covered marble table.",
+      "lighting": "Soft focus natural indoor lighting with a gentle warm key source from the side.",
+      "action_beats": [
+        "Camera maintains steady focus on the intricate craftsmanship of the golden bracelet.",
+        "A thin layer of volcanic ash lightly dusts the polished metal surface."
+      ],
+      "continuity": [
+        "Ties the coin evidence directly to the house of the golden bracelet discovery.",
+        "Maintains smooth photographic depth of field and color grading."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "second half of September 79. It was in circulation before the ash fell.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Wide aerial establishing view looking down over the vast excavated ruins of the ancient city.",
+      "lighting": "Warm, long shadows cast by a low late-September sunset across stone foundations.",
+      "action_beats": [
+        "Camera slowly drifts over the grid of ancient streets and unroofed stone villas.",
+        "The last rays of daylight sweep across the terracotta roofs and fallen masonry."
+      ],
+      "continuity": [
+        "Brings in the chronological timestamp of late September 79 AD.",
+        "Consistent with previous architectural wide views and lighting language."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_18",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "So the eruption almost certainly happened in late October,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Close-up",
+      "composition": "Intimate close-up, static framing of a Roman oil lamp unlit on a stone console.",
+      "lighting": "Warm indoor lighting with deep shadow falloff in the immediate background.",
+      "action_beats": [
+        "Camera holds on the ceramic wick-hole of the ancient lamp.",
+        "A faint glimmer of dust catches the edge of the frame in the still air."
+      ],
+      "continuity": [
+        "Transitions logically to the conclusion regarding the eruption timing in late October.",
+        "Maintains documentary texture and intimate artifact focus."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_19",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "most likely on the 24th,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide shot",
+      "composition": "Slow zoom out to a wide cinematic framing of the excavated forum against a hazy horizon.",
+      "lighting": "Epic, moody directional sunlight breaking through lingering volcanic haze.",
+      "action_beats": [
+        "Camera slowly pulls back from a cluster of fallen columns to reveal the wider archaeological site.",
+        "Volcanic dust swirls subtly across the desolate stone plaza."
+      ],
+      "continuity": [
+        "Points specifically to the hypothesized date of October 24th.",
+        "Maintains historical reconstruction style and color palette."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_20",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "2 months after the date that every one of us was taught.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide shot",
+      "composition": "Slow zoom in, starting wide on the panoramic expanse of the ruined city under a gray sky.",
+      "lighting": "Diffused natural daylight simulating an overcast, ash-laden morning atmosphere.",
+      "action_beats": [
+        "Camera slowly pushes forward toward the central ruins, emphasizing the monumental scale of history.",
+        "The horizon blurs gently into the heavy atmospheric haze."
+      ],
+      "continuity": [
+        "Concludes the documentary sequence by contrasting historical truth with conventional teachings.",
+        "Consistent visual grammar, film grain, and environmental tone."
+      ],
+      "negative_prompt": "visible narrator, modern elements, cartoon, illustration, low resolution, oversaturated colors, plastic skin",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

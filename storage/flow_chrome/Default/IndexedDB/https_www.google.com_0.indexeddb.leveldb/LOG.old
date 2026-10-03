@@ -1,0 +1,13 @@
+2026/10/02-09:16:29.538 2b04 Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_www.google.com_0.indexeddb.leveldb/MANIFEST-000001
+2026/10/02-09:16:29.538 2b04 Recovering log #7
+2026/10/02-09:16:29.539 2b04 Reusing old log D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_www.google.com_0.indexeddb.leveldb/000007.log 
+2026/10/02-09:16:29.544 145c Level-0 table #11: started
+2026/10/02-09:16:29.550 145c Level-0 table #11: 1410 bytes OK
+2026/10/02-09:16:29.551 145c Delete type=0 #7
+2026/10/02-09:16:29.551 145c Manual compaction at level-0 from '\x00\x06\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at '\x00\x06\x00\x00\x05' @ 210 : 1
+2026/10/02-09:16:29.551 145c Compacting 1@0 + 1@1 files
+2026/10/02-09:16:29.556 145c Generated table #12@0: 58 keys, 1571 bytes
+2026/10/02-09:16:29.556 145c Compacted 1@0 + 1@1 files => 1571 bytes
+2026/10/02-09:16:29.557 145c compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/10/02-09:16:29.557 145c Delete type=2 #11
+2026/10/02-09:16:29.557 145c Manual compaction at level-0 from '\x00\x06\x00\x00\x05' @ 210 : 1 .. '\x00\x07\x00\x00\x00' @ 0 : 0; will stop at (end)

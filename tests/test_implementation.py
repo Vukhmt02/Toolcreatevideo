@@ -138,7 +138,7 @@ def test_fastapi_endpoints():
     status_data = res.json()
     print("Status:", status_data)
     assert "imagen_api" in status_data
-    assert "omnivoice_api" in status_data
+    assert "elevenlabs_api" in status_data
     assert "ffmpeg_ready" in status_data
 
     # 2. /api/project/create

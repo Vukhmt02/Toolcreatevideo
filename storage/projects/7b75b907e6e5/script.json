@@ -1,0 +1,679 @@
+{
+  "title": "Kịch bản video",
+  "settings": {
+    "default_language": "vi",
+    "aspect_ratio": "16:9",
+    "resolution": "720p"
+  },
+  "visual_bible": {
+    "style": "Photorealistic cinematic documentary style with moody historical reconstruction, highly detailed textures, depth of field, 4k resolution",
+    "color_palette": "Earthy tones, muted ochres, Pompeian reds, charcoal blacks, warm golden hour highlights, ash grey",
+    "lighting_language": "Chiaroscuro lighting, dramatic directional sunlight, warm indoor fireglow, soft volumetric dust beams in archaeological sites",
+    "camera_language": "Cinematic framing, subtle slow tracking shots, intimate macro details, establishing wide angles for historical atmosphere",
+    "texture": "Rough stone, ancient frescoes, crumbling plaster, coarse woven fabrics, volcanic ash, charred wood",
+    "global_negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality, distorted anatomy, oversaturated colors"
+  },
+  "characters": [
+    {
+      "id": "char_narrator",
+      "name": "Người dẫn chuyện",
+      "description": "Narrator, calm and clear voice, Vietnamese storyteller",
+      "voice_ref": "",
+      "voice_gender": "male",
+      "reference_images": [],
+      "appearance_signature": "Voice-only entity, no physical on-screen presence",
+      "wardrobe": "None",
+      "identity_markers": [
+        "Voiceover only"
+      ],
+      "consistency_rules": [
+        "Never depict a visible narrator on screen",
+        "Maintain voice continuity"
+      ]
+    }
+  ],
+  "scenes": [
+    {
+      "id": "scene_01",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "In October 2018, in a house on the Via del Vasuvio that was being excavated for the first time,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium cinematic shot",
+      "composition": "Framed inside the excavated ruins of a Pompeian room on Via del Vasuvio, gentle pan right revealing ancient stone walls with traces of faded frescoes",
+      "lighting": "Warm golden hour sunlight slanting through a makeshift protective overhead canopy, casting soft volumetric dust beams",
+      "action_beats": [
+        "Camera pans slowly across the freshly uncovered archaeological site",
+        "Dust motes drift lazily in the warm slanting sunlight",
+        "Texture of crumbling ancient plaster is highlighted in mid-ground"
+      ],
+      "continuity": [
+        "Established October 2018 excavation site with authentic historical textures and dusty atmosphere"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_02",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "a workman had written a line in charcoal on a wall.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Close-up cinematic shot",
+      "composition": "Tight macro framing on a rough, ancient plaster wall surface, slow push in toward faint dark smudges",
+      "lighting": "Dramatic directional side-lighting emphasizing the coarse texture of volcanic ash and crumbling wall surface",
+      "action_beats": [
+        "Camera pushes slowly in toward a faint charcoal inscription on the wall",
+        "Lighting accentuates the gritty, uneven surface of the ancient plaster",
+        "Details of mineral deposits and micro-cracks become prominent"
+      ],
+      "continuity": [
+        "Maintains the Via del Vasuvio excavation setting with close attention to the charcoal writing mentioned in narration"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_03",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "Charcoal fades within weeks in the open air.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide cinematic shot",
+      "composition": "Wide shot of an open-air archaeological sector under a protective awning, static camera framing crumbling walls against the open sky",
+      "lighting": "Harsh daylight diffusing into soft ambient illumination across the ancient stones",
+      "action_beats": [
+        "Camera remains static as subtle air currents sweep through the open-air ruin",
+        "Background shows distant excavated streets of Pompeii under hazy daylight"
+      ],
+      "continuity": [
+        "Continues the archaeological site atmosphere, emphasizing exposure to open air"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_04",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "This had survived because it was sealed almost immediately.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot",
+      "composition": "Medium framing of a newly exposed wall section showing a distinct protective layer of fine volcanic ash sealing the surface, slight tilt up",
+      "lighting": "Soft ambient daylight mixed with warm reflected tones from surrounding terracotta tiles",
+      "action_beats": [
+        "Camera tilts slightly up from a sealed section of masonry to undisturbed strata",
+        "Highlights the protective crust of grey ash that preserved the underlying details"
+      ],
+      "continuity": [
+        "Follows the previous wide shot of the excavation, focusing on the preservation mechanism"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_05",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "It was a date, the 16th day before the calendars of November,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "Low angle looking up at an ancient Roman wall inscription, emphasizing the historical weight of the engraved or written characters",
+      "lighting": "Contrasted chiaroscuro lighting with deep charcoal shadows and sharp highlights on the text",
+      "action_beats": [
+        "Camera holds a steady low angle framing the ancient date written on the plaster",
+        "Shadows shift slightly as ambient light filters through overhead scaffolding"
+      ],
+      "continuity": [
+        "Focuses directly on the specific date inscription referenced in the narration"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_06",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "the 17th of October.\nSomebody wrote that on a wall in a house that was still",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "Medium shot of unfinished architectural details in a Roman domus, showing bare brickwork and unpainted wall panels",
+      "lighting": "Soft natural daylight filtering through an unroofed atrium, creating gentle gradients on the stone",
+      "action_beats": [
+        "Camera holds steady on a wall undergoing active renovation in antiquity",
+        "Visual elements showcase unfinished fresco borders and stacked construction materials"
+      ],
+      "continuity": [
+        "Represents the house still being renovated prior to the disaster"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_07",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "being renovated. And then the mountain came down on top of it.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "High-angle cinematic panoramic shot looking down over the sprawling ruins of Pompeii toward the massive silhouette of Mount Vesuvius",
+      "lighting": "Dramatic sunset lighting casting long shadows across the ancient rooftops and volcanic slopes",
+      "action_beats": [
+        "Camera slowly descends over the ancient city layout",
+        "Mount Vesuvius looms menacingly in the background under an ash-tinged sky"
+      ],
+      "continuity": [
+        "Connects the interior renovation scene to the impending cataclysmic eruption of the mountain"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_08",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "It fits everything else.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Intimate close-up",
+      "composition": "Static close-up on an ornate bronze brazier resting on a mosaic floor inside a darkened room",
+      "lighting": "Warm, flickering indoor fireglow casting dancing amber highlights on the bronze metalwork",
+      "action_beats": [
+        "Camera remains static, capturing the intricate metal details of the heating brazier",
+        "Subtle warm light pulses gently as if from glowing coals inside the vessel"
+      ],
+      "continuity": [
+        "Transitions from the mountain overview to the domestic interior details matching the narration"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_09",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "The brazers found in the houses set up for heating in a city where August",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Epic wide shot of a complete Pompeian atrium interior, slow zoom out revealing columns, impluvium, and domestic hearth elements",
+      "lighting": "Epic cinematic lighting with strong directional sunbeams cutting through atmospheric indoor dust",
+      "action_beats": [
+        "Camera slowly zooms out from the central hearth area to encompass the grand room",
+        "Emphasizes the scale and setup of the ancient urban residence designed for seasonal climate shifts"
+      ],
+      "continuity": [
+        "Builds upon the presence of the brazier from the previous shot within the larger house context"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_10",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "afternoons run to 35°.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Cinematic establishing shot",
+      "composition": "Wide establishing shot of an ancient Roman street bathed in intense, shimmering summer daylight, slow zoom in toward shaded porticoes",
+      "lighting": "Harsh, high-contrast midday sunlight creating intense glare and deep, cool shadows under colonnades",
+      "action_beats": [
+        "Camera slowly zooms in from a sun-drenched street corner toward the cool shelter of a house interior",
+        "Heat haze subtly distorts the distant horizon over the ancient masonry"
+      ],
+      "continuity": [
+        "Concludes the sequence by contrasting the historical heating devices with the sweltering August climate mentioned in the narration"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_11",
+      "setting": "Medium cinematic shot, warm golden lighting, photorealistic 4k",
+      "camera": "Medium shot, gentle pan right",
+      "dialogues": [],
+      "narration": {
+        "text": "The heavier clothing on the bodies,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium cinematic shot, gentle pan right",
+      "composition": "Medium shot framing heavy woolen Roman tunics and cloaks neatly folded on an ancient wooden bench",
+      "lighting": "Warm golden hour light filtering through a rustic lattice window, highlighting the dense texture of the woven fabric",
+      "action_beats": [
+        "Camera gently pans right across the layers of heavy, cold-weather garments",
+        "Subtle dust motes drift lazily in the warm sunbeam across the coarse wool"
+      ],
+      "continuity": [
+        "Maintains the warm tonal palette from preceding scenes while introducing heavier historical garments"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_12",
+      "setting": "Close-up cinematic shot, dramatic lighting, photorealistic 4k",
+      "camera": "Close-up, slow push in",
+      "dialogues": [],
+      "narration": {
+        "text": "the pomegranates and the walnuts and the chestnuts in the storooms,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Close-up, slow push in",
+      "composition": "Macro close-up of harvested autumn produce including dried pomegranates, cracked walnuts, and chestnuts arranged on a dark slate shelf",
+      "lighting": "Dramatic chiaroscuro side-lighting emphasizing the rough textures of shells and leathery fruit skins",
+      "action_beats": [
+        "Camera slowly pushes in closer to the seasonal provisions",
+        "Details of autumn harvest staples are crisp and sharply focused against a dark, moody background"
+      ],
+      "continuity": [
+        "Follows the shift toward autumnal indicators mentioned in narration"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_13",
+      "setting": "Wide cinematic shot, atmospheric lighting, photorealistic 4k",
+      "camera": "Wide shot, static",
+      "dialogues": [],
+      "narration": {
+        "text": "which are October food,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Wide shot, static",
+      "composition": "Wide composition of a rustic Pompeian storeroom dimly lit, filled with clay storage vessels and baskets of late-season produce",
+      "lighting": "Atmospheric, muted lighting with a single directional shaft cutting across rows of pottery",
+      "action_beats": [
+        "Static camera holds on the quiet, shadowy interior of the ancient pantry",
+        "Evokes the feeling of stored provisions waiting unused in the cool room"
+      ],
+      "continuity": [
+        "Expands the context of the food items shown in the previous close-up"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_14",
+      "setting": "Cinematic scene, soft ambient lighting, photorealistic 4k",
+      "camera": "Medium shot, slight tilt up",
+      "dialogues": [],
+      "narration": {
+        "text": "the wine that had already been pressed and sealed into jars,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Medium shot, slight tilt up",
+      "composition": "Medium shot of large terracotta amphorae sealed with pitch and clay stoppers, resting in a cool cellar",
+      "lighting": "Soft ambient lighting reflecting off the curved terracotta surfaces",
+      "action_beats": [
+        "Camera performs a slight tilt up along the height of a heavy wine amphora",
+        "Highlights the sealed resin rim indicating the completed post-harvest winemaking process"
+      ],
+      "continuity": [
+        "Maintains the dark, earthy interior atmosphere of the storeroom sequence"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_15",
+      "setting": "Dramatic cinematic shot, contrasted lighting, photorealistic 4k",
+      "camera": "Dramatic low angle shot",
+      "dialogues": [],
+      "narration": {
+        "text": "which happens after the harvest and never before it.\nA coin found in the house",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Dramatic low angle shot",
+      "composition": "Low angle dramatic shot of a small Roman silver coin resting on a cracked stone table, glinting in sharp light",
+      "lighting": "High-contrast, focused spotlight effect emphasizing the metallic relief of the coin",
+      "action_beats": [
+        "Camera holds steady on the ancient coin bearing imperial inscriptions",
+        "Subtle play of light catches the worn edges of the precious metal artifact"
+      ],
+      "continuity": [
+        "Transitions from bulky foodstuffs to the precise chronological evidence of the coin"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_16",
+      "setting": "Emotional close-up, soft focus, natural lighting, photorealistic 4k",
+      "camera": "Eye-level medium shot",
+      "dialogues": [],
+      "narration": {
+        "text": "of the golden bracelet carries a title that the emperor Titus took up in the",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Eye-level medium shot",
+      "composition": "Eye-level medium shot focusing on an ornate golden serpent bracelet resting on a scorched wooden surface",
+      "lighting": "Soft focus background with natural, warm light catching the intricate golden scales",
+      "action_beats": [
+        "Camera maintains a stable, contemplative framing on the treasured ornament",
+        "Gentle flicker of light simulates ambient indoor illumination from an oil lamp"
+      ],
+      "continuity": [
+        "Connects the imperial titling of the coin with the domestic luxury item found nearby"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_17",
+      "setting": "Cinematic panoramic shot, sunset lighting, photorealistic 4k",
+      "camera": "Aerial establishing shot",
+      "dialogues": [],
+      "narration": {
+        "text": "second half of September 79. It was in circulation before the ash fell.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Aerial establishing shot",
+      "composition": "Panoramic aerial view over the ruins of Pompeii as the sun dips below the horizon, bathing the landscape in deep amber",
+      "lighting": "Warm sunset lighting casting long shadows across ancient stone roofs and streets",
+      "action_beats": [
+        "Aerial perspective slowly drifts over the silent, tragic city layout",
+        "Captures the vast scale of the archaeological site under late autumn twilight skies"
+      ],
+      "continuity": [
+        "Establishes the chronological conclusion of September changing into the fateful month"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_18",
+      "setting": "Intimate medium shot, warm indoor lighting, photorealistic 4k",
+      "camera": "Intimate close-up, static",
+      "dialogues": [],
+      "narration": {
+        "text": "So the eruption almost certainly happened in late October,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "filler",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Intimate close-up, static",
+      "composition": "Intimate close-up of a household oil lamp burning low on a stone ledge, surrounded by a thin layer of grey ash",
+      "lighting": "Warm indoor fireglow contrasted with cold ash-grey tones gathering around the base",
+      "action_beats": [
+        "Static intimate shot holding steady on the flickering flame and accumulating debris",
+        "Subtle wisp of smoke drifts away from the wick"
+      ],
+      "continuity": [
+        "Brings the documentary evidence together into a singular, tangible moment of domestic life"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_19",
+      "setting": "Final cinematic shot, epic lighting, photorealistic 4k",
+      "camera": "Slow zoom out to wide shot",
+      "dialogues": [],
+      "narration": {
+        "text": "most likely on the 24th,",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Slow zoom out to wide shot",
+      "composition": "Wide shot of a ruined Pompeian courtyard under an overcast, ash-laden sky, slow zoom out revealing the desolate architecture",
+      "lighting": "Epic cinematic lighting with moody, muted daylight breaking through heavy particulate clouds",
+      "action_beats": [
+        "Camera slowly zooms out from a cracked marble column base to encompass the abandoned courtyard",
+        "Reinforces the exact historical timing of the catastrophic event"
+      ],
+      "continuity": [
+        "Directly echoes the zoom structure of earlier establishing scenes but with somber post-eruption atmosphere"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    },
+    {
+      "id": "scene_20",
+      "setting": "Cinematic establishing shot, natural lighting, photorealistic 4k",
+      "camera": "Slow zoom in, starting wide",
+      "dialogues": [],
+      "narration": {
+        "text": "2 months after the date that every one of us was taught.",
+        "voice": "",
+        "emotion": "calm"
+      },
+      "scene_type": "key",
+      "background_music": "gentle ambient background music",
+      "duration_hint": "8s",
+      "flow_video_path": "",
+      "flow_image_path": "",
+      "generated_media_path": "",
+      "generated_media_type": "",
+      "generated_media_provider": "",
+      "shot_type": "Slow zoom in, starting wide",
+      "composition": "Very wide establishing shot of Mount Vesuvius looming ominously in the distance under heavy grey clouds, slow zoom in toward the peak",
+      "lighting": "Natural, overcast daylight with harsh, dramatic shadows clinging to the volcanic slopes",
+      "action_beats": [
+        "Camera begins in a vast, wide vista and slowly zooms in toward the silent, towering volcano",
+        "Final lingering image challenging conventional historical dogma with material proof"
+      ],
+      "continuity": [
+        "Concludes the documentary sequence by returning the gaze to the ultimate source of destruction"
+      ],
+      "negative_prompt": "visible narrator, modern elements, plastic, neon, cartoon, low quality",
+      "prompt_override": "",
+      "visible_character_ids": []
+    }
+  ]
+}

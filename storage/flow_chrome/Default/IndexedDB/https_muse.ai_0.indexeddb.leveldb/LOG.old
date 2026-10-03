@@ -1,0 +1,27 @@
+2026/10/03-01:08:10.272 a7bc Reusing MANIFEST D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_muse.ai_0.indexeddb.leveldb/MANIFEST-000001
+2026/10/03-01:08:10.273 a7bc Recovering log #400
+2026/10/03-01:08:10.285 a7bc Reusing old log D:\ToolCreateVideo\storage\flow_chrome\Default\IndexedDB\https_muse.ai_0.indexeddb.leveldb/000400.log 
+2026/10/03-01:08:10.285 a7bc Delete type=2 #399
+2026/10/03-01:08:10.285 a7bc Delete type=2 #401
+2026/10/03-01:08:10.299 16b8 Manual compaction at level-0 from '\x00\x9a\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x9b\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/10/03-01:09:37.210 16b8 Level-0 table #405: started
+2026/10/03-01:09:37.217 16b8 Level-0 table #405: 2775300 bytes OK
+2026/10/03-01:09:37.218 16b8 Delete type=0 #400
+2026/10/03-01:09:37.219 a7bc Manual compaction at level-0 from '\x00\x9b\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x9c\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/10/03-01:09:38.937 16b8 Compacting 1@1 + 1@2 files
+2026/10/03-01:09:38.943 16b8 Generated table #406@1: 682 keys, 64435 bytes
+2026/10/03-01:09:38.943 16b8 Compacted 1@1 + 1@2 files => 64435 bytes
+2026/10/03-01:09:38.945 16b8 compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/10/03-01:10:02.689 63d8 Manual compaction at level-0 from '\x00\x9c\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x9d\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/10/03-01:11:43.930 9824 Level-0 table #408: started
+2026/10/03-01:11:43.954 9824 Level-0 table #408: 2882098 bytes OK
+2026/10/03-01:11:43.956 9824 Delete type=2 #402
+2026/10/03-01:11:43.956 9824 Delete type=0 #404
+2026/10/03-01:11:43.956 9824 Delete type=2 #405
+2026/10/03-01:11:43.960 9824 Manual compaction at level-0 from '\x00\x9d\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x9e\x00\x00\x00' @ 0 : 0; will stop at (end)
+2026/10/03-01:11:47.349 16b8 Compacting 1@1 + 1@2 files
+2026/10/03-01:11:47.361 16b8 Generated table #409@1: 710 keys, 67549 bytes
+2026/10/03-01:11:47.361 16b8 Compacted 1@1 + 1@2 files => 67549 bytes
+2026/10/03-01:11:47.362 16b8 compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/10/03-01:11:47.363 16b8 Delete type=2 #406
+2026/10/03-01:11:47.363 16b8 Delete type=2 #408
