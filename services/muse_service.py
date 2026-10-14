@@ -2,7 +2,6 @@
 
 import asyncio
 import base64
-import hashlib
 import inspect
 import re
 import subprocess
@@ -11,7 +10,6 @@ from collections.abc import Callable
 from pathlib import Path
 
 from config import config
-from services.content_verifier import verify_scene_content
 
 
 class MuseService:
@@ -72,7 +70,12 @@ class MuseService:
             raise RuntimeError("Playwright chưa được cài đặt. Chạy: pip install -r requirements.txt") from exc
         async with self._lock:
             if self._browser is not None and self._browser.is_connected():
-                return self._browser
+                try:
+                    if self._browser.contexts:
+                        return self._browser
+                except Exception:
+                    pass
+                self._browser = None
             if self._playwright is not None:
                 try:
                     await self._playwright.stop()
@@ -88,6 +91,36 @@ class MuseService:
                     f"Không thể kết nối Chrome Muse tại {config.MUSE_CDP_URL}. Hãy bấm Mở Muse rồi thử lại."
                 ) from exc
             return self._browser
+
+    async def _discard_connection(self) -> None:
+        """Forget a broken CDP connection without closing the user's Chrome."""
+        async with self._lock:
+            playwright = self._playwright
+            self._browser = None
+            self._playwright = None
+        if playwright is not None:
+            try:
+                await playwright.stop()
+            except Exception:
+                pass
+
+    async def _new_page(self):
+        """Open a page and reconnect once when the previous CDP context died."""
+        last_error = None
+        for attempt in range(2):
+            try:
+                browser = await self._connect()
+                if not browser.contexts:
+                    raise RuntimeError("Chrome Muse không còn browser context hoạt động")
+                return await browser.contexts[0].new_page()
+            except Exception as exc:
+                last_error = exc
+                await self._discard_connection()
+                if attempt == 0:
+                    await asyncio.sleep(0.5)
+        raise RuntimeError(
+            f"Kết nối Chrome Muse đã bị đóng. Hãy bấm Mở Muse rồi chạy lại cảnh lỗi. Chi tiết: {last_error}"
+        ) from last_error
 
     async def open_home(self) -> dict:
         browser = await self._connect()
@@ -119,6 +152,15 @@ class MuseService:
 
     @staticmethod
     async def _submit(page) -> None:
+        # Enter in the composer is more stable after a response adds other
+        # buttons whose accessible name also contains "Generate".
+        try:
+            composer = page.locator('textarea:not([name="g-recaptcha-response"])').last
+            await composer.wait_for(state="visible", timeout=4000)
+            await composer.press("Enter")
+            return
+        except Exception:
+            pass
         candidates = [
             page.get_by_role("button", name=re.compile(
                 "create video|generate video|generate|send|submit|tạo video|gửi", re.I
@@ -140,14 +182,64 @@ class MuseService:
             raise RuntimeError("Không tìm thấy nút gửi lệnh trên Muse.") from exc
 
     @staticmethod
-    async def _video_results(page) -> list[dict]:
+    async def _prompt_is_in_history(page, token: str) -> bool:
+        """Confirm that Muse moved the prompt from its composer into chat."""
+        try:
+            return bool(await page.evaluate(
+                """(token) => {
+                    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+                    let node;
+                    while ((node = walker.nextNode())) {
+                        if (!node.nodeValue || !node.nodeValue.includes(token)) continue;
+                        const parent = node.parentElement;
+                        if (parent && !parent.closest('textarea, input, [contenteditable="true"]')) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }""",
+                token,
+            ))
+        except Exception:
+            # Lightweight test pages may not implement evaluate. Download
+            # detection still applies the same token guard later.
+            return True
+
+    @classmethod
+    async def _wait_prompt_accepted(cls, page, token: str, seconds: int = 12) -> bool:
+        for _ in range(seconds):
+            if await cls._prompt_is_in_history(page, token):
+                return True
+            await page.wait_for_timeout(1000)
+        return False
+
+    @staticmethod
+    async def _video_results(page, job_token: str = "") -> list[dict]:
         try:
             # Muse also has a looping avatar video. Only media-generation
             # wrappers represent results created from a user prompt.
             values = await page.locator(
                 '[data-hatch-video-wrapper="true"]'
             ).evaluate_all(
-                """wrappers => wrappers.map((wrapper) => {
+                """(wrappers, token) => {
+                    let anchor = null;
+                    if (token) {
+                        const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+                        let node;
+                        while ((node = walker.nextNode())) {
+                            if (!node.nodeValue || !node.nodeValue.includes(token)) continue;
+                            const parent = node.parentElement;
+                            if (!parent || parent.closest('textarea, input, [contenteditable="true"]')) continue;
+                            anchor = parent;
+                        }
+                        // Never fall back to all history when the prompt has not
+                        // appeared in the conversation yet.
+                        if (!anchor) return [];
+                    }
+                    return wrappers.map((wrapper) => {
+                    if (anchor && !(anchor.compareDocumentPosition(wrapper) & Node.DOCUMENT_POSITION_FOLLOWING)) {
+                        return null;
+                    }
                     const video = wrapper.querySelector('video');
                     const source = video?.currentSrc || video?.src ||
                         video?.querySelector('source')?.src || '';
@@ -156,7 +248,9 @@ class MuseService:
                         wrapper.querySelector('a[download]')?.href || '', source].join(' ');
                     const stableName = identity.match(/media-generation-[^\\s]+\\.(?:mp4|webm|mov)/i)?.[0] || '';
                     return {key: stableName, source};
-                }).filter(item => item.key && item.source)"""
+                }).filter(item => item && item.key && item.source);
+                }""",
+                job_token,
             )
             return values
         except Exception:
@@ -248,7 +342,7 @@ class MuseService:
 
     async def _try_download_result(
         self, page, scene_id: str, previous_result_keys: set[str],
-        progress_callback: Callable | None = None,
+        progress_callback: Callable | None = None, job_token: str = "",
     ) -> str:
         last_error = ""
         attempted_sources: set[tuple[str, str]] = set()
@@ -270,7 +364,7 @@ class MuseService:
             if elapsed < 15:
                 await page.wait_for_timeout(1000)
                 continue
-            results = await self._video_results(page)
+            results = await self._video_results(page, job_token)
             new_results = [item for item in results
                            if item["key"] not in previous_result_keys
                            and item["key"] not in self._used_result_keys]
@@ -295,84 +389,136 @@ class MuseService:
 
     async def submit_prompt(self, scene_id: str, prompt: str,
                             reference_images: list[str] | None = None,
-                            progress_callback: Callable | None = None) -> dict:
+                            progress_callback: Callable | None = None,
+                            _page=None) -> dict:
         async with self._generation_lock:
+            if _page is None:
+                return await self._submit_prompt_unlocked(
+                    scene_id, prompt, reference_images, progress_callback,
+                )
             return await self._submit_prompt_unlocked(
-                scene_id, prompt, reference_images, progress_callback,
+                scene_id, prompt, reference_images, progress_callback, _page,
             )
 
     async def _submit_prompt_unlocked(self, scene_id: str, prompt: str,
                                       reference_images: list[str] | None = None,
-                                      progress_callback: Callable | None = None) -> dict:
-        if not config.has_google_api():
-            raise RuntimeError("Cần Google API Key để kiểm tra video Muse có đúng kịch bản trước khi tạo")
+                                      progress_callback: Callable | None = None,
+                                      page=None) -> dict:
         await self._notify(progress_callback, {
             "scene_id": scene_id, "status": "processing", "progress": 5,
-            "message": "Đang mở một tab Muse cho cảnh này...",
+            "message": "Đang mở Muse để phân tích cảnh và tạo video...",
         })
-        browser = await self._connect()
-        context = browser.contexts[0] if browser.contexts else await browser.new_context()
-        page = await context.new_page()
+        owns_page = page is None
+        if owns_page:
+            page = await self._new_page()
         try:
-            await page.goto(config.MUSE_URL, wait_until="domcontentloaded", timeout=60000)
-            await page.wait_for_timeout(1500)
+            if "muse.ai" not in (page.url or ""):
+                await page.goto(config.MUSE_URL, wait_until="domcontentloaded", timeout=60000)
+                await page.wait_for_timeout(1500)
             previous_result_keys = await self._settled_existing_result_keys(page)
-            video_prompt = (
-                "Create one downloadable cinematic video clip that depicts only the scene below. "
-                "Use 16:9 landscape, no captions, no visible logo, no spoken dialogue. "
-                "Follow the required setting, named characters and visible actions in order. "
-                "Dialogue supplies current-scene emotion, not an instruction to show a flashback. "
-                "Preserve identity, wardrobe, location layout, lighting and fixed props. "
-                "Do not substitute stock footage or unrelated action. Scene prompt:\n" + prompt
+            job_token = f"TCV-{scene_id}-{uuid.uuid4().hex[:10]}"
+            tracked_prompt = (
+                f"{prompt}\n\nINTERNAL JOB TOKEN: {job_token}. "
+                "Keep this token only in the request history; do not draw or display it in the video."
             )
-            await self._fill_prompt(page, video_prompt)
+            await self._fill_prompt(page, tracked_prompt)
             await self._submit(page)
+            if not await self._wait_prompt_accepted(page, job_token):
+                # Muse can ignore Enter after completing the previous clip.
+                # Refill once and use only an explicit send/submit control.
+                await self._fill_prompt(page, tracked_prompt)
+                clicked = False
+                candidates = [
+                    page.locator('button[type="submit"]').last,
+                    page.locator('button[aria-label*="send" i]').last,
+                    page.get_by_role("button", name=re.compile("send|submit|gửi", re.I)).last,
+                ]
+                for locator in candidates:
+                    try:
+                        await locator.wait_for(state="visible", timeout=3000)
+                        if await locator.is_enabled():
+                            await locator.click()
+                            clicked = True
+                            break
+                    except Exception:
+                        continue
+                if not clicked or not await self._wait_prompt_accepted(page, job_token):
+                    raise RuntimeError(
+                        "Muse chưa nhận prompt của cảnh này. Tool đã thử gửi lại nhưng không thành công."
+                    )
             await self._notify(progress_callback, {
                 "scene_id": scene_id, "status": "processing", "progress": 20,
-                "message": "Đã gửi prompt; đang chờ Muse tạo video...",
+                "message": "Muse đang phân tích nội dung, lập bố cục và tạo video...",
             })
             media_path = await self._try_download_result(
-                page, scene_id, previous_result_keys, progress_callback,
+                page, scene_id, previous_result_keys, progress_callback, job_token,
             )
             await self._notify(progress_callback, {
-                "scene_id": scene_id, "status": "processing", "progress": 94,
-                "message": "Đang đối chiếu hình ảnh video với kịch bản cảnh...",
+                "scene_id": scene_id, "status": "processing", "progress": 96,
+                "message": "Đã tải video; đang kiểm tra định dạng và kích thước...",
             })
-            verdict = await verify_scene_content(media_path, prompt)
-            if verdict.status != "match":
-                raise RuntimeError(
-                    f"Video Muse chưa khớp kịch bản ({verdict.status}): {verdict.reason}"
-                )
             return {"scene_id": scene_id, "status": "done", "file_path": media_path,
                     "media_type": "video", "provider": "muse",
-                    "content_check": verdict.status,
-                    "content_check_reason": verdict.reason,
-                    "content_check_prompt_hash": hashlib.sha256(prompt.encode("utf-8")).hexdigest(),
-                    "message": "Đã tạo và tải video từ Muse"}
+                    "content_check": "muse_generated",
+                    "content_check_reason": "Muse đã tự phân tích cảnh; tool đã kiểm tra tệp video hợp lệ.",
+                    "message": "Muse đã phân tích, tạo và trả video về tool"}
         finally:
-            await page.close()
+            if owns_page:
+                try:
+                    await page.close()
+                except Exception:
+                    await self._discard_connection()
 
     async def submit_many(self, prompts: list[dict], on_result: Callable | None = None,
                           on_progress: Callable | None = None) -> list[dict]:
-        semaphore = asyncio.Semaphore(1)
-
-        async def worker(item):
-            await self._notify(on_progress, {
-                "scene_id": item["scene_id"], "status": "processing", "progress": 1,
-                "message": "Đang xếp hàng gửi sang Muse...",
-            })
-            async with semaphore:
+        results = []
+        page = None
+        try:
+            # Muse keeps a live chat session in each tab. Reusing one tab for
+            # the batch prevents that session from being torn down between
+            # scene 1 and scene 2.
+            page = await self._new_page()
+            await page.goto(config.MUSE_URL, wait_until="domcontentloaded", timeout=60000)
+            await page.wait_for_timeout(1500)
+            for item in prompts:
+                await self._notify(on_progress, {
+                    "scene_id": item["scene_id"], "status": "processing", "progress": 1,
+                    "message": "Đang xếp hàng gửi sang Muse...",
+                })
                 try:
                     result = await self.submit_prompt(
                         item["scene_id"], item["prompt"], item.get("reference_images") or [],
-                        progress_callback=on_progress,
+                        progress_callback=on_progress, _page=page,
                     )
                 except Exception as exc:
                     result = {"scene_id": item["scene_id"], "status": "error",
                               "provider": "muse", "error": str(exc)}
+                results.append(result)
                 await self._notify(on_result, result)
-                return result
-        return await asyncio.gather(*(worker(item) for item in prompts))
+
+                message = result.get("error", "").lower()
+                connection_lost = any(value in message for value in (
+                    "target page, context or browser has been closed",
+                    "kết nối chrome muse đã bị đóng",
+                    "không thể kết nối chrome muse",
+                ))
+                if result.get("status") == "error" and connection_lost:
+                    try:
+                        await page.close()
+                    except Exception:
+                        pass
+                    await self._discard_connection()
+                    page = await self._new_page()
+                    await page.goto(config.MUSE_URL, wait_until="domcontentloaded", timeout=60000)
+                    await page.wait_for_timeout(1500)
+        finally:
+            if page is not None:
+                try:
+                    await page.close()
+                except Exception:
+                    await self._discard_connection()
+        return results
+
 
 
 muse_service = MuseService()

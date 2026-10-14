@@ -221,6 +221,10 @@ async function testVoice() {
 // ═══════════════════════════════════════════
 //  Script Tab & File Upload
 // ═══════════════════════════════════════════
+function getSceneDensity() {
+    return document.getElementById('sceneDensity')?.value || 'balanced';
+}
+
 async function handleScriptFileUpload(input) {
     const file = input.files ? input.files[0] : null;
     if (!file) return;
@@ -238,6 +242,7 @@ async function uploadScriptFile(file) {
 
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('scene_density', getSceneDensity());
 
     try {
         const res = await fetch('/api/script/upload', { method: 'POST', body: formData });
@@ -335,6 +340,7 @@ async function formatJson() {
     try {
         const formData = new FormData();
         formData.append('script_text', text);
+        formData.append('scene_density', getSceneDensity());
 
         const res = await fetch('/api/script/format', { method: 'POST', body: formData });
         const data = await res.json();
@@ -428,6 +434,7 @@ async function refineScriptWithAI() {
     try {
         const formData = new FormData();
         formData.append('script_text', text);
+        formData.append('scene_density', getSceneDensity());
 
         const res = await fetch('/api/script/ai-refine', { method: 'POST', body: formData });
         const data = await res.json();
@@ -473,6 +480,7 @@ async function validateScript() {
     try {
         const formData = new FormData();
         formData.append('script_json', scriptJson);
+        formData.append('scene_density', getSceneDensity());
 
         const res = await fetch('/api/script/validate', { method: 'POST', body: formData });
         const data = await res.json();
@@ -521,6 +529,7 @@ async function createProject() {
     try {
         const formData = new FormData();
         formData.append('script_json', scriptJson);
+        formData.append('scene_density', getSceneDensity());
 
         const res = await fetch('/api/project/create', { method: 'POST', body: formData });
         const data = await res.json();
@@ -658,13 +667,12 @@ function renderGenerateSceneCards() {
             const hasMuseVideo = scene.generated_media_provider === 'muse'
                 && scene.generated_media_type === 'video' && scene.generated_media_path;
             const hasMediaError = scene.media_generation_status === 'error';
-            const needsContentCheck = hasMuseVideo && scene.media_content_check_status !== 'match';
-            const cardState = hasMediaError ? 'error' : (hasMuseVideo && !needsContentCheck ? 'done' : '');
-            const badgeState = hasMediaError ? 'error' : (needsContentCheck ? 'pending' : (hasMuseVideo ? 'done' : 'pending'));
-            const badgeText = hasMediaError ? 'Lỗi' : (needsContentCheck ? 'Chưa kiểm tra' : (hasMuseVideo ? 'Hoàn thành' : 'Đang chờ'));
-            const initialProgress = hasMuseVideo && !needsContentCheck && !hasMediaError ? 100 : 0;
+            const cardState = hasMediaError ? 'error' : (hasMuseVideo ? 'done' : '');
+            const badgeState = hasMediaError ? 'error' : (hasMuseVideo ? 'done' : 'pending');
+            const badgeText = hasMediaError ? 'Lỗi' : (hasMuseVideo ? 'Hoàn thành' : 'Đang chờ');
+            const initialProgress = hasMuseVideo && !hasMediaError ? 100 : 0;
             const initialMessage = hasMediaError ? scene.media_generation_error
-                : (needsContentCheck ? 'Video cũ cần đối chiếu với kịch bản' : (hasMuseVideo ? 'Đã kiểm tra nội dung video Muse' : 'Sẵn sàng'));
+                : (hasMuseVideo ? 'Muse đã phân tích và tạo video' : 'Sẵn sàng');
             const mediaUrl = `/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(scene.id)}/media`;
 
             return `
@@ -731,7 +739,8 @@ function renderGenerateSceneCards() {
                     <span class="scene-badge pending" id="badge-final">Đang chờ</span>
                 </div>
                 <div style="margin:10px 0 4px">
-                    <button type="button" class="btn btn-primary btn-sm" onclick="startGeneration()">▶ Tạo giọng & ghép timeline ngay</button>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="startGeneration(true)">🎙️ Ghép timeline có giọng</button>
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="startGeneration(false)">🔇 Ghép timeline không tạo giọng</button>
                 </div>
                 <div class="progress-container">
                     <div class="progress-bar">
@@ -777,7 +786,8 @@ async function toggleScenePrompt(sceneId) {
         const data = await response.json();
         if (!response.ok) throw new Error(data.detail || 'Không tải được prompt');
         editor.value = data.override || '';
-        document.getElementById(`prompt-preview-${sceneId}`).textContent = data.prompt;
+        document.getElementById(`prompt-preview-${sceneId}`).textContent =
+            `${data.prompt}\n\n===== LỆNH MUSE TỰ PHÂN TÍCH VÀ TẠO VIDEO =====\n\n${data.muse_prompt || ''}`;
         editor.dataset.loaded = 'true';
     } catch (error) {
         showToast(error.message, 'error');
@@ -801,7 +811,8 @@ async function saveScenePrompt(sceneId) {
         const previewResponse = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(sceneId)}/prompt`);
         if (previewResponse.ok) {
             const preview = await previewResponse.json();
-            document.getElementById(`prompt-preview-${sceneId}`).textContent = preview.prompt;
+            document.getElementById(`prompt-preview-${sceneId}`).textContent =
+                `${preview.prompt}\n\n===== LỆNH MUSE TỰ PHÂN TÍCH VÀ TẠO VIDEO =====\n\n${preview.muse_prompt || ''}`;
         }
         showToast(`Đã lưu prompt riêng cho ${sceneId}.`, 'success');
     } catch (error) {
@@ -1121,15 +1132,49 @@ async function handleFileUpload(charId, type, input) {
 // ═══════════════════════════════════════════
 //  Generate Tab
 // ═══════════════════════════════════════════
-async function startGeneration() {
+function updateGenerationControls(status = 'created') {
+    const generate = document.getElementById('btnGenerate');
+    const generateNoVoice = document.getElementById('btnGenerateNoVoice');
+    const pause = document.getElementById('btnPauseGeneration');
+    const resume = document.getElementById('btnResumeGeneration');
+    if (!generate || !generateNoVoice || !pause || !resume) return;
+
+    const isRunning = status === 'generating';
+    const isQueued = status === 'queued';
+    const isStopping = status === 'stopping';
+    const canResume = ['paused', 'paused_error', 'error', 'partial'].includes(status);
+
+    generate.disabled = isQueued || isRunning || isStopping;
+    generateNoVoice.disabled = isQueued || isRunning || isStopping;
+    generate.innerHTML = isQueued
+        ? '<span class="spinner"></span> Đang chờ hàng đợi...'
+        : (isRunning || isStopping)
+        ? '<span class="spinner"></span> Đang tạo video...'
+        : '🎙️ Tạo video có giọng';
+    generateNoVoice.innerHTML = isQueued
+        ? '<span class="spinner"></span> Đang chờ...'
+        : (isRunning || isStopping)
+        ? '<span class="spinner"></span> Đang xử lý...'
+        : '🔇 Tạo video không giọng';
+
+    pause.style.display = isQueued || isRunning || isStopping ? '' : 'none';
+    pause.disabled = isStopping;
+    pause.innerHTML = isStopping
+        ? '<span class="spinner"></span> Đang dừng...'
+        : '⏸ Dừng sau cảnh hiện tại';
+
+    resume.style.display = canResume ? '' : 'none';
+    resume.disabled = false;
+    resume.innerHTML = '▶ Tiếp tục tác vụ';
+}
+
+async function startGeneration(withVoice = true) {
     if (!currentProjectId) {
         showToast('Chưa có project', 'error');
         return;
     }
 
-    const btn = document.getElementById('btnGenerate');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Đang tạo video...';
+    updateGenerationControls('generating');
 
     // Setup WebSocket before starting so the first progress events are not lost.
     await connectWebSocket();
@@ -1142,15 +1187,70 @@ async function startGeneration() {
 
     // Start generation
     try {
-        const res = await fetch(`/api/project/${currentProjectId}/generate`, { method: 'POST' });
+        const res = await fetch(
+            `/api/project/${currentProjectId}/generate?with_voice=${withVoice ? 'true' : 'false'}`,
+            { method: 'POST' },
+        );
         const data = await res.json();
         if (!res.ok) throw new Error(data.detail || data.message || `HTTP ${res.status}`);
+        updateGenerationControls(data.status);
+        if (data.status === 'queued') updateProgress({
+            scene_id: 'final', status: 'queued', progress: 0,
+            message: `Đang chờ trong hàng đợi${data.queue_position ? ` — vị trí ${data.queue_position}` : ''}`,
+        });
         showToast(data.message, 'info');
         startGenerationPolling();
     } catch (e) {
         showToast('Lỗi bắt đầu tạo video: ' + e.message, 'error');
-        btn.disabled = false;
-        btn.innerHTML = '🎬 Bắt đầu tạo Video';
+        updateGenerationControls('error');
+    }
+}
+
+async function pauseGeneration() {
+    if (!currentProjectId) return;
+    const pause = document.getElementById('btnPauseGeneration');
+    if (pause) pause.disabled = true;
+    try {
+        const response = await fetch(
+            `/api/project/${encodeURIComponent(currentProjectId)}/pause`,
+            {method: 'POST'},
+        );
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || data.message || `HTTP ${response.status}`);
+        updateGenerationControls(data.status || 'stopping');
+        showToast(data.message, 'info');
+        startGenerationPolling();
+    } catch (error) {
+        showToast(`Không thể dừng tác vụ: ${error.message}`, 'error');
+        if (pause) pause.disabled = false;
+    }
+}
+
+async function resumeGeneration() {
+    if (!currentProjectId) return;
+    const resume = document.getElementById('btnResumeGeneration');
+    if (resume) {
+        resume.disabled = true;
+        resume.innerHTML = '<span class="spinner"></span> Đang tiếp tục...';
+    }
+    await connectWebSocket();
+    try {
+        const response = await fetch(
+            `/api/project/${encodeURIComponent(currentProjectId)}/resume`,
+            {method: 'POST'},
+        );
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || data.message || `HTTP ${response.status}`);
+        updateGenerationControls(data.status);
+        if (data.status === 'queued') updateProgress({
+            scene_id: 'final', status: 'queued', progress: 0,
+            message: `Đã xếp lại vào hàng đợi${data.queue_position ? ` — vị trí ${data.queue_position}` : ''}`,
+        });
+        showToast(data.message, 'info');
+        startGenerationPolling();
+    } catch (error) {
+        updateGenerationControls('paused_error');
+        showToast(`Không thể tiếp tục tác vụ: ${error.message}`, 'error');
     }
 }
 
@@ -1165,9 +1265,15 @@ async function pollGenerationStatus() {
         const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/status`);
         if (!response.ok) return;
         const data = await response.json();
+        updateGenerationControls(data.status);
         Object.entries(data.scenes_status || {}).forEach(([sceneId, status]) => {
             if (status === 'done') updateProgress({
                 scene_id: sceneId, status: 'done', progress: 100, message: 'Đã hoàn thành',
+            });
+            else if (status === 'error') updateProgress({
+                scene_id: sceneId, status: 'error', progress: 0,
+                message: sceneId === data.active_scene_id && data.last_error
+                    ? data.last_error : 'Cảnh này gặp lỗi. Sửa lỗi rồi bấm Tiếp tục tác vụ.',
             });
         });
         if (data.status === 'done' || data.status === 'partial') {
@@ -1176,17 +1282,25 @@ async function pollGenerationStatus() {
                 scene_id: 'final', status: data.status, progress: 100,
                 message: data.status === 'done' ? 'Video hoàn thành! 🎬' : 'Đã xuất video phần hoàn thành',
             });
-        } else if (data.status === 'error') {
+        } else if (data.status === 'queued') {
+            updateProgress({
+                scene_id: 'final', status: 'queued', progress: 0,
+                message: `Đang chờ trong hàng đợi${data.queue_position ? ` — vị trí ${data.queue_position}` : ''}`,
+            });
+        } else if (data.status === 'paused') {
             stopGenerationPolling();
             updateProgress({
-                scene_id: 'final', status: 'error', progress: 0,
-                message: 'Tạo video thất bại. Kiểm tra cảnh lỗi phía trên.',
+                scene_id: 'final', status: 'paused', progress: 0,
+                message: 'Đã tạm dừng an toàn. Bấm Tiếp tục tác vụ để chạy từ cảnh còn thiếu.',
             });
-            const btn = document.getElementById('btnGenerate');
-            if (btn) {
-                btn.disabled = false;
-                btn.innerHTML = '🎬 Tạo lại Video';
-            }
+        } else if (data.status === 'paused_error' || data.status === 'error') {
+            stopGenerationPolling();
+            updateProgress({
+                scene_id: 'final', status: 'paused_error', progress: 0,
+                message: data.last_error
+                    ? `Đã dừng do lỗi: ${data.last_error}`
+                    : 'Đã dừng do lỗi. Kiểm tra cảnh lỗi rồi bấm Tiếp tục tác vụ.',
+            });
         }
     } catch (_) {
         // Keep polling; a short browser/server disconnect should not become a false error.
@@ -1243,7 +1357,7 @@ function updateProgress(data) {
     if (cardEl) {
         cardEl.className = 'scene-card';
         if (status === 'done' || status === 'partial') cardEl.classList.add('done');
-        else if (status === 'error') cardEl.classList.add('error');
+        else if (status === 'error' || status === 'paused_error') cardEl.classList.add('error');
         else cardEl.classList.add('processing');
     }
 
@@ -1252,9 +1366,18 @@ function updateProgress(data) {
         if (status === 'done' || status === 'partial') {
             badgeEl.classList.add('done');
             badgeEl.textContent = status === 'partial' ? 'Thiếu một số cảnh' : 'Hoàn thành';
-        } else if (status === 'error') {
+        } else if (status === 'error' || status === 'paused_error') {
             badgeEl.classList.add('error');
-            badgeEl.textContent = 'Lỗi';
+            badgeEl.textContent = status === 'paused_error' ? 'Đã dừng do lỗi' : 'Lỗi';
+        } else if (status === 'paused') {
+            badgeEl.classList.add('pending');
+            badgeEl.textContent = 'Đã tạm dừng';
+        } else if (status === 'stopping') {
+            badgeEl.classList.add('processing');
+            badgeEl.textContent = 'Đang dừng';
+        } else if (status === 'queued') {
+            badgeEl.classList.add('pending');
+            badgeEl.textContent = 'Trong hàng đợi';
         } else {
             badgeEl.classList.add('processing');
             badgeEl.textContent = 'Đang xử lý';
@@ -1264,24 +1387,31 @@ function updateProgress(data) {
     // If final scene is done, show result
     if (scene_id === 'final' && (status === 'done' || status === 'partial')) {
         stopGenerationPolling();
-        showResult();
+        showResult(status);
         if (status === 'partial') showToast('Video thiếu một số cảnh; xem trạng thái từng cảnh.', 'error');
+    } else if (scene_id === 'final' && ['paused', 'paused_error', 'error'].includes(status)) {
+        stopGenerationPolling();
+        updateGenerationControls(status);
+    } else if (scene_id === 'final' && status === 'stopping') {
+        updateGenerationControls('stopping');
+    } else if (scene_id === 'final' && status === 'queued') {
+        updateGenerationControls('queued');
     }
 }
 
 // ═══════════════════════════════════════════
 //  Result Tab
 // ═══════════════════════════════════════════
-function showResult() {
-    const btn = document.getElementById('btnGenerate');
-    btn.disabled = false;
-    btn.innerHTML = '🎬 Tạo lại Video';
+function showResult(status = 'done') {
+    updateGenerationControls(status);
 
     document.getElementById('resultContent').innerHTML = `
         <div class="result-container">
             <div class="result-icon">🎬</div>
-            <div class="result-title">Video đã hoàn thành!</div>
-            <div class="result-subtitle">Video của bạn đã được tạo thành công</div>
+            <div class="result-title">${status === 'partial' ? 'Đã có video phần hoàn thành' : 'Video đã hoàn thành!'}</div>
+            <div class="result-subtitle">${status === 'partial'
+                ? 'Bạn có thể tải bản hiện tại hoặc bấm Tiếp tục tác vụ để xử lý cảnh còn thiếu.'
+                : 'Video của bạn đã được tạo thành công'}</div>
             <div class="btn-group" style="justify-content:center">
                 <a href="/api/project/${currentProjectId}/download" class="btn btn-primary" download>
                     📥 Tải Video MP4
@@ -1348,7 +1478,7 @@ function setMuseResultData(item) {
         scene.media_capture_version = 'muse-result-v3';
         scene.media_generation_status = 'done';
         scene.media_generation_error = '';
-        scene.media_content_check_status = item.content_check || '';
+        scene.media_content_check_status = item.content_check || 'muse_generated';
     }
     const preview = document.getElementById(`media-preview-${item.scene_id}`);
     const video = document.getElementById(`media-video-${item.scene_id}`);
@@ -1368,7 +1498,7 @@ function attachMuseResult(item) {
         scene_id: item.scene_id,
         status: 'done',
         progress: 100,
-        message: 'Đã nhận và kiểm tra nội dung video Muse',
+        message: 'Muse đã phân tích, tạo và trả video về tool',
     });
 }
 
@@ -1387,7 +1517,7 @@ async function generateInMuse() {
             progress: 1,
             message: 'Đang xếp hàng gửi sang Muse...',
         }));
-        showToast('Đang mở Muse và tạo video cho các cảnh chưa có video...', 'info');
+        showToast('Đang gửi nội dung để Muse tự phân tích, làm prompt và tạo video...', 'info');
         const response = await fetch(
             `/api/project/${encodeURIComponent(projectId)}/muse-video-generate`,
             { method: 'POST' },
@@ -1415,11 +1545,9 @@ async function generateInMuse() {
         if (failed.length) {
             showToast(`${failed.length} cảnh lỗi trên Muse. ${completed.length} cảnh đã hoàn thành.`, 'error');
         } else if (!results.length) {
-            showToast(`${data.message || 'Tất cả cảnh đã có video.'} Đang tạo giọng và ghép timeline...`, 'success');
-            await startGeneration();
+            showToast(`${data.message || 'Tất cả cảnh đã có video.'} Hãy chọn ghép có giọng hoặc không giọng.`, 'success');
         } else {
-            showToast(`Đã nhận ${completed.length} video từ Muse. Đang tạo giọng và ghép timeline...`, 'success');
-            await startGeneration();
+            showToast(`Đã nhận ${completed.length} video từ Muse. Hãy chọn ghép có giọng hoặc không giọng.`, 'success');
         }
     } catch (error) {
         if (currentProjectId !== projectId) return;
@@ -1449,7 +1577,7 @@ async function retrySceneInMuse(sceneId) {
         scene_id: sceneId,
         status: 'processing',
         progress: 10,
-        message: 'Đang tạo riêng cảnh này bằng Muse...',
+        message: 'Muse đang phân tích và tạo riêng cảnh này...',
     });
     try {
         const response = await fetch(
@@ -1499,6 +1627,7 @@ async function restoreLastProject({force = false} = {}) {
             document.getElementById('generateControls').style.display = 'block';
             updateProjectStats();
             renderGenerateSceneCards();
+            updateGenerationControls(data.status);
             Object.entries(data.scenes_status || {}).forEach(([sceneId, status]) => {
                 updateProgress({
                     scene_id: sceneId,
@@ -1512,7 +1641,25 @@ async function restoreLastProject({force = false} = {}) {
                     scene_id: 'final', status: data.status, progress: 100,
                     message: data.status === 'done' ? 'Video hoàn thành! 🎬' : 'Đã xuất video phần hoàn thành',
                 });
-            } else if (data.status === 'generating') {
+            } else if (data.status === 'queued') {
+                updateProgress({
+                    scene_id: 'final', status: 'queued', progress: 0,
+                    message: `Đang chờ trong hàng đợi${data.queue_position ? ` — vị trí ${data.queue_position}` : ''}`,
+                });
+                startGenerationPolling();
+            } else if (data.status === 'paused') {
+                updateProgress({
+                    scene_id: 'final', status: 'paused', progress: 0,
+                    message: 'Đã tạm dừng an toàn. Bấm Tiếp tục tác vụ để chạy từ cảnh còn thiếu.',
+                });
+            } else if (data.status === 'paused_error' || data.status === 'error') {
+                updateProgress({
+                    scene_id: 'final', status: 'paused_error', progress: 0,
+                    message: data.last_error
+                        ? `Đã dừng do lỗi: ${data.last_error}`
+                        : 'Đã dừng do lỗi. Kiểm tra cảnh lỗi rồi bấm Tiếp tục tác vụ.',
+                });
+            } else if (data.status === 'generating' || data.status === 'stopping') {
                 startGenerationPolling();
             }
             await connectWebSocket();

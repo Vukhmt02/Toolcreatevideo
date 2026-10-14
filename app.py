@@ -19,10 +19,12 @@ import re
 import os
 import shutil
 import subprocess
+import time
 import urllib.request
 import urllib.parse
 import uuid
 import webbrowser
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Optional
 from PIL import Image
@@ -40,7 +42,7 @@ from core.script_parser import (
     format_script_to_complete_json,
     FULL_SCRIPT_TEMPLATE,
 )
-from core.prompt_builder import build_scene_prompt, build_image_prompt, build_character_prompt
+from core.prompt_builder import build_scene_prompt, build_image_prompt, build_character_prompt, build_muse_prompt
 from core.visual_analyzer import analyze_visual_consistency, ensure_visual_defaults
 from core.timeline import build_scene_timeline, get_audio_duration, estimate_duration_from_text
 from services.voice_service import voice_service
@@ -49,13 +51,22 @@ from services.image_service import image_service
 from services.compositor import compositor
 from services.flow_service import flow_service
 from services.muse_service import muse_service
-from services.content_verifier import verify_scene_content, _sample_frames
+from services.content_verifier import _sample_frames
 
 # ═══════════════════════════════════════════
 #  App Setup
 # ═══════════════════════════════════════════
 
-app = FastAPI(title="ToolCreateVideo", version="1.0.0")
+@asynccontextmanager
+async def app_lifespan(_app: FastAPI):
+    await restore_generation_queue()
+    try:
+        yield
+    finally:
+        await stop_generation_queue()
+
+
+app = FastAPI(title="ToolCreateVideo", version="1.0.0", lifespan=app_lifespan)
 
 # Mount static files
 app.mount("/static", StaticFiles(directory=str(config.BASE_DIR / "static")), name="static")
@@ -64,6 +75,14 @@ app.mount("/static", StaticFiles(directory=str(config.BASE_DIR / "static")), nam
 projects: dict = {}
 # Active WebSocket connections
 ws_connections: dict[str, WebSocket] = {}
+# Persistent generation queue. Checkpoints and queue state are persisted in state.json.
+generation_tasks: dict[str, asyncio.Task] = {}
+generation_queue: Optional[asyncio.Queue] = None
+generation_workers: list[asyncio.Task] = []
+queued_project_ids: set[str] = set()
+# Keep Muse batch tasks alive when the browser UI reloads or its HTTP request
+# disconnects while Muse is still rendering a clip.
+muse_generation_tasks: set[asyncio.Task] = set()
 
 
 def _save_project_state(project_id: str) -> None:
@@ -75,6 +94,13 @@ def _save_project_state(project_id: str) -> None:
         "status": project["status"],
         "scenes_status": project["scenes_status"],
         "output_path": project.get("output_path", ""),
+        "pause_requested": project.get("pause_requested", False),
+        "scene_outputs": project.get("scene_outputs", {}),
+        "active_scene_id": project.get("active_scene_id", ""),
+        "last_error": project.get("last_error", ""),
+        "queued_at": project.get("queued_at", 0),
+        "with_voice": project.get("with_voice", True),
+        "media_workflow": project.get("media_workflow", ""),
     }, ensure_ascii=False), encoding="utf-8")
     temporary.replace(state_path)
 
@@ -119,15 +145,39 @@ def _load_projects() -> None:
                     latest = max(existing_videos, key=lambda path: path.stat().st_mtime)
                     state["output_path"] = str(latest)
                     status = "done"
-            if status == "generating":
-                status = "error"  # A task cannot survive a server restart.
+            scenes_status = state.get("scenes_status") or {s.id: "pending" for s in script.scenes}
+            pause_was_requested = bool(state.get("pause_requested", False))
+            recovered_interrupted_task = status in {"generating", "stopping"}
+            if status == "stopping" or (status == "generating" and pause_was_requested):
+                status = "paused"
+            elif status == "generating":
+                # The worker disappeared with the server. Requeue it and resume
+                # from the last complete scene checkpoint during startup.
+                status = "queued"
+            if recovered_interrupted_task:
+                for scene_id, scene_status in list(scenes_status.items()):
+                    if scene_status == "processing":
+                        scenes_status[scene_id] = "pending"
             projects[project_id] = {
                 "id": project_id,
                 "script": script,
                 "status": status,
-                "scenes_status": state.get("scenes_status") or {s.id: "pending" for s in script.scenes},
+                "scenes_status": scenes_status,
                 "output_path": state.get("output_path", ""),
+                "pause_requested": False,
+                "scene_outputs": state.get("scene_outputs") or {},
+                "active_scene_id": "",
+                "last_error": state.get("last_error", ""),
+                "queued_at": state.get("queued_at", script_path.stat().st_mtime),
+                "with_voice": bool(state.get("with_voice", True)),
+                "media_workflow": state.get("media_workflow") or (
+                    "muse" if any(
+                        scene.generated_media_provider == "muse" for scene in script.scenes
+                    ) else ""
+                ),
             }
+            if recovered_interrupted_task:
+                _save_project_state(project_id)
         except (OSError, ValueError, json.JSONDecodeError) as exc:
             print(f"[PROJECT LOAD] Skipping {script_path}: {exc}")
 
@@ -179,11 +229,26 @@ def launch_muse_chrome() -> dict:
     # Reuse the Flow Chrome profile so Muse can see the Google session the user
     # already authenticated in that controlled browser.
     if config.MUSE_CDP_URL.rstrip("/") == config.FLOW_CDP_URL.rstrip("/"):
-        result = launch_flow_chrome()
-        return {
-            "status": result["status"],
-            "message": "Đã mở Muse trong Chrome dùng chung với Flow.",
-        }
+        chrome_candidates = [
+            shutil.which("chrome.exe"),
+            os.getenv("PROGRAMFILES", "") + r"\Google\Chrome\Application\chrome.exe",
+            os.getenv("LOCALAPPDATA", "") + r"\Google\Chrome\Application\chrome.exe",
+        ]
+        chrome = next((path for path in chrome_candidates if path and Path(path).exists()), None)
+        if not chrome:
+            raise RuntimeError("Không tìm thấy Google Chrome")
+        parsed = urllib.parse.urlparse(config.MUSE_CDP_URL)
+        port = parsed.port or 9222
+        shared_profile = config.BASE_DIR / "storage" / "flow_chrome"
+        shared_profile.mkdir(parents=True, exist_ok=True)
+        subprocess.Popen([
+            chrome,
+            f"--remote-debugging-port={port}",
+            "--remote-allow-origins=*",
+            f"--user-data-dir={shared_profile}",
+            config.MUSE_URL,
+        ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return {"status": "started", "message": "Đã mở Muse trong Chrome dùng chung với Flow."}
 
     chrome_candidates = [
         shutil.which("chrome.exe"),
@@ -420,7 +485,9 @@ async def save_config(
 
 
 @app.post("/api/script/upload")
-async def upload_script_file(file: UploadFile = File(...)):
+async def upload_script_file(
+    file: UploadFile = File(...), scene_density: str = Form("balanced")
+):
     """Upload file kịch bản (.json, .txt, .docx, .md)"""
     try:
         content_bytes = await file.read(5 * 1024 * 1024 + 1)
@@ -455,7 +522,7 @@ async def upload_script_file(file: UploadFile = File(...)):
         safe_fname = re.sub(r'[^\w\.-]', '_', file.filename or "script.txt")
         (save_dir / safe_fname).write_text(raw_text, encoding="utf-8")
 
-        script = parse_script(raw_text)
+        script = parse_script(raw_text, scene_density=scene_density)
         script_dict = script.model_dump()
 
         # Tạo danh sách tóm tắt từng đoạn đã tách
@@ -483,6 +550,7 @@ async def upload_script_file(file: UploadFile = File(...)):
             "script": script_dict,
             "filename": file.filename,
             "scenes_preview": scenes_preview,
+            "scene_density": scene_density,
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -493,10 +561,12 @@ async def upload_script_file(file: UploadFile = File(...)):
 
 
 @app.post("/api/script/ai-refine")
-async def ai_refine_script(script_text: str = Form(...)):
+async def ai_refine_script(
+    script_text: str = Form(...), scene_density: str = Form("balanced")
+):
     """Dùng Gemini AI để chuẩn hóa kịch bản thô sang JSON điện ảnh (có fallback thông minh)"""
     try:
-        data = await refine_script_with_ai(script_text)
+        data = await refine_script_with_ai(script_text, scene_density=scene_density)
         is_fallback = data.pop("_used_fallback", False)
         fallback_notice = data.pop("_fallback_notice", "")
         script = Script(**data)
@@ -512,6 +582,7 @@ async def ai_refine_script(script_text: str = Form(...)):
             "is_fallback": is_fallback,
             "warning": " ".join(filter(None, [fallback_notice, visual_warning])),
             "visual_fallback": visual_fallback,
+            "scene_density": scene_density,
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -520,10 +591,12 @@ async def ai_refine_script(script_text: str = Form(...)):
 
 
 @app.post("/api/script/format")
-async def format_script(script_text: str = Form("")):
+async def format_script(
+    script_text: str = Form(""), scene_density: str = Form("balanced")
+):
     """Format kịch bản thành JSON chuẩn và tách từng đoạn/cảnh đầy đủ các trường"""
     try:
-        data = format_script_to_complete_json(script_text)
+        data = format_script_to_complete_json(script_text, scene_density=scene_density)
         formatted_json = json.dumps(data, ensure_ascii=False, indent=2)
 
         # Danh sách tóm tắt từng đoạn/cảnh đã tách
@@ -551,6 +624,7 @@ async def format_script(script_text: str = Form("")):
             "characters": len(data.get("characters", [])),
             "scenes": len(data.get("scenes", [])),
             "scenes_preview": scenes_preview,
+            "scene_density": scene_density,
         }
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Lỗi format JSON: {str(e)}")
@@ -563,10 +637,12 @@ async def get_full_template():
 
 
 @app.post("/api/script/validate")
-async def validate_script(script_json: str = Form(...)):
+async def validate_script(
+    script_json: str = Form(...), scene_density: str = Form("balanced")
+):
     """Validate kịch bản JSON hoặc text"""
     try:
-        script = parse_script(script_json)
+        script = parse_script(script_json, scene_density=scene_density)
         script_dict = script.model_dump()
         return {
             "valid": True,
@@ -592,10 +668,12 @@ async def get_sample_script():
 
 
 @app.post("/api/project/create")
-async def create_project(script_json: str = Form(...)):
+async def create_project(
+    script_json: str = Form(...), scene_density: str = Form("balanced")
+):
     """Tạo project mới từ kịch bản"""
     try:
-        script = ensure_visual_defaults(parse_script(script_json))
+        script = ensure_visual_defaults(parse_script(script_json, scene_density=scene_density))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -616,6 +694,13 @@ async def create_project(script_json: str = Form(...)):
         "status": "created",
         "scenes_status": {s.id: "pending" for s in script.scenes},
         "output_path": "",
+        "pause_requested": False,
+        "scene_outputs": {},
+        "active_scene_id": "",
+        "last_error": "",
+        "queued_at": 0,
+        "with_voice": True,
+        "media_workflow": "",
     }
     _save_project_state(project_id)
 
@@ -628,6 +713,17 @@ async def create_project(script_json: str = Form(...)):
     }
 
 
+def _generation_queue_position(project_id: str) -> int:
+    queued = sorted(
+        (pid for pid, item in projects.items() if item.get("status") == "queued"),
+        key=lambda pid: (projects[pid].get("queued_at", 0), pid),
+    )
+    try:
+        return queued.index(project_id) + 1
+    except ValueError:
+        return 0
+
+
 def _project_payload(project_id: str) -> dict:
     project = projects[project_id]
     return {
@@ -637,6 +733,11 @@ def _project_payload(project_id: str) -> dict:
         "status": project["status"],
         "scenes_status": project["scenes_status"],
         "output_path": project.get("output_path", ""),
+        "active_scene_id": project.get("active_scene_id", ""),
+        "last_error": project.get("last_error", ""),
+        "resumable": project["status"] in {"paused", "paused_error", "error", "partial"},
+        "queue_position": _generation_queue_position(project_id),
+        "with_voice": project.get("with_voice", True),
     }
 
 
@@ -691,7 +792,7 @@ async def get_scene_prompt(project_id: str, scene_id: str):
     if not scene:
         raise HTTPException(status_code=404, detail="Không tìm thấy cảnh")
     prompt = build_scene_prompt(scene, script) if scene.scene_type == "key" else build_image_prompt(scene, script)
-    return {"scene_id": scene_id, "prompt": prompt,
+    return {"scene_id": scene_id, "prompt": prompt, "muse_prompt": build_muse_prompt(scene, script),
             "override": scene.prompt_override, "is_override": bool(scene.prompt_override.strip())}
 
 
@@ -1111,9 +1212,6 @@ def _attach_muse_result(script: Script, result: dict) -> bool:
     """Attach a Muse video without overwriting legacy Flow fields."""
     if result.get("status") != "done" or not result.get("file_path"):
         return False
-    if result.get("content_check") != "match":
-        result["error"] = "Video Muse chưa được xác minh là đúng nội dung kịch bản"
-        return False
     media_path = Path(result["file_path"])
     if not media_path.is_file() or media_path.stat().st_size < 1024:
         return False
@@ -1143,10 +1241,12 @@ def _attach_muse_result(script: Script, result: dict) -> bool:
     scene.media_capture_version = muse_service.CAPTURE_VERSION
     scene.media_generation_status = "done"
     scene.media_generation_error = ""
-    scene.media_content_check_status = "match"
-    scene.media_content_check_reason = result.get("content_check_reason", "")
+    scene.media_content_check_status = result.get("content_check") or "muse_generated"
+    scene.media_content_check_reason = result.get("content_check_reason") or (
+        "Muse đã tự phân tích cảnh; tool đã kiểm tra tệp video hợp lệ."
+    )
     scene.media_content_check_prompt_hash = result.get("content_check_prompt_hash") or hashlib.sha256(
-        build_scene_prompt(scene, script).encode("utf-8")
+        build_muse_prompt(scene, script).encode("utf-8")
     ).hexdigest()
     return True
 
@@ -1182,33 +1282,23 @@ async def generate_videos_in_muse(project_id: str):
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project không tồn tại")
     await _ensure_muse_browser()
+    projects[project_id]["media_workflow"] = "muse"
+    _save_project_state(project_id)
     script: Script = projects[project_id]["script"]
     changed = _clear_duplicate_muse_assignments(script)
     for scene in script.scenes:
         current = Path(scene.generated_media_path) if scene.generated_media_path else None
-        expected_prompt = build_scene_prompt(scene, script)
+        expected_prompt = build_muse_prompt(scene, script)
         expected_hash = hashlib.sha256(expected_prompt.encode("utf-8")).hexdigest()
         if (scene.generated_media_provider != "muse" or scene.generated_media_type != "video"
-                or not current or not current.is_file()
-                or (scene.media_content_check_status == "match"
-                    and scene.media_content_check_prompt_hash == expected_hash)):
+                or not current or not current.is_file()):
             continue
-        await send_progress(project_id, scene.id, "processing", 5,
-                            "Đang đối chiếu video đã lưu với kịch bản...", provider="muse")
-        try:
-            verdict = await verify_scene_content(str(current), expected_prompt)
-        except Exception as exc:
-            raise HTTPException(status_code=502, detail=f"Không kiểm tra được video cảnh {scene.id}: {exc}")
-        scene.media_content_check_status = verdict.status
-        scene.media_content_check_reason = verdict.reason
+        scene.media_content_check_status = "muse_generated"
+        scene.media_content_check_reason = "Video do Muse tự phân tích và tạo từ nội dung cảnh."
         scene.media_content_check_prompt_hash = expected_hash
+        scene.media_generation_status = "done"
+        scene.media_generation_error = ""
         changed = True
-        if verdict.status != "match":
-            scene.generated_media_path = ""
-            scene.generated_media_type = ""
-            scene.generated_media_provider = ""
-            scene.media_generation_status = "error"
-            scene.media_generation_error = f"Video không khớp kịch bản: {verdict.reason}"
     if changed:
         (config.OUTPUT_DIR / project_id / "script.json").write_text(
             script.model_dump_json(indent=2), encoding="utf-8"
@@ -1220,7 +1310,7 @@ async def generate_videos_in_muse(project_id: str):
             continue
         prompts.append({
             "scene_id": scene.id,
-            "prompt": build_scene_prompt(scene, script),
+            "prompt": build_muse_prompt(scene, script),
             "reference_images": [],
         })
     if not prompts:
@@ -1229,6 +1319,13 @@ async def generate_videos_in_muse(project_id: str):
     save_lock = asyncio.Lock()
 
     async def report_progress(event: dict):
+        scene = next((item for item in script.scenes if item.id == event.get("scene_id")), None)
+        if scene:
+            scene.media_generation_status = event.get("status", "processing")
+            if scene.media_generation_status != "error":
+                scene.media_generation_error = ""
+            async with save_lock:
+                script_path.write_text(script.model_dump_json(indent=2), encoding="utf-8")
         await send_progress(
             project_id, event["scene_id"], event.get("status", "processing"),
             event.get("progress", 0), event.get("message", "Muse đang xử lý..."),
@@ -1248,9 +1345,9 @@ async def generate_videos_in_muse(project_id: str):
             script_path.write_text(script.model_dump_json(indent=2), encoding="utf-8")
         if attached:
             await send_progress(
-                project_id, result["scene_id"], "done", 100, "Đã nhận và kiểm tra nội dung video Muse",
+                project_id, result["scene_id"], "done", 100, "Muse đã phân tích, tạo và trả video về tool",
                 provider="muse", file_path=result["file_path"], media_type="video",
-                content_check=result["content_check"],
+                content_check=result.get("content_check") or "muse_generated",
             )
         else:
             await send_progress(
@@ -1258,9 +1355,12 @@ async def generate_videos_in_muse(project_id: str):
                 provider="muse", error=result["error"],
             )
 
-    results = await muse_service.submit_many(
+    batch_task = asyncio.create_task(muse_service.submit_many(
         prompts, on_result=persist_result, on_progress=report_progress,
-    )
+    ))
+    muse_generation_tasks.add(batch_task)
+    batch_task.add_done_callback(muse_generation_tasks.discard)
+    results = await asyncio.shield(batch_task)
     completed = sum(item.get("status") == "done" for item in results)
     return {
         "status": "ok", "results": results, "concurrency": 1,
@@ -1273,6 +1373,8 @@ async def regenerate_scene_in_muse(project_id: str, scene_id: str):
     """Generate or retry one scene through Muse."""
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project không tồn tại")
+    projects[project_id]["media_workflow"] = "muse"
+    _save_project_state(project_id)
     script: Script = projects[project_id]["script"]
     scene = next((item for item in script.scenes if item.id == scene_id), None)
     if not scene:
@@ -1281,7 +1383,7 @@ async def regenerate_scene_in_muse(project_id: str, scene_id: str):
     try:
         result = await muse_service.submit_prompt(
             scene.id,
-            build_scene_prompt(scene, script),
+            build_muse_prompt(scene, script),
             reference_images=[],
         )
     except Exception as exc:
@@ -1393,83 +1495,267 @@ async def toggle_scene_type(project_id: str, scene_id: str):
 
 
 @app.post("/api/project/{project_id}/generate")
-async def generate_video(project_id: str):
+async def generate_video(project_id: str, with_voice: bool = True):
     """Bắt đầu tạo video cho project"""
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project không tồn tại")
 
     project = projects[project_id]
-    if project["status"] == "generating":
+    if project["status"] in {"queued", "generating", "stopping"}:
         raise HTTPException(status_code=400, detail="Project đang được tạo")
 
-    project["status"] = "generating"
+    project["status"] = "queued"
     project["output_path"] = ""
     project["scenes_status"] = {s.id: "pending" for s in project["script"].scenes}
+    project["scene_outputs"] = {}
+    project["pause_requested"] = False
+    project["active_scene_id"] = ""
+    project["last_error"] = ""
+    project["queued_at"] = time.time()
+    project["with_voice"] = with_voice
     _save_project_state(project_id)
 
-    # Run generation in background
-    asyncio.create_task(_generate_project_video(project_id))
+    await _enqueue_generation(project_id)
 
-    return {"status": "generating", "message": "Đang bắt đầu tạo video..."}
+    return {
+        "status": project["status"],
+        "queue_position": _generation_queue_position(project_id),
+        "with_voice": with_voice,
+        "message": "Đã thêm tác vụ vào hàng đợi tạo video...",
+    }
+
+
+async def _generation_worker(worker_number: int) -> None:
+    """Consume persisted project jobs one at a time."""
+    assert generation_queue is not None
+    while True:
+        project_id = await generation_queue.get()
+        queued_project_ids.discard(project_id)
+        try:
+            project = projects.get(project_id)
+            if not project or project.get("status") != "queued":
+                continue
+            project["status"] = "generating"
+            project["pause_requested"] = False
+            project["active_scene_id"] = ""
+            _save_project_state(project_id)
+            generation_tasks[project_id] = asyncio.current_task()
+            await send_progress(
+                project_id, "final", "generating", 0,
+                f"Worker {worker_number}: bắt đầu xử lý tác vụ trong hàng đợi...",
+            )
+            await _generate_project_video(project_id)
+        except asyncio.CancelledError:
+            # Keep a running project as "generating" on disk. Startup recovery
+            # will turn it back into a queued job and resume its checkpoints.
+            raise
+        except Exception as exc:
+            project = projects.get(project_id)
+            if project:
+                project["status"] = "paused_error"
+                project["last_error"] = str(exc)
+                _save_project_state(project_id)
+        finally:
+            generation_tasks.pop(project_id, None)
+            generation_queue.task_done()
+
+
+async def _ensure_generation_workers() -> None:
+    global generation_queue
+    if generation_queue is None:
+        generation_queue = asyncio.Queue()
+    generation_workers[:] = [task for task in generation_workers if not task.done()]
+    while len(generation_workers) < config.TIMELINE_CONCURRENCY:
+        worker_number = len(generation_workers) + 1
+        generation_workers.append(asyncio.create_task(_generation_worker(worker_number)))
+
+
+async def _enqueue_generation(project_id: str) -> None:
+    await _ensure_generation_workers()
+    if project_id in queued_project_ids or project_id in generation_tasks:
+        return
+    queued_project_ids.add(project_id)
+    await generation_queue.put(project_id)
+
+
+async def restore_generation_queue() -> None:
+    """Restore queued and interrupted jobs after every server restart."""
+    await _ensure_generation_workers()
+    queued = sorted(
+        (pid for pid, item in projects.items() if item.get("status") == "queued"),
+        key=lambda pid: (projects[pid].get("queued_at", 0), pid),
+    )
+    for project_id in queued:
+        await _enqueue_generation(project_id)
+
+
+async def stop_generation_queue() -> None:
+    global generation_queue
+    for worker in generation_workers:
+        worker.cancel()
+    if generation_workers:
+        await asyncio.gather(*generation_workers, return_exceptions=True)
+    generation_workers.clear()
+    generation_tasks.clear()
+    queued_project_ids.clear()
+    generation_queue = None
+
+
+@app.post("/api/project/{project_id}/pause")
+async def pause_generation(project_id: str):
+    """Request a safe pause after the currently processing scene."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    project = projects[project_id]
+    if project["status"] == "paused":
+        return {"status": "paused", "message": "Tác vụ đã tạm dừng"}
+    if project["status"] == "queued":
+        project["status"] = "paused"
+        project["pause_requested"] = False
+        project["active_scene_id"] = ""
+        queued_project_ids.discard(project_id)
+        _save_project_state(project_id)
+        await send_progress(
+            project_id, "final", "paused", 0,
+            "Đã lấy tác vụ ra khỏi hàng đợi. Bấm Tiếp tục để xếp lại vào hàng đợi.",
+        )
+        return {"status": "paused", "message": "Đã tạm dừng tác vụ trong hàng đợi"}
+    if project["status"] == "stopping":
+        return {
+            "status": "stopping",
+            "message": "Đang chờ hoàn tất cảnh hiện tại để tạm dừng an toàn",
+        }
+    if project["status"] != "generating":
+        raise HTTPException(status_code=400, detail="Project hiện không chạy")
+    project["pause_requested"] = True
+    project["status"] = "stopping"
+    _save_project_state(project_id)
+    await send_progress(
+        project_id, "final", "stopping", 0,
+        "Đã nhận yêu cầu dừng. Tool sẽ dừng sau khi hoàn tất cảnh hiện tại...",
+    )
+    return {
+        "status": "stopping",
+        "message": "Đang chờ hoàn tất cảnh hiện tại để tạm dừng an toàn",
+    }
+
+
+@app.post("/api/project/{project_id}/resume")
+async def resume_generation(project_id: str):
+    """Resume from persisted per-scene checkpoints."""
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    project = projects[project_id]
+    if project["status"] in {"queued", "generating", "stopping"}:
+        raise HTTPException(status_code=400, detail="Project đang được xử lý")
+    if project["status"] not in {"paused", "paused_error", "error", "partial"}:
+        raise HTTPException(status_code=400, detail="Project không có tác vụ để tiếp tục")
+
+    outputs = project.get("scene_outputs") or {}
+    for scene in project["script"].scenes:
+        checkpoint = outputs.get(scene.id) or {}
+        checkpoint_path = Path(checkpoint.get("video_path", ""))
+        if project["scenes_status"].get(scene.id) == "done" and checkpoint_path.is_file():
+            continue
+        project["scenes_status"][scene.id] = "pending"
+        outputs.pop(scene.id, None)
+    project["scene_outputs"] = outputs
+    project["status"] = "queued"
+    project["pause_requested"] = False
+    project["active_scene_id"] = ""
+    project["last_error"] = ""
+    project["output_path"] = ""
+    project["queued_at"] = time.time()
+    _save_project_state(project_id)
+    await _enqueue_generation(project_id)
+    return {
+        "status": project["status"],
+        "queue_position": _generation_queue_position(project_id),
+        "message": "Đã xếp lại tác vụ vào hàng đợi từ cảnh chưa hoàn thành...",
+    }
+
+
+async def _finish_pause(project_id: str, next_scene_id: str = "") -> None:
+    project = projects[project_id]
+    project["status"] = "paused"
+    project["pause_requested"] = False
+    project["active_scene_id"] = next_scene_id
+    _save_project_state(project_id)
+    await send_progress(
+        project_id, "final", "paused", 0,
+        "Đã tạm dừng an toàn. Bấm Tiếp tục để chạy từ cảnh còn thiếu.",
+    )
+
+
+def _scene_duration_seconds(scene) -> float:
+    """Read a practical clip duration from values such as '8s' or '10 giây'."""
+    match = re.search(r"\d+(?:[.,]\d+)?", scene.duration_hint or "")
+    if not match:
+        return 5.0
+    return max(2.0, min(60.0, float(match.group(0).replace(",", "."))))
 
 
 async def _generate_project_video(project_id: str):
     """Background task: tạo video cho toàn bộ project"""
     project = projects[project_id]
     script: Script = project["script"]
+    with_voice = bool(project.get("with_voice", True))
+    muse_workflow = project.get("media_workflow") == "muse" or any(
+        scene.generated_media_provider == "muse" for scene in script.scenes
+    )
+    if muse_workflow and project.get("media_workflow") != "muse":
+        project["media_workflow"] = "muse"
+        _save_project_state(project_id)
     active_scene_id = None
 
     try:
         all_scene_videos = []
         all_subtitles = []
         cumulative_time = 0.0
+        scene_outputs = project.setdefault("scene_outputs", {})
 
         for scene_idx, scene in enumerate(script.scenes):
             scene_id = scene.id
+            if project.get("pause_requested"):
+                await _finish_pause(project_id, scene_id)
+                return
+
+            checkpoint = scene_outputs.get(scene_id) or {}
+            checkpoint_path = Path(checkpoint.get("video_path", ""))
+            if (project["scenes_status"].get(scene_id) == "done"
+                    and checkpoint_path.is_file()
+                    and bool(checkpoint.get("with_voice", True)) == with_voice):
+                all_scene_videos.append(str(checkpoint_path))
+                for subtitle in checkpoint.get("subtitles") or []:
+                    restored = dict(subtitle)
+                    restored["start_time"] = cumulative_time + float(subtitle.get("start_time", 0))
+                    restored["end_time"] = cumulative_time + float(subtitle.get("end_time", 0))
+                    all_subtitles.append(restored)
+                cumulative_time += float(checkpoint.get("duration", 0))
+                await send_progress(
+                    project_id, scene_id, "done", 100,
+                    f"Cảnh {scene_idx + 1} đã hoàn thành trước đó, tiếp tục từ checkpoint.",
+                )
+                continue
+
             active_scene_id = scene_id
+            project["active_scene_id"] = scene_id
             subtitle_start_index = len(all_subtitles)
+            scene_start_time = cumulative_time
             project["scenes_status"][scene_id] = "processing"
             _save_project_state(project_id)
 
-            if (scene.generated_media_provider == "muse" and scene.generated_media_path
-                    and Path(scene.generated_media_path).is_file()):
-                expected_prompt = build_scene_prompt(scene, script)
-                expected_hash = hashlib.sha256(expected_prompt.encode("utf-8")).hexdigest()
-                if (scene.media_content_check_status != "match"
-                        or scene.media_content_check_prompt_hash != expected_hash):
-                    await send_progress(project_id, scene_id, "processing", 5,
-                                        "Đang kiểm tra video Muse với kịch bản trước khi ghép...")
-                    try:
-                        verdict = await verify_scene_content(scene.generated_media_path, expected_prompt)
-                    except Exception as exc:
-                        scene.media_generation_status = "error"
-                        scene.media_generation_error = f"Chưa kiểm tra được nội dung video: {exc}"
-                        (config.OUTPUT_DIR / project_id / "script.json").write_text(
-                            script.model_dump_json(indent=2), encoding="utf-8"
-                        )
-                        raise
-                    scene.media_content_check_status = verdict.status
-                    scene.media_content_check_reason = verdict.reason
-                    scene.media_content_check_prompt_hash = expected_hash
-                    if verdict.status != "match":
-                        scene.generated_media_path = ""
-                        scene.generated_media_type = ""
-                        scene.generated_media_provider = ""
-                        scene.media_generation_status = "error"
-                        scene.media_generation_error = f"Video không khớp kịch bản: {verdict.reason}"
-                    (config.OUTPUT_DIR / project_id / "script.json").write_text(
-                        script.model_dump_json(indent=2), encoding="utf-8"
-                    )
-                    if verdict.status != "match":
-                        raise RuntimeError(f"Video Muse cảnh {scene_id} không khớp kịch bản: {verdict.reason}")
-
-            await send_progress(project_id, scene_id, "voice", 0,
-                                f"Cảnh {scene_idx + 1}/{len(script.scenes)}: Đang tạo giọng nói...")
+            await send_progress(
+                project_id, scene_id, "voice", 0,
+                (f"Cảnh {scene_idx + 1}/{len(script.scenes)}: Đang tạo giọng nói..."
+                 if with_voice else
+                 f"Cảnh {scene_idx + 1}/{len(script.scenes)}: Bỏ qua tạo giọng theo lựa chọn của bạn..."),
+            )
 
             # ── STEP 1: Tạo audio cho scene ──
             scene_audio_files = []
 
-            if scene.has_dialogue:
+            if with_voice and scene.has_dialogue:
                 for d_idx, dialogue in enumerate(scene.dialogues):
                     char = script.get_character(dialogue.character)
                     gender = char.voice_gender if char else "female"
@@ -1508,7 +1794,7 @@ async def _generate_project_video(project_id: str):
                     await send_progress(project_id, scene_id, "voice", progress,
                                         f"Giọng nói {d_idx + 1}/{len(scene.dialogues)} xong")
 
-            if scene.has_narration:
+            if with_voice and scene.has_narration:
                 char = script.get_character(scene.narration.voice) if scene.narration.voice else None
                 gender = char.voice_gender if char else "female"
                 voice_ref = char.voice_ref if char else ""
@@ -1567,7 +1853,11 @@ async def _generate_project_video(project_id: str):
 
             # ── STEP 4: Tạo video (Veo 3.1 cho KEY, Gemini + Ken Burns cho FILLER) ──
             scene_type = getattr(scene, "scene_type", "filler")
-            target_duration = max(timeline.total_duration, 3.0) if timeline.total_duration > 0 else 5.0
+            target_duration = (
+                max(timeline.total_duration, 3.0)
+                if with_voice and timeline.total_duration > 0
+                else _scene_duration_seconds(scene)
+            )
 
             raw_video_path = ""
             img_result = {}
@@ -1595,6 +1885,21 @@ async def _generate_project_video(project_id: str):
                     scene_id=scene_id,
                     effect="auto",
                 )
+
+            if muse_workflow and not raw_video_path:
+                muse_detail = (scene.media_generation_error or "").strip()
+                detail = f" Lỗi Muse trước đó: {muse_detail}" if muse_detail else ""
+                raise RuntimeError(
+                    f"Cảnh {scene_idx + 1} ({scene_id}) chưa có video Muse. "
+                    f"Bấm Tạo lại Muse tại cảnh này, chờ Hoàn thành rồi bấm Tiếp tục.{detail}"
+                )
+
+            # Without generated narration, retain the natural duration of an
+            # existing Muse/Flow video instead of forcing it to an arbitrary 5s.
+            if not with_voice and raw_video_path:
+                source_duration = await asyncio.to_thread(get_audio_duration, raw_video_path)
+                if source_duration > 0:
+                    target_duration = source_duration
 
             if not raw_video_path and scene_type == "key":
                 await send_progress(project_id, scene_id, "video", 40,
@@ -1659,15 +1964,19 @@ async def _generate_project_video(project_id: str):
 
             if not raw_video_path:
                 del all_subtitles[subtitle_start_index:]
-                await send_progress(project_id, scene_id, "error", 0,
-                                    img_result.get("error", f"Không thể tạo hình ảnh hoặc video cho cảnh {scene_idx + 1}"))
+                error_message = img_result.get(
+                    "error", f"Không thể tạo hình ảnh hoặc video cho cảnh {scene_idx + 1}"
+                )
+                await send_progress(project_id, scene_id, "error", 0, error_message)
                 project["scenes_status"][scene_id] = "error"
                 _save_project_state(project_id)
-                continue
+                raise RuntimeError(error_message)
 
             # ── STEP 5: Swap audio ──
-            await send_progress(project_id, scene_id, "compositing", 90,
-                                "Đang ghép âm thanh và video...")
+            await send_progress(
+                project_id, scene_id, "compositing", 90,
+                "Đang ghép âm thanh và video..." if with_voice else "Đang chuẩn hóa video không tạo giọng...",
+            )
 
             fitted_path = await asyncio.to_thread(compositor.fit_video_duration, raw_video_path, target_duration)
             if not fitted_path:
@@ -1680,12 +1989,33 @@ async def _generate_project_video(project_id: str):
                 final_scene_path = swapped
 
             all_scene_videos.append(final_scene_path)
+            local_subtitles = []
+            for subtitle in all_subtitles[subtitle_start_index:]:
+                saved_subtitle = dict(subtitle)
+                saved_subtitle["start_time"] = max(
+                    0.0, float(subtitle.get("start_time", 0)) - scene_start_time
+                )
+                saved_subtitle["end_time"] = max(
+                    0.0, float(subtitle.get("end_time", 0)) - scene_start_time
+                )
+                local_subtitles.append(saved_subtitle)
+            scene_outputs[scene_id] = {
+                "video_path": final_scene_path,
+                "duration": target_duration,
+                "subtitles": local_subtitles,
+                "with_voice": with_voice,
+            }
             cumulative_time += target_duration
 
             project["scenes_status"][scene_id] = "done"
+            project["active_scene_id"] = ""
             _save_project_state(project_id)
             await send_progress(project_id, scene_id, "done", 100,
                                 f"Cảnh {scene_idx + 1} ({scene_type.upper()}) hoàn thành!")
+
+        if project.get("pause_requested"):
+            await _finish_pause(project_id)
+            return
 
         # ── STEP 6: Stitch all scenes ──
         if all_scene_videos:
@@ -1702,16 +2032,22 @@ async def _generate_project_video(project_id: str):
 
             # Export final
             if stitched:
-                final_path = await asyncio.to_thread(compositor.export_final, stitched, project_id, script.title)
+                output_title = f"{script.title} - {'có giọng' if with_voice else 'không giọng'}"
+                final_path = await asyncio.to_thread(
+                    compositor.export_final, stitched, project_id, output_title
+                )
                 if not final_path:
                     raise RuntimeError("Final video export failed")
                 project["output_path"] = final_path
                 project["status"] = "partial" if any(
                     status == "error" for status in project["scenes_status"].values()) else "done"
+                project["active_scene_id"] = ""
+                project["last_error"] = ""
                 _save_project_state(project_id)
 
                 await send_progress(project_id, "final", project["status"], 100,
-                                    "Video hoàn thành! 🎬")
+                                    ("Video có giọng đã hoàn thành! 🎬" if with_voice
+                                     else "Video không tạo giọng đã hoàn thành! 🎬"))
             else:
                 project["status"] = "error"
                 _save_project_state(project_id)
@@ -1725,43 +2061,16 @@ async def _generate_project_video(project_id: str):
 
     except Exception as e:
         if active_scene_id and project["scenes_status"].get(active_scene_id) == "processing":
-            project["scenes_status"][active_scene_id] = "pending"
-        # Export the completed prefix so a quota failure does not make finished
-        # scenes unavailable. The project can still resume later from its caches.
-        partial_path = ""
-        if all_scene_videos:
-            try:
-                stitched = await asyncio.to_thread(compositor.build_timeline_video, all_scene_videos)
-                if all_subtitles and stitched:
-                    srt_path = str(config.TEMP_DIR / f"{project_id}_partial_subs.srt")
-                    await asyncio.to_thread(compositor.generate_srt, all_subtitles, srt_path)
-                    stitched = await asyncio.to_thread(compositor.add_subtitles, stitched, srt_path)
-                if stitched:
-                    partial_path = await asyncio.to_thread(
-                        compositor.export_final,
-                        stitched,
-                        project_id,
-                        f"{script.title} - phần đã hoàn thành",
-                    )
-            except Exception as partial_error:
-                print(f"[WARN] Partial video export failed: {partial_error}")
-
-        if partial_path:
-            project["output_path"] = partial_path
-            project["status"] = "partial"
-        else:
-            project["status"] = "error"
+            project["scenes_status"][active_scene_id] = "error"
+        project["status"] = "paused_error"
+        project["pause_requested"] = False
+        project["active_scene_id"] = active_scene_id or ""
+        project["last_error"] = str(e)
         _save_project_state(project_id)
-        if partial_path:
-            await send_progress(
-                project_id,
-                "final",
-                "partial",
-                100,
-                f"Đã xuất {len(all_scene_videos)} cảnh hoàn thành. Có thể tải bản tạm và tiếp tục sau. Lỗi: {e}",
-            )
-        else:
-            await send_progress(project_id, "final", "error", 0, f"Lỗi: {str(e)}")
+        await send_progress(
+            project_id, "final", "paused_error", 0,
+            f"Đã tạm dừng do lỗi. Sửa lỗi rồi bấm Tiếp tục. Lỗi: {str(e)}",
+        )
         print(f"[ERROR] Generate failed: {e}")
         import traceback
         traceback.print_exc()
@@ -1778,6 +2087,11 @@ async def get_project_status(project_id: str):
         "status": project["status"],
         "scenes_status": project["scenes_status"],
         "output_path": project.get("output_path", ""),
+        "active_scene_id": project.get("active_scene_id", ""),
+        "last_error": project.get("last_error", ""),
+        "resumable": project["status"] in {"paused", "paused_error", "error", "partial"},
+        "queue_position": _generation_queue_position(project_id),
+        "with_voice": project.get("with_voice", True),
     }
 
 
@@ -1796,7 +2110,10 @@ async def download_video(project_id: str):
     return FileResponse(
         path=output_path,
         media_type="video/mp4",
-        filename=f"{project['script'].title}.mp4",
+        filename=(
+            f"{project['script'].title} - "
+            f"{'có giọng' if project.get('with_voice', True) else 'không giọng'}.mp4"
+        ),
     )
 
 

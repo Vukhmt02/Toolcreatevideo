@@ -1,0 +1,20 @@
+# Local secrets
+.env
+
+# Python and test caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Runtime logs
+*.log
+
+# Generated projects, media, caches, and browser profiles
+storage/projects/
+storage/temp/
+storage/flow_chrome/
+storage/muse_chrome/
+
+# Local virtual environments
+.venv/
+venv/

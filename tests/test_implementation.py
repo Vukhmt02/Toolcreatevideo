@@ -77,6 +77,43 @@ def test_narrative_story_key_filler_distribution():
     assert scenes[0]["scene_type"] == "key", "Scene 1 should be KEY"
 
 
+def test_scene_density_changes_narrative_scene_count_without_losing_text():
+    body = " ".join([
+        f"Nhịp truyện {index}: Nam đi qua con phố cũ và nhớ về gia đình trong buổi chiều mưa."
+        for index in range(1, 19)
+    ])
+    source = f"Một chuyến trở về\n\n{body}"
+
+    parsed = {
+        density: parse_script(source, scene_density=density)
+        for density in ("few", "balanced", "many")
+    }
+
+    assert len(parsed["few"].scenes) < len(parsed["balanced"].scenes)
+    assert len(parsed["balanced"].scenes) < len(parsed["many"].scenes)
+    narration_words = {
+        density: " ".join(
+            scene.narration.text for scene in script.scenes if scene.narration
+        ).split()
+        for density, script in parsed.items()
+    }
+    assert narration_words["few"] == narration_words["balanced"] == narration_words["many"]
+    assert all(scene.duration_hint == "15s" for scene in parsed["few"].scenes)
+    assert all(scene.duration_hint == "10s" for scene in parsed["balanced"].scenes)
+    assert all(scene.duration_hint == "7s" for scene in parsed["many"].scenes)
+
+
+def test_scene_density_does_not_merge_existing_json_scenes():
+    source = {
+        "title": "Cảnh đã biên tập",
+        "scenes": [
+            {"id": "scene_01", "setting": "Phòng khách", "dialogues": []},
+            {"id": "scene_02", "setting": "Sân ga", "dialogues": []},
+        ],
+    }
+    assert len(parse_script(source, scene_density="few").scenes) == 2
+
+
 def test_prompt_builders():
     print("\n--- [3] Test Prompt Builders ---")
     script = parse_script("""

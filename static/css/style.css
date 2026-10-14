@@ -318,6 +318,31 @@ label {
     border-color: var(--border-active);
 }
 
+.btn-danger {
+    color: #fecaca;
+    background: rgba(239, 68, 68, 0.16);
+    border: 1px solid rgba(239, 68, 68, 0.48);
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: rgba(239, 68, 68, 0.28);
+}
+
+.btn-warning {
+    color: #fde68a;
+    background: rgba(245, 158, 11, 0.16);
+    border: 1px solid rgba(245, 158, 11, 0.48);
+}
+
+.btn-warning:hover:not(:disabled) {
+    background: rgba(245, 158, 11, 0.28);
+}
+
+.btn-danger:disabled, .btn-warning:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
 .btn-sm {
     padding: 6px 14px;
     font-size: 12px;

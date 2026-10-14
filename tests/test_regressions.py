@@ -26,7 +26,6 @@ from services.voice_service import VoiceService
 from services.muse_service import MuseService
 from services.content_verifier import _sample_frames
 import services.content_verifier as content_verifier
-import services.muse_service as muse_module
 
 
 def _script():
@@ -35,6 +34,228 @@ def _script():
         "characters": [{"id": "person", "name": "Person"}],
         "scenes": [{"id": "scene_01", "setting": "A room", "dialogues": []}],
     }
+
+
+def test_pause_endpoint_requests_safe_stop_and_persists_state(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    app_module.generation_tasks.clear()
+    client = TestClient(app_module.app)
+    created = client.post("/api/project/create", data={"script_json": json.dumps(_script())})
+    project_id = created.json()["project_id"]
+    project = app_module.projects[project_id]
+    project["status"] = "generating"
+    project["active_scene_id"] = "scene_01"
+    app_module._save_project_state(project_id)
+
+    response = client.post(f"/api/project/{project_id}/pause")
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "stopping"
+    assert project["pause_requested"] is True
+    assert project["status"] == "stopping"
+    saved = json.loads((tmp_path / project_id / "state.json").read_text(encoding="utf-8"))
+    assert saved["pause_requested"] is True
+    assert saved["status"] == "stopping"
+
+
+def test_resume_keeps_valid_checkpoints_and_requeues_failed_scene(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    app_module.generation_tasks.clear()
+    client = TestClient(app_module.app)
+    script = _script()
+    script["scenes"].append({"id": "scene_02", "setting": "A garden", "dialogues": []})
+    created = client.post("/api/project/create", data={"script_json": json.dumps(script)})
+    project_id = created.json()["project_id"]
+    checkpoint = tmp_path / project_id / "scene_01_complete.mp4"
+    checkpoint.write_bytes(b"checkpoint")
+    project = app_module.projects[project_id]
+    project["status"] = "paused_error"
+    project["scenes_status"] = {"scene_01": "done", "scene_02": "error"}
+    project["scene_outputs"] = {
+        "scene_01": {"video_path": str(checkpoint), "duration": 5.0, "subtitles": []},
+        "scene_02": {"video_path": str(tmp_path / "missing.mp4"), "duration": 5.0, "subtitles": []},
+    }
+    launched = []
+
+    async def enqueue(project):
+        launched.append(project)
+
+    monkeypatch.setattr(app_module, "_enqueue_generation", enqueue)
+
+    response = client.post(f"/api/project/{project_id}/resume")
+
+    assert response.status_code == 200
+    assert project["status"] == "queued"
+    assert project["scenes_status"] == {"scene_01": "done", "scene_02": "pending"}
+    assert set(project["scene_outputs"]) == {"scene_01"}
+    assert launched == [project_id]
+
+
+def test_server_restart_requeues_running_job_but_preserves_user_pause(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    script = parse_script(_script())
+
+    running_id = "aaaaaaaaaaaa"
+    running_dir = tmp_path / running_id
+    running_dir.mkdir()
+    (running_dir / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    (running_dir / "state.json").write_text(json.dumps({
+        "status": "generating",
+        "pause_requested": False,
+        "scenes_status": {"scene_01": "processing"},
+        "scene_outputs": {},
+        "queued_at": 10,
+    }), encoding="utf-8")
+
+    stopping_id = "bbbbbbbbbbbb"
+    stopping_dir = tmp_path / stopping_id
+    stopping_dir.mkdir()
+    (stopping_dir / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
+    (stopping_dir / "state.json").write_text(json.dumps({
+        "status": "stopping",
+        "pause_requested": True,
+        "scenes_status": {"scene_01": "processing"},
+        "scene_outputs": {},
+        "queued_at": 20,
+    }), encoding="utf-8")
+
+    app_module._load_projects()
+
+    assert app_module.projects[running_id]["status"] == "queued"
+    assert app_module.projects[running_id]["scenes_status"]["scene_01"] == "pending"
+    assert app_module.projects[stopping_id]["status"] == "paused"
+    assert json.loads((running_dir / "state.json").read_text(encoding="utf-8"))["status"] == "queued"
+
+
+def test_startup_restores_persisted_queue_in_original_order(monkeypatch):
+    app_module.projects.clear()
+    app_module.projects.update({
+        "later": {"status": "queued", "queued_at": 20},
+        "finished": {"status": "done", "queued_at": 5},
+        "first": {"status": "queued", "queued_at": 10},
+    })
+    restored = []
+
+    async def ensure_workers():
+        return None
+
+    async def enqueue(project_id):
+        restored.append(project_id)
+
+    monkeypatch.setattr(app_module, "_ensure_generation_workers", ensure_workers)
+    monkeypatch.setattr(app_module, "_enqueue_generation", enqueue)
+
+    asyncio.run(app_module.restore_generation_queue())
+
+    assert restored == ["first", "later"]
+
+
+def test_generate_endpoint_persists_no_voice_choice(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    queued = []
+
+    async def enqueue(project_id):
+        queued.append(project_id)
+
+    monkeypatch.setattr(app_module, "_enqueue_generation", enqueue)
+    client = TestClient(app_module.app)
+    project_id = client.post(
+        "/api/project/create", data={"script_json": json.dumps(_script())}
+    ).json()["project_id"]
+
+    response = client.post(f"/api/project/{project_id}/generate?with_voice=false")
+
+    assert response.status_code == 200
+    assert response.json()["with_voice"] is False
+    assert app_module.projects[project_id]["with_voice"] is False
+    assert queued == [project_id]
+    saved = json.loads((tmp_path / project_id / "state.json").read_text(encoding="utf-8"))
+    assert saved["with_voice"] is False
+
+
+def test_no_voice_timeline_skips_elevenlabs_and_subtitles(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    script_data = _script()
+    script_data["scenes"][0]["dialogues"] = [{
+        "character": "person", "text": "Lời thoại không được gửi tới ElevenLabs."
+    }]
+    client = TestClient(app_module.app)
+    project_id = client.post(
+        "/api/project/create", data={"script_json": json.dumps(script_data)}
+    ).json()["project_id"]
+    project = app_module.projects[project_id]
+    raw_video = tmp_path / "muse.mp4"
+    raw_video.write_bytes(b"video" * 300)
+    scene = project["script"].scenes[0]
+    scene.generated_media_path = str(raw_video)
+    scene.generated_media_type = "video"
+    scene.generated_media_provider = "muse"
+    project["status"] = "generating"
+    project["with_voice"] = False
+
+    async def unexpected_voice_call(**_kwargs):
+        raise AssertionError("ElevenLabs must not run in no-voice mode")
+
+    stitched = tmp_path / "stitched.mp4"
+    final = tmp_path / "final.mp4"
+    exported = {}
+
+    def build_timeline(_videos):
+        stitched.write_bytes(b"stitched")
+        return str(stitched)
+
+    def export(video_path, output_project_id, title):
+        exported.update(video_path=video_path, project_id=output_project_id, title=title)
+        final.write_bytes(b"final")
+        return str(final)
+
+    monkeypatch.setattr(app_module.voice_service, "synthesize", unexpected_voice_call)
+    monkeypatch.setattr(app_module, "get_audio_duration", lambda _path: 5.0)
+    monkeypatch.setattr(app_module.compositor, "fit_video_duration", lambda path, _duration: path)
+    monkeypatch.setattr(app_module.compositor, "build_timeline_video", build_timeline)
+    monkeypatch.setattr(app_module.compositor, "export_final", export)
+    monkeypatch.setattr(
+        app_module.compositor, "generate_srt",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("No subtitles expected")),
+    )
+
+    asyncio.run(app_module._generate_project_video(project_id))
+
+    assert project["status"] == "done"
+    assert project["output_path"] == str(final)
+    assert project["scene_outputs"]["scene_01"]["subtitles"] == []
+    assert project["scene_outputs"]["scene_01"]["with_voice"] is False
+    assert "không giọng" in exported["title"]
+
+
+def test_muse_timeline_pauses_on_missing_clip_without_calling_google(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    client = TestClient(app_module.app)
+    project_id = client.post(
+        "/api/project/create", data={"script_json": json.dumps(_script())}
+    ).json()["project_id"]
+    project = app_module.projects[project_id]
+    project["status"] = "generating"
+    project["with_voice"] = False
+    project["media_workflow"] = "muse"
+
+    async def unexpected(*_args, **_kwargs):
+        raise AssertionError("Muse workflow must not call a Google generator")
+
+    monkeypatch.setattr(app_module.video_service, "generate_scene_video", unexpected)
+    monkeypatch.setattr(app_module.image_service, "generate_scene_image", unexpected)
+
+    asyncio.run(app_module._generate_project_video(project_id))
+
+    assert project["status"] == "paused_error"
+    assert project["scenes_status"]["scene_01"] == "error"
+    assert "chưa có video Muse" in project["last_error"]
 
 
 def test_asset_upload_stays_in_project_and_persists(tmp_path, monkeypatch):
@@ -238,14 +459,14 @@ def test_muse_rejects_same_picture_after_reencoding(tmp_path):
     assert not app_module._same_muse_video(original, different, {}, {})
 
 
-def test_muse_does_not_attach_unverified_video(tmp_path):
+def test_muse_attaches_generated_video_without_gemini_verification(tmp_path):
     script = app_module.Script.model_validate(_script())
     video = tmp_path / "unverified.mp4"
     video.write_bytes(b"video" * 300)
     result = {"scene_id": "scene_01", "status": "done", "file_path": str(video)}
-    assert not app_module._attach_muse_result(script, result)
-    assert "chưa được xác minh" in result["error"]
-    assert script.scenes[0].generated_media_path == ""
+    assert app_module._attach_muse_result(script, result)
+    assert script.scenes[0].generated_media_path == str(video)
+    assert script.scenes[0].media_content_check_status == "muse_generated"
 
 
 def test_muse_batch_marks_existing_duplicate_for_regeneration(tmp_path):
@@ -267,7 +488,7 @@ def test_muse_batch_marks_existing_duplicate_for_regeneration(tmp_path):
     assert script.scenes[1].media_generation_status == "error"
 
 
-def test_muse_batch_checks_saved_video_before_skipping_it(tmp_path, monkeypatch):
+def test_muse_batch_keeps_saved_video_without_google_request(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
     app_module.projects.clear()
     client = TestClient(app_module.app)
@@ -278,60 +499,47 @@ def test_muse_batch_checks_saved_video_before_skipping_it(tmp_path, monkeypatch)
     scene.generated_media_path = str(video)
     scene.generated_media_type = "video"
     scene.generated_media_provider = "muse"
-    checks = []
-
     async def browser_ready(): return None
-    async def verify(path, prompt):
-        checks.append((path, prompt))
-        return SimpleNamespace(status="match", reason="Setting matches")
 
     monkeypatch.setattr(app_module, "_ensure_muse_browser", browser_ready)
-    monkeypatch.setattr(app_module, "verify_scene_content", verify)
     response = client.post(f"/api/project/{project_id}/muse-video-generate")
     assert response.status_code == 200
     assert response.json()["results"] == []
-    assert len(checks) == 1
-    assert scene.media_content_check_status == "match"
+    assert scene.media_content_check_status == "muse_generated"
     assert scene.media_content_check_prompt_hash
     assert client.post(f"/api/project/{project_id}/muse-video-generate").status_code == 200
-    assert len(checks) == 1
     scene.setting = "A different room"
     assert client.post(f"/api/project/{project_id}/muse-video-generate").status_code == 200
-    assert len(checks) == 2
+    assert scene.generated_media_path == str(video)
 
 
-def test_muse_batch_regenerates_saved_video_that_conflicts_with_script(tmp_path, monkeypatch):
+def test_muse_batch_sends_source_scene_for_muse_to_analyze(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
     app_module.projects.clear()
     client = TestClient(app_module.app)
     project_id = client.post("/api/project/create", data={"script_json": json.dumps(_script())}).json()["project_id"]
-    old = tmp_path / "wrong.mp4"
     new = tmp_path / "correct.mp4"
-    old.write_bytes(b"wrong video" * 150)
     new.write_bytes(b"correct video" * 150)
-    scene = app_module.projects[project_id]["script"].scenes[0]
-    scene.generated_media_path = str(old)
-    scene.generated_media_type = "video"
-    scene.generated_media_provider = "muse"
-
-    async def browser_ready(): return None
-    async def verify(path, prompt):
-        return SimpleNamespace(status="mismatch", reason="The clip shows a beach")
+    captured = {}
 
     async def submit_many(prompts, on_result=None, on_progress=None):
         assert [item["scene_id"] for item in prompts] == ["scene_01"]
+        captured["prompt"] = prompts[0]["prompt"]
         result = {"scene_id": "scene_01", "status": "done", "file_path": str(new),
-                  "provider": "muse", "content_check": "match"}
+                  "provider": "muse", "content_check": "muse_generated"}
         await on_result(result)
         return [result]
 
+    async def browser_ready(): return None
     monkeypatch.setattr(app_module, "_ensure_muse_browser", browser_ready)
-    monkeypatch.setattr(app_module, "verify_scene_content", verify)
     monkeypatch.setattr(app_module.muse_service, "submit_many", submit_many)
     response = client.post(f"/api/project/{project_id}/muse-video-generate")
     assert response.status_code == 200
+    scene = app_module.projects[project_id]["script"].scenes[0]
     assert scene.generated_media_path == str(new)
-    assert scene.media_content_check_status == "match"
+    assert scene.media_content_check_status == "muse_generated"
+    assert "MUSE DIRECTOR TASK" in captured["prompt"]
+    assert "A room" in captured["prompt"]
 
 
 def test_muse_serializes_prompts_across_requests(monkeypatch):
@@ -392,8 +600,8 @@ def test_content_verifier_sends_script_and_frames_to_gemini(monkeypatch):
     assert len(captured["contents"]) == 3
 
 
-def test_muse_rejects_video_when_content_check_finds_mismatch(tmp_path, monkeypatch):
-    monkeypatch.setattr(config, "GOOGLE_API_KEY", "test-key")
+def test_muse_generates_without_google_content_check(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "GOOGLE_API_KEY", "")
     service = MuseService()
     video = tmp_path / "scene.mp4"
     video.write_bytes(b"video" * 300)
@@ -407,20 +615,23 @@ def test_muse_rejects_video_when_content_check_finds_mismatch(tmp_path, monkeypa
     async def new_page(): return FakePage()
     async def connect(): return SimpleNamespace(contexts=[SimpleNamespace(new_page=new_page)])
     async def settled(page): return set()
-    async def fill(page, prompt): return None
+    captured = {}
+    async def fill(page, prompt): captured["prompt"] = prompt
     async def submit(page): return None
-    async def download(page, scene_id, previous_result_keys, progress_callback): return str(video)
-    async def verify(path, prompt):
-        return SimpleNamespace(status="mismatch", reason="Cảnh là quán cà phê nhưng video là bãi biển")
-
+    async def download(page, scene_id, previous_result_keys, progress_callback, job_token=""):
+        captured["job_token"] = job_token
+        return str(video)
     monkeypatch.setattr(service, "_connect", connect)
     monkeypatch.setattr(service, "_settled_existing_result_keys", settled)
     monkeypatch.setattr(service, "_fill_prompt", fill)
     monkeypatch.setattr(service, "_submit", submit)
     monkeypatch.setattr(service, "_try_download_result", download)
-    monkeypatch.setattr(muse_module, "verify_scene_content", verify)
-    with pytest.raises(RuntimeError, match="chưa khớp kịch bản"):
-        asyncio.run(service.submit_prompt("scene_01", "A quiet cafe"))
+    result = asyncio.run(service.submit_prompt("scene_01", "A quiet cafe"))
+    assert result["status"] == "done"
+    assert result["content_check"] == "muse_generated"
+    assert captured["prompt"].startswith("A quiet cafe")
+    assert captured["job_token"]
+    assert captured["job_token"] in captured["prompt"]
 
 
 def test_location_reference_persists_and_reaches_scene_prompt(tmp_path, monkeypatch):
@@ -561,7 +772,8 @@ def test_muse_only_reads_generated_video_wrappers():
     captured = {}
 
     class FakeLocator:
-        async def evaluate_all(self, _script):
+        async def evaluate_all(self, _script, token=""):
+            captured["token"] = token
             return [{
                 "key": "media-generation-scene-1.mp4",
                 "source": "blob:https://muse.ai/generated",
@@ -575,6 +787,59 @@ def test_muse_only_reads_generated_video_wrappers():
     sources = asyncio.run(MuseService._video_sources(FakePage()))
     assert sources == {"blob:https://muse.ai/generated"}
     assert captured["selector"] == '[data-hatch-video-wrapper="true"]'
+    assert captured["token"] == ""
+
+
+def test_muse_scopes_result_search_to_current_prompt_token():
+    captured = {}
+
+    class FakeLocator:
+        async def evaluate_all(self, script, token):
+            captured.update(script=script, token=token)
+            return []
+
+    class FakePage:
+        def locator(self, _selector):
+            return FakeLocator()
+
+    result = asyncio.run(MuseService._video_results(FakePage(), "TCV-scene_01-current"))
+    assert result == []
+    assert captured["token"] == "TCV-scene_01-current"
+    assert "compareDocumentPosition" in captured["script"]
+    assert "if (!anchor) return []" in captured["script"]
+
+
+def test_muse_batch_reconnects_and_continues_when_browser_page_closes(monkeypatch):
+    service = MuseService()
+    called = []
+    reported = []
+
+    class FakePage:
+        url = "https://muse.ai/"
+        async def goto(self, *_args, **_kwargs): return None
+        async def wait_for_timeout(self, _milliseconds): return None
+        async def close(self): return None
+
+    async def new_page():
+        return FakePage()
+
+    async def submit(scene_id, *_args, **_kwargs):
+        called.append(scene_id)
+        raise RuntimeError("Target page, context or browser has been closed")
+
+    async def report(result):
+        reported.append(result)
+
+    monkeypatch.setattr(service, "_new_page", new_page)
+    monkeypatch.setattr(service, "_discard_connection", lambda: asyncio.sleep(0))
+    monkeypatch.setattr(service, "submit_prompt", submit)
+    prompts = [{"scene_id": f"scene_{index:02d}", "prompt": "test"} for index in range(1, 4)]
+    results = asyncio.run(service.submit_many(prompts, on_result=report))
+
+    assert called == ["scene_01", "scene_02", "scene_03"]
+    assert [item["scene_id"] for item in results] == ["scene_01", "scene_02", "scene_03"]
+    assert all(item["status"] == "error" for item in results)
+    assert len(reported) == 3
 
 
 def test_muse_tracks_history_by_stable_result_id_not_blob_url(monkeypatch):
@@ -602,7 +867,7 @@ def test_muse_does_not_download_failed_source_repeatedly(monkeypatch):
     service = MuseService()
     attempts = 0
 
-    async def results(_page):
+    async def results(_page, _job_token=""):
         return [{"key": "media-generation-new.mp4", "source": "blob:https://muse.ai/new"}]
 
     async def save(*_args):

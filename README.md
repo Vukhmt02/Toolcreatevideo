@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ToolCreateVideo
 
 ToolCreateVideo là ứng dụng tạo video từ kịch bản. Ứng dụng hỗ trợ phân tích kịch bản JSON/TXT/Markdown/DOCX, chia cảnh KEY/FILLER, gửi prompt sang Google Flow, nhận media từ Flow, tạo giọng đọc, phụ đề, chuyển động Ken Burns và ghép video bằng FFmpeg.
@@ -17,11 +16,23 @@ Mở PowerShell:
 
 ```powershell
 cd D:\ToolCreateVideo
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
-python -m playwright install chromium
 ```
 
 Nếu chưa có `.env`, sao chép `.env.example` thành `.env` rồi chỉnh các giá trị cần thiết.
+
+## Chọn mức độ chia cảnh
+
+Trước khi tải TXT, Markdown, DOCX hoặc bấm **Tách đoạn sang JSON**, chọn một chế độ:
+
+- **Ít cảnh:** gộp nhiều nhịp kể liên tiếp, khoảng 12–20 giây/cảnh.
+- **Cân bằng:** mặc định, khoảng 8–12 giây/cảnh.
+- **Nhiều cảnh:** tách chi tiết theo hành động, khoảng 5–8 giây/cảnh.
+
+Parser giữ nguyên toàn bộ lời dẫn và lời thoại khi gộp. Kịch bản JSON đã chia cảnh thủ công không bị thay đổi bởi lựa chọn này.
 
 ## Chạy ứng dụng
 
@@ -31,6 +42,14 @@ python app.py
 ```
 
 Mở giao diện tại `http://127.0.0.1:8000`. `start.bat` cũng có thể dùng để cài dependency và chạy ứng dụng.
+
+## Hàng đợi và tiếp tục tác vụ
+
+- Mỗi yêu cầu ghép timeline được lưu vào `state.json` trước khi đưa vào hàng đợi.
+- Mặc định chỉ có một timeline chạy cùng lúc để tránh quá tải FFmpeg, CPU và API.
+- Nếu server dừng khi tác vụ đang chạy, lần khởi động sau tác vụ tự quay lại hàng đợi và tiếp tục từ cảnh hoàn thành gần nhất.
+- Nếu người dùng chủ động bấm **Dừng**, tác vụ giữ trạng thái tạm dừng và chỉ chạy lại khi bấm **Tiếp tục tác vụ**.
+- Có thể đặt `TIMELINE_CONCURRENCY=1`, `2` hoặc `3` trong `.env`; nên giữ giá trị `1` trên máy thông thường.
 
 ## Cấu hình Google Flow tự động
 
@@ -67,6 +86,34 @@ Prompt được ghép theo cấu trúc cố định gồm phong cách toàn proj
 
 Nếu giao diện Flow thay đổi hoặc nút Download không được nhận diện, tác vụ sẽ báo lỗi để bạn kiểm tra lại kết nối và selector Flow.
 
+## Quy trình Muse tự phân tích và tạo video
+
+Muse được điều khiển qua cửa sổ Chrome Remote Debugging và dùng phiên đăng nhập trong cùng hồ sơ Chrome với Flow.
+
+```env
+MUSE_ENABLED=true
+MUSE_CDP_URL=http://127.0.0.1:9222
+MUSE_URL=https://muse.ai/
+MUSE_CONCURRENCY=1
+MUSE_RESULT_TIMEOUT_SECONDS=900
+```
+
+1. Nhập kịch bản và tạo project.
+2. Bấm **Muse phân tích & tạo video**.
+3. Tool gửi nội dung gốc của từng cảnh, lời thoại, hành động, mô tả nhân vật, địa điểm và continuity sang Muse.
+4. Muse được yêu cầu tự phân tích, chọn bố cục, tạo prompt nội bộ và tạo video ngay.
+5. Tool tải video về, kiểm tra định dạng, kích thước, chống nhận nhầm avatar hoặc video trùng rồi gắn đúng cảnh.
+6. Cảnh lỗi có thể chạy riêng bằng nút **Tạo lại Muse**.
+
+Luồng Muse không cần Gemini API để phân tích hoặc xác minh lại video. Nút **AI phân tích bố cục & đồng bộ** vẫn là lựa chọn bổ sung nếu muốn khóa mô tả nhân vật và bối cảnh chi tiết hơn trước khi gửi Muse.
+
+Sau khi nhận đủ video cảnh, chọn một trong hai cách ghép:
+
+- **Tạo video có giọng:** gọi ElevenLabs, ghép lời thoại/lời dẫn và tạo phụ đề.
+- **Tạo video không giọng:** không gọi ElevenLabs, không tạo phụ đề và giữ âm thanh gốc của video Muse/Flow nếu có.
+
+Lựa chọn được lưu cùng hàng đợi và checkpoint, nên khi server khởi động lại hoặc tác vụ được tiếp tục, tool vẫn dùng đúng chế độ đã chọn.
+
 ## Google AI Studio/Gemini API
 
 Gemini API là phương án dự phòng khi không dùng media từ Flow. Cấu hình trong `.env`:
@@ -101,18 +148,21 @@ Trong tab **Cài đặt**:
 3. Bấm **Lưu Cấu Hình** rồi **Kiểm tra ElevenLabs**.
 4. Dùng **Nghe thử** trước khi chạy toàn bộ dự án.
 
-Nếu API dừng giữa chừng, các tệp đã tạo vẫn nằm trong cache. Ứng dụng xuất video tạm từ các cảnh hoàn thành và có thể tiếp tục sau.
+Nếu API dừng giữa chừng, các tệp và checkpoint đã tạo vẫn nằm trong cache. Tác vụ chuyển sang trạng thái dừng do lỗi và có thể tiếp tục từ cảnh còn thiếu sau khi quota hoặc cấu hình đã được xử lý.
 
 ## Xử lý lỗi thường gặp
 
 ### `ResolutionImpossible` khi cài package
 
 ```powershell
+cd D:\ToolCreateVideo
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
 
-Project đã đặt các phiên bản tương thích với Google GenAI và Python 3.13.
+Không cài dependency của dự án vào Python toàn hệ thống. Môi trường `.venv` riêng tránh xung đột với các package Google hoặc YOLO của ứng dụng khác.
 
 ### Flow không mở hoặc không nhận prompt
 
@@ -139,6 +189,3 @@ python -m pytest -q
 python -m compileall -q app.py core services
 node --check static\js\app.js
 ```
-=======
-# Toolcreatevideo
->>>>>>> b28934b7cbb272bfd36305e66809638cb3b7924c

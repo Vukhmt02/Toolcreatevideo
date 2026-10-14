@@ -57,6 +57,7 @@ class Config:
     # Server
     HOST: str = os.getenv("HOST", "127.0.0.1")
     PORT: int = int(os.getenv("PORT", "8000"))
+    TIMELINE_CONCURRENCY: int = max(1, min(3, int(os.getenv("TIMELINE_CONCURRENCY", "1"))))
 
     # FFmpeg
     FFMPEG_PATH: str = _detect_ffmpeg()

@@ -148,6 +148,20 @@
                 </div>
             </div>
 
+            <div style="display:flex;gap:10px;align-items:center;margin:12px 0;flex-wrap:wrap">
+                <label for="sceneDensity" style="font-size:13px;color:var(--text-secondary);font-weight:600">
+                    Mức độ chia cảnh:
+                </label>
+                <select id="sceneDensity" style="min-width:220px">
+                    <option value="few">Ít cảnh — khoảng 12–20 giây/cảnh</option>
+                    <option value="balanced" selected>Cân bằng — khoảng 8–12 giây/cảnh</option>
+                    <option value="many">Nhiều cảnh — khoảng 5–8 giây/cảnh</option>
+                </select>
+                <span style="font-size:12px;color:var(--text-secondary)">
+                    Áp dụng khi đọc TXT, Markdown, DOCX hoặc kịch bản tự nhiên. JSON có sẵn giữ nguyên các cảnh.
+                </span>
+            </div>
+
             <div class="btn-group" style="margin-top:0;margin-bottom:12px;flex-wrap:wrap">
                 <button class="btn btn-secondary btn-sm" onclick="document.getElementById('scriptFileInput').click()">📁 Chọn file kịch bản</button>
                 <button class="btn btn-secondary btn-sm" onclick="formatJson()" style="border-color:var(--accent-secondary);color:#38bdf8;font-weight:600">⚡ Tách đoạn sang JSON</button>
@@ -269,18 +283,29 @@ Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi
 
                 <div style="display:flex;gap:12px;align-items:center;margin-bottom:16px;flex-wrap:wrap">
                     <button class="btn btn-secondary" id="btnVisualAnalyze" type="button" onclick="analyzeVisualPlan()">🧠 AI phân tích bố cục & đồng bộ</button>
-                    <button class="btn btn-primary" id="btnGenerate" onclick="startGeneration()">
-                        🎬 Bắt đầu tạo Video (Veo 3.1 + Gemini tạo ảnh)
+                    <button class="btn btn-primary" id="btnGenerate" onclick="startGeneration(true)">
+                        🎙️ Tạo video có giọng
+                    </button>
+                    <button class="btn btn-secondary" id="btnGenerateNoVoice" onclick="startGeneration(false)">
+                        🔇 Tạo video không giọng
+                    </button>
+                    <button class="btn btn-danger" id="btnPauseGeneration" type="button"
+                            onclick="pauseGeneration()" style="display:none">
+                        ⏸ Dừng sau cảnh hiện tại
+                    </button>
+                    <button class="btn btn-warning" id="btnResumeGeneration" type="button"
+                            onclick="resumeGeneration()" style="display:none">
+                        ▶ Tiếp tục tác vụ
                     </button>
                     <button class="btn btn-secondary" type="button" onclick="openFlowWindows()">🌐 Mở các cửa sổ Flow</button>
                     <button class="btn btn-secondary" type="button" onclick="generateInFlow()">⚡ Gửi prompt vào Flow (3 luồng)</button>
                     <button class="btn btn-secondary" type="button" onclick="openMuseWindow()">🌐 Mở Muse</button>
-                    <button class="btn btn-secondary" type="button" onclick="generateInMuse()">🎞️ Tạo video bằng Muse</button>
+                    <button class="btn btn-secondary" type="button" onclick="generateInMuse()">🎞️ Muse phân tích & tạo video</button>
                     <span style="font-size:12px;color:var(--text-secondary)">
                         💡 Nhấp vào nút <b>KEY / FILLER</b> tại từng cảnh bên dưới để đổi loại cảnh nếu muốn.
                     </span>
                     <span style="font-size:12px;color:var(--text-secondary)">
-                        Muse dùng chung Chrome Flow và phiên Google đã đăng nhập. Tài khoản vẫn cần được Meta cấp quyền dùng Muse Video.
+                        Muse nhận nội dung từng cảnh, tự chọn bố cục và prompt nội bộ rồi tạo video. Không cần Gemini API cho luồng Muse.
                     </span>
                 </div>
                 <div id="visualBibleSummary" class="visual-bible-summary"></div>

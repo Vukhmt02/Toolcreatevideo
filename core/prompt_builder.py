@@ -127,6 +127,60 @@ def build_scene_prompt(scene: Scene, script: Script, audio_duration: float = 0) 
     return "\n\n".join(parts)
 
 
+def build_muse_prompt(scene: Scene, script: Script) -> str:
+    """Give Muse source material and let Muse plan the shot before generating it."""
+    characters = _visible_characters(scene, script)
+    location = script.get_location(scene.location_id)
+    scene_index = next((index for index, item in enumerate(script.scenes) if item.id == scene.id), -1)
+    previous_scene = script.scenes[scene_index - 1] if scene_index > 0 else None
+
+    source_lines = [
+        f"Scene ID: {scene.id}",
+        f"Story setting and time: {scene.setting}",
+    ]
+    if scene.action_beats:
+        source_lines.append("Actions in story order: " + " -> ".join(scene.action_beats))
+    if scene.narration and scene.narration.text.strip():
+        source_lines.append(f'Narration to depict visually: "{scene.narration.text.strip()}"')
+    for dialogue in scene.dialogues:
+        character = script.get_character(dialogue.character)
+        name = character.name if character else dialogue.character
+        action = f"; visible action: {dialogue.action}" if dialogue.action else ""
+        source_lines.append(
+            f'Dialogue context: {name}, emotion {dialogue.emotion}{action}: "{dialogue.text.strip()}"'
+        )
+    if scene.prompt_override.strip():
+        source_lines.append(f"User direction that must be followed: {scene.prompt_override.strip()}")
+
+    locks = [
+        f"Project visual style: {_visual_style(script)}",
+        *(_character_lock(character) for character in characters),
+    ]
+    if location:
+        locks.append(
+            f"Location continuity lock: {location.name}: {location.description or scene.setting}. "
+            "Keep its architecture, layout, furniture and fixed props unchanged."
+        )
+    if previous_scene:
+        locks.append(
+            f"Previous scene continuity: scene {previous_scene.id} was set in {previous_scene.setting}. "
+            "Keep story continuity where the source scene requires it."
+        )
+
+    return "\n\n".join([
+        "MUSE DIRECTOR TASK: Analyze the source scene below yourself, design the strongest cinematic "
+        "shot plan and generation prompt internally, then generate the video immediately. Do not stop "
+        "after explaining the analysis and do not return prompt text instead of a video.",
+        "SOURCE SCENE (this is the authority; do not invent another plot):\n" + "\n".join(source_lines),
+        "CONTINUITY LOCKS:\n" + "\n".join(locks),
+        "GENERATION RULES: Create one downloadable 16:9 landscape cinematic clip. Select camera, "
+        "composition, lighting and natural motion that best communicate this exact scene. Preserve every "
+        "named character's identity and wardrobe. Show only concrete actions supported by the source. "
+        "Dialogue is emotional context; spoken audio will be added later. No captions, text, watermark, "
+        "visible logo, unrelated stock footage, flashback or extra person. Produce the video now.",
+    ])
+
+
 def build_image_prompt(scene: Scene, script: Script) -> str:
     """Build a still-image prompt with locked identity and composition."""
     if scene.prompt_override.strip():

@@ -225,7 +225,74 @@ def _detect_prose_dialogues(paragraphs: list[str], characters_map: dict) -> list
     return results
 
 
-def parse_narrative_story(text: str, max_scenes: int = 10) -> dict:
+SCENE_DENSITY_SETTINGS = {
+    "few": {"target_chars": 300, "duration": "15s"},
+    "balanced": {"target_chars": 180, "duration": "10s"},
+    "many": {"target_chars": 80, "duration": "7s"},
+}
+
+
+def normalize_scene_density(value: str) -> str:
+    value = (value or "balanced").strip().lower()
+    return value if value in SCENE_DENSITY_SETTINGS else "balanced"
+
+
+def _scene_story_length(scene: dict) -> int:
+    narration = scene.get("narration") or {}
+    return len(str(narration.get("text", ""))) + sum(
+        len(str(dialogue.get("text", ""))) for dialogue in scene.get("dialogues", [])
+    )
+
+
+def _merge_narrative_scenes(scenes: list[dict], density: str) -> list[dict]:
+    """Combine adjacent story beats without losing narration or dialogue."""
+    density = normalize_scene_density(density)
+    settings = SCENE_DENSITY_SETTINGS[density]
+    target_chars = settings["target_chars"]
+    if density == "many" or len(scenes) < 2:
+        merged = scenes
+    else:
+        merged = []
+        current = None
+        for scene in scenes:
+            if current is None:
+                current = scene
+                continue
+            current_length = _scene_story_length(current)
+            next_length = _scene_story_length(scene)
+            if current_length > 0 and current_length + next_length > target_chars:
+                merged.append(current)
+                current = scene
+                continue
+
+            current_narration = current.get("narration") or None
+            next_narration = scene.get("narration") or None
+            if next_narration and next_narration.get("text", "").strip():
+                if current_narration:
+                    current_narration["text"] = " ".join(filter(None, [
+                        current_narration.get("text", "").strip(),
+                        next_narration.get("text", "").strip(),
+                    ]))
+                else:
+                    current["narration"] = dict(next_narration)
+            current.setdefault("dialogues", []).extend(scene.get("dialogues") or [])
+            current["duration_hint"] = settings["duration"]
+        if current is not None:
+            merged.append(current)
+
+    total = len(merged)
+    step = max(2, round(total / 12)) if total > 8 else 2
+    for index, scene in enumerate(merged):
+        scene["id"] = f"scene_{index + 1:02d}"
+        scene["duration_hint"] = settings["duration"]
+        scene["scene_type"] = "key" if (
+            index == 0 or index == total - 1 or index % step == 0
+        ) else "filler"
+    return merged
+
+
+def parse_narrative_story(text: str, max_scenes: int = 10,
+                          scene_density: str = "balanced") -> dict:
     """
     Phân tích truyện kể / văn xuôi liền mạch thành các cảnh video.
     - Dòng đầu tiên (ngắn ≤ 100 ký tự) = tiêu đề
@@ -498,20 +565,8 @@ def parse_narrative_story(text: str, max_scenes: int = 10) -> dict:
         else:
             last["narration"] = {"text": pending_text, "voice": "", "emotion": "calm"}
 
-    # Đánh lại số thứ tự cảnh và phân loại cảnh KEY / FILLER
-    total_scenes = len(merged_scenes)
-    # Tỷ lệ: chọn khoảng 8-15 cảnh KEY (Veo 3.1) cho toàn bộ câu chuyện dài
-    step = max(2, round(total_scenes / 12)) if total_scenes > 8 else 2
-
-    for idx, sc in enumerate(merged_scenes):
-        sc["id"] = f"scene_{idx + 1:02d}"
-        is_key = (
-            idx == 0
-            or idx == total_scenes - 1
-            or (idx % step == 0)
-            or (len(sc.get("dialogues", [])) > 0 and idx % max(1, step // 2) == 0)
-        )
-        sc["scene_type"] = "key" if is_key else "filler"
+    # Gộp các nhịp kể liền nhau theo mật độ cảnh người dùng chọn.
+    merged_scenes = _merge_narrative_scenes(merged_scenes, scene_density)
 
     return {
         "title": title,
@@ -540,7 +595,7 @@ def _has_scene_markers(lines: list[str]) -> bool:
     return False
 
 
-def parse_plain_text_script(text: str) -> dict:
+def parse_plain_text_script(text: str, scene_density: str = "balanced") -> dict:
     """
     Phân tích thông minh kịch bản viết bằng văn bản thuần (.txt, .md, ChatGPT, kịch bản phân cảnh).
     Hỗ trợ cả Markdown headers (### Cảnh 1), bullet points (- **Bối cảnh:**), TikTok script, voiceover scripts...
@@ -555,7 +610,7 @@ def parse_plain_text_script(text: str) -> dict:
     # Kiểm tra xem có từ khóa phân cảnh không
     if not _has_scene_markers(raw_lines):
         # Văn xuôi / truyện kể — dùng narrative parser
-        return parse_narrative_story(text)
+        return parse_narrative_story(text, scene_density=scene_density)
 
     title = ""
     characters_map: dict[str, dict] = {}
@@ -976,7 +1031,7 @@ def normalize_script_data(data: dict) -> dict:
     return data
 
 
-def parse_script(raw_input: str | dict) -> Script:
+def parse_script(raw_input: str | dict, scene_density: str = "balanced") -> Script:
     """
     Parse kịch bản từ JSON string, Python dict hoặc văn bản thuần (.txt, .md).
     Tự động sửa lỗi cú pháp nhẹ, tự động phát hiện nhân vật và các cảnh.
@@ -993,14 +1048,14 @@ def parse_script(raw_input: str | dict) -> Script:
                 data = json.loads(cleaned_str)
             except json.JSONDecodeError as json_err:
                 try:
-                    data = parse_plain_text_script(raw_input)
+                    data = parse_plain_text_script(raw_input, scene_density=scene_density)
                 except Exception:
                     raise ValueError(
                         f"Lỗi định dạng JSON: {json_err.msg} (dòng {json_err.lineno}, cột {json_err.colno}). "
                         "Hãy kiểm tra lại dấu ngoặc và dấu phẩy hoặc sử dụng văn bản thuần."
                     )
         else:
-            data = parse_plain_text_script(raw_input)
+            data = parse_plain_text_script(raw_input, scene_density=scene_density)
     else:
         raise ValueError("Định dạng kịch bản không hợp lệ.")
 
@@ -1081,7 +1136,7 @@ FULL_SCRIPT_TEMPLATE = {
 }
 
 
-def format_script_to_complete_json(raw_input: str) -> dict:
+def format_script_to_complete_json(raw_input: str, scene_density: str = "balanced") -> dict:
     """
     Chuẩn hóa kịch bản thành JSON chuẩn và ĐẦY ĐỦ 100% tất cả các trường.
     Nếu đầu vào trống -> trả về FULL_SCRIPT_TEMPLATE.
@@ -1090,7 +1145,7 @@ def format_script_to_complete_json(raw_input: str) -> dict:
     if not raw_input or not str(raw_input).strip():
         return FULL_SCRIPT_TEMPLATE
 
-    script = parse_script(raw_input)
+    script = parse_script(raw_input, scene_density=scene_density)
     data = script.model_dump()
 
     # Đảm bảo settings
@@ -1175,7 +1230,7 @@ def format_script_to_complete_json(raw_input: str) -> dict:
     return data
 
 
-async def refine_script_with_ai(raw_text: str) -> dict:
+async def refine_script_with_ai(raw_text: str, scene_density: str = "balanced") -> dict:
     """
     Sử dụng Google Gemini để chuẩn hóa bất kỳ kịch bản thô nào
     thành cấu trúc JSON điện ảnh hoàn chỉnh cho Veo 3.1 & Imagen 3.
@@ -1242,7 +1297,23 @@ Lưu ý quan trọng về "scene_type":
 - Trả về JSON thuần túy, không thêm bất kỳ văn bản giải thích nào ngoài JSON.
 """
 
-    prompt = f"Hãy chuyển đổi kịch bản sau thành JSON chuẩn:\n\n{raw_text}"
+    density = normalize_scene_density(scene_density)
+    density_instruction = {
+        "few": (
+            "Tạo ÍT CẢNH: gộp lời dẫn, lời thoại và hành động liên tiếp trong cùng địa điểm/thời điểm; "
+            "mỗi cảnh khoảng 12-20 giây. Chỉ tách khi đổi địa điểm, thời gian hoặc ý hình ảnh chính."
+        ),
+        "balanced": (
+            "Tạo số cảnh CÂN BẰNG: mỗi cảnh khoảng 8-12 giây; gộp các câu thoại và hành động "
+            "liền mạch trong cùng địa điểm, không tách riêng từng câu thoại."
+        ),
+        "many": (
+            "Tạo NHIỀU CẢNH chi tiết: mỗi cảnh khoảng 5-8 giây, có thể tách theo các nhịp hành động rõ ràng."
+        ),
+    }[density]
+    prompt = (
+        f"Hãy chuyển đổi kịch bản sau thành JSON chuẩn. {density_instruction}\n\n{raw_text}"
+    )
 
     # Danh sách model thử nghiệm theo thứ tự ưu tiên
     model_preference = getattr(config, "GEMINI_MODEL", "gemini-3.8-flash")
@@ -1307,7 +1378,7 @@ Lưu ý quan trọng về "scene_type":
     # Nếu tất cả các model AI đều bận hoặc không phản hồi, tự động dùng bộ chuẩn hóa kịch bản cục bộ
     if response is None or not response.text:
         print(f"[Gemini Refine] Tất cả model AI đều bận ({last_err}). Chuyển sang parser cục bộ.")
-        fallback_data = format_script_to_complete_json(raw_text)
+        fallback_data = format_script_to_complete_json(raw_text, scene_density=density)
         fallback_data["_used_fallback"] = True
         fallback_data["_fallback_notice"] = (
             "Máy chủ Google Gemini tạm thời quá tải (503 UNAVAILABLE). "
