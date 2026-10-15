@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToolCreateVideo — Tạo Video từ Kịch Bản</title>
     <meta name="description" content="Tool tạo video tự động từ kịch bản với AI voice và Veo 3.1">
-    <link rel="stylesheet" href="/static/css/style.css?v=20261003-1">
+    <link rel="stylesheet" href="/static/css/style.css?v=20261015-1">
 </head>
 <body>
 
@@ -222,8 +222,17 @@ Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi
         <div class="card">
             <div class="card-title"><span class="icon">👥</span> Nhân Vật</div>
             <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">
-                Khóa ngoại hình và trang phục bằng mô tả dùng chung cho mọi cảnh. Ảnh tham chiếu là tùy chọn cho các luồng khác; Muse dùng mô tả chữ.
+                Khóa ngoại hình và trang phục bằng hồ sơ dùng chung cho mọi cảnh. Khi cảnh được gửi sang Muse, tool tự tải ảnh tham chiếu của đúng nhân vật lên trước khi gửi prompt.
             </p>
+            <form id="createCharacterForm" class="character-create-form">
+                <input name="name" required maxlength="120" placeholder="Tên nhân vật, ví dụ: Minh">
+                <input name="description" maxlength="2000" placeholder="Tuổi, khuôn mặt, tóc, vóc dáng, màu da...">
+                <select name="voice_gender" aria-label="Giọng nhân vật">
+                    <option value="female">Giọng nữ</option>
+                    <option value="male">Giọng nam</option>
+                </select>
+                <button type="submit" class="btn btn-secondary btn-sm">+ Thêm nhân vật</button>
+            </form>
             <div class="character-grid" id="characterGrid">
                 <div class="empty-state">
                     <div class="icon">👤</div>
@@ -331,6 +340,6 @@ Lời dẫn: Đó là một ngày thu, khi những chiếc lá cuối cùng rơi
 
 </main>
 
-<script src="/static/js/app.js?v=20261003-1"></script>
+<script src="/static/js/app.js?v=20261015-1"></script>
 </body>
 </html>

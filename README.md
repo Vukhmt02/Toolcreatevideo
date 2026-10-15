@@ -105,6 +105,16 @@ MUSE_RESULT_TIMEOUT_SECONDS=900
 5. Tool tải video về, kiểm tra định dạng, kích thước, chống nhận nhầm avatar hoặc video trùng rồi gắn đúng cảnh.
 6. Cảnh lỗi có thể chạy riêng bằng nút **Tạo lại Muse**.
 
+### Đồng bộ hai hoặc nhiều nhân vật
+
+1. Trong tab **Nhân vật**, thêm hoặc mở hồ sơ riêng của từng người.
+2. Điền **Ngoại hình cố định**, **Trang phục cố định**, các dấu hiệu nhận dạng và tải ảnh tham chiếu nếu có.
+3. Trong tab **Tạo Video**, chọn đúng các nhân vật xuất hiện tại từng cảnh rồi bấm **Lưu nhân vật cảnh**.
+4. Mở **Prompt** để xem cảnh báo. Prompt nhiều người tự thêm khóa vị trí, khuôn mặt, trang phục và chống tráo hoặc trộn nhận dạng.
+5. Sau khi thay đổi hồ sơ hay danh sách nhân vật, bấm **Tạo lại Muse** ở các cảnh liên quan.
+
+Nhân vật có lời thoại luôn được giữ trong danh sách của cảnh. Với Muse, tool tải tối đa 4 ảnh tham chiếu của các nhân vật trong cảnh rồi gửi prompt có bản đồ thứ tự ảnh; nếu cảnh không có ảnh, tool vẫn dùng khóa mô tả chữ.
+
 Luồng Muse không cần Gemini API để phân tích hoặc xác minh lại video. Nút **AI phân tích bố cục & đồng bộ** vẫn là lựa chọn bổ sung nếu muốn khóa mô tả nhân vật và bối cảnh chi tiết hơn trước khi gửi Muse.
 
 Sau khi nhận đủ video cảnh, chọn một trong hai cách ghép:

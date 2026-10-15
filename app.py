@@ -37,12 +37,17 @@ from config import config
 from core.script_parser import (
     parse_script,
     Script,
+    Character,
     Location,
+    slugify,
     refine_script_with_ai,
     format_script_to_complete_json,
     FULL_SCRIPT_TEMPLATE,
 )
-from core.prompt_builder import build_scene_prompt, build_image_prompt, build_character_prompt, build_muse_prompt
+from core.prompt_builder import (
+    build_scene_prompt, build_image_prompt, build_character_prompt, build_muse_prompt,
+    character_sync_warnings,
+)
 from core.visual_analyzer import analyze_visual_consistency, ensure_visual_defaults
 from core.timeline import build_scene_timeline, get_audio_duration, estimate_duration_from_text
 from services.voice_service import voice_service
@@ -793,7 +798,8 @@ async def get_scene_prompt(project_id: str, scene_id: str):
         raise HTTPException(status_code=404, detail="Không tìm thấy cảnh")
     prompt = build_scene_prompt(scene, script) if scene.scene_type == "key" else build_image_prompt(scene, script)
     return {"scene_id": scene_id, "prompt": prompt, "muse_prompt": build_muse_prompt(scene, script),
-            "override": scene.prompt_override, "is_override": bool(scene.prompt_override.strip())}
+            "override": scene.prompt_override, "is_override": bool(scene.prompt_override.strip()),
+            "character_warnings": character_sync_warnings(scene, script)}
 
 
 @app.post("/api/project/{project_id}/scene/{scene_id}/prompt")
@@ -945,6 +951,81 @@ async def update_character_visual_details(
     character.identity_markers = [value.strip() for value in identity_markers.split(";") if value.strip()]
     (config.OUTPUT_DIR / project_id / "script.json").write_text(script.model_dump_json(indent=2), encoding="utf-8")
     return {"status": "ok", "character": character.model_dump()}
+
+
+@app.post("/api/project/{project_id}/characters")
+async def create_character(
+    project_id: str, name: str = Form(...), description: str = Form(""),
+    voice_gender: str = Form("female"),
+):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    name, description = name.strip(), description.strip()
+    if not name or len(name) > 120 or len(description) > 2000:
+        raise HTTPException(status_code=400, detail="Tên hoặc mô tả nhân vật không hợp lệ")
+    if len(script.characters) >= config.MAX_CHARACTERS:
+        raise HTTPException(status_code=400, detail=f"Tối đa {config.MAX_CHARACTERS} nhân vật")
+    if any(item.name.casefold() == name.casefold() for item in script.characters):
+        raise HTTPException(status_code=400, detail="Tên nhân vật đã tồn tại")
+    base_id = f"char_{slugify(name)}"
+    character_id = base_id
+    suffix = 2
+    existing_ids = {item.id for item in script.characters}
+    while character_id in existing_ids:
+        character_id = f"{base_id}_{suffix}"
+        suffix += 1
+    character = Character(
+        id=character_id, name=name, description=description,
+        appearance_signature=description, voice_gender=(
+            voice_gender if voice_gender in {"male", "female"} else "female"
+        ),
+    )
+    character.consistency_rules = [
+        "same face, age, hairstyle, body proportions and skin tone in every shot",
+        "same wardrobe and accessories until the script explicitly changes them",
+    ]
+    script.characters.append(character)
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(
+        script.model_dump_json(indent=2), encoding="utf-8"
+    )
+    return {"status": "ok", "character": character.model_dump()}
+
+
+@app.post("/api/project/{project_id}/scene/{scene_id}/characters")
+async def set_scene_characters(
+    project_id: str, scene_id: str, character_ids: str = Form("[]"),
+):
+    if project_id not in projects:
+        raise HTTPException(status_code=404, detail="Project không tồn tại")
+    script: Script = projects[project_id]["script"]
+    scene = next((item for item in script.scenes if item.id == scene_id), None)
+    if scene is None:
+        raise HTTPException(status_code=404, detail="Không tìm thấy cảnh")
+    try:
+        values = json.loads(character_ids)
+    except json.JSONDecodeError as exc:
+        raise HTTPException(status_code=400, detail="Danh sách nhân vật không hợp lệ") from exc
+    if not isinstance(values, list):
+        raise HTTPException(status_code=400, detail="Danh sách nhân vật không hợp lệ")
+    valid_ids = {item.id for item in script.characters}
+    selected = list(dict.fromkeys(str(value) for value in values if str(value) in valid_ids))
+    automatically_added = []
+    for dialogue in scene.dialogues:
+        character = script.get_character(dialogue.character)
+        if character and character.id not in selected:
+            selected.append(character.id)
+            automatically_added.append(character.id)
+    scene.visible_character_ids = selected
+    (config.OUTPUT_DIR / project_id / "script.json").write_text(
+        script.model_dump_json(indent=2), encoding="utf-8"
+    )
+    return {
+        "status": "ok", "scene_id": scene_id,
+        "visible_character_ids": selected,
+        "automatically_added": automatically_added,
+        "warnings": character_sync_warnings(scene, script),
+    }
 
 
 @app.post("/api/project/{project_id}/scene/{scene_id}/location")
@@ -1311,7 +1392,7 @@ async def generate_videos_in_muse(project_id: str):
         prompts.append({
             "scene_id": scene.id,
             "prompt": build_muse_prompt(scene, script),
-            "reference_images": [],
+            "reference_images": _scene_reference_images(scene, script),
         })
     if not prompts:
         return {"status": "ok", "results": [], "message": "Tất cả cảnh đã có video"}
@@ -1384,7 +1465,7 @@ async def regenerate_scene_in_muse(project_id: str, scene_id: str):
         result = await muse_service.submit_prompt(
             scene.id,
             build_muse_prompt(scene, script),
-            reference_images=[],
+            reference_images=_scene_reference_images(scene, script),
         )
     except Exception as exc:
         raise HTTPException(status_code=502, detail=str(exc))

@@ -674,6 +674,16 @@ function renderGenerateSceneCards() {
             const initialMessage = hasMediaError ? scene.media_generation_error
                 : (hasMuseVideo ? 'Muse đã phân tích và tạo video' : 'Sẵn sàng');
             const mediaUrl = `/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(scene.id)}/media`;
+            const dialogueIds = (scene.dialogues || []).map(item => item.character);
+            const visibleIds = new Set([...(scene.visible_character_ids || []), ...dialogueIds]);
+            const selectedCharacters = (currentScript.characters || []).filter(char =>
+                visibleIds.has(char.id) || visibleIds.has(char.name));
+            const syncWarnings = [];
+            selectedCharacters.forEach(char => {
+                if (!(char.appearance_signature || char.description || '').trim()) syncWarnings.push(`${char.name}: thiếu ngoại hình`);
+                if (!(char.wardrobe || '').trim()) syncWarnings.push(`${char.name}: thiếu trang phục`);
+                if (!(char.reference_images || []).length) syncWarnings.push(`${char.name}: chưa có ảnh tham chiếu`);
+            });
 
             return `
             <div class="scene-card ${cardState}" id="scene-card-${escapeAttr(scene.id)}">
@@ -701,7 +711,26 @@ function renderGenerateSceneCards() {
                         `).join('')}
                     </select>
                 </label>
+                <fieldset class="scene-character-selector" data-character-scene-id="${escapeAttr(scene.id)}">
+                    <legend>👥 Nhân vật xuất hiện trong khung hình</legend>
+                    ${(currentScript.characters || []).length ? (currentScript.characters || []).map(char => `
+                        <label>
+                            <input type="checkbox" value="${escapeAttr(char.id)}"
+                                   ${visibleIds.has(char.id) || visibleIds.has(char.name) ? 'checked' : ''}>
+                            <span>${escapeHtml(char.name)}</span>
+                        </label>
+                    `).join('') : '<span class="character-sync-empty">Chưa có nhân vật trong project</span>'}
+                    <button type="button" class="btn btn-secondary btn-sm" data-save-scene-characters="${escapeAttr(scene.id)}">💾 Lưu nhân vật cảnh</button>
+                </fieldset>
+                <div class="character-sync-status ${syncWarnings.length ? 'warning' : 'ready'}">
+                    ${syncWarnings.length
+                        ? `⚠ ${escapeHtml(syncWarnings.join(' • '))}`
+                        : (selectedCharacters.length > 1
+                            ? `✓ Đã khóa ${selectedCharacters.length} nhân vật riêng biệt trong prompt`
+                            : '✓ Danh sách nhân vật đã sẵn sàng')}
+                </div>
                 <div class="scene-prompt-panel" id="prompt-panel-${escapeAttr(scene.id)}" style="display:none">
+                    <div id="prompt-character-warnings-${escapeAttr(scene.id)}" class="prompt-character-warnings"></div>
                     <div class="scene-plan-line"><b>Bố cục:</b> ${escapeHtml(scene.composition || 'Chưa phân tích')}</div>
                     <div class="scene-plan-line"><b>Ánh sáng:</b> ${escapeHtml(scene.lighting || 'Chưa phân tích')}</div>
                     <div class="scene-plan-line"><b>Continuity:</b> ${escapeHtml((scene.continuity || []).join('; ') || 'Chưa có')}</div>
@@ -759,6 +788,9 @@ function renderGenerateSceneCards() {
         container.querySelectorAll('[data-location-scene-id]').forEach(select => {
             select.addEventListener('change', () => setSceneLocation(select.dataset.locationSceneId, select.value));
         });
+        container.querySelectorAll('[data-save-scene-characters]').forEach(button => {
+            button.addEventListener('click', () => saveSceneCharacters(button.dataset.saveSceneCharacters));
+        });
         container.querySelectorAll('.scene-flow-retry-btn[data-flow-scene-id]').forEach(button => {
             button.addEventListener('click', () => retrySceneInFlow(button.dataset.flowSceneId));
         });
@@ -788,6 +820,14 @@ async function toggleScenePrompt(sceneId) {
         editor.value = data.override || '';
         document.getElementById(`prompt-preview-${sceneId}`).textContent =
             `${data.prompt}\n\n===== LỆNH MUSE TỰ PHÂN TÍCH VÀ TẠO VIDEO =====\n\n${data.muse_prompt || ''}`;
+        const warningBox = document.getElementById(`prompt-character-warnings-${sceneId}`);
+        if (warningBox) {
+            const warnings = data.character_warnings || [];
+            warningBox.className = `prompt-character-warnings ${warnings.length ? 'warning' : 'ready'}`;
+            warningBox.textContent = warnings.length
+                ? `⚠ ${warnings.join(' • ')}`
+                : '✓ Khóa nhân vật trong prompt đã đầy đủ.';
+        }
         editor.dataset.loaded = 'true';
     } catch (error) {
         showToast(error.message, 'error');
@@ -960,11 +1000,20 @@ function renderCharacters() {
         return;
     }
 
-    grid.innerHTML = currentScript.characters.map(char => `
+    grid.innerHTML = currentScript.characters.map(char => {
+        const profileReady = Boolean((char.appearance_signature || char.description || '').trim()
+            && (char.wardrobe || '').trim());
+        const hasReference = Boolean((char.reference_images || []).length);
+        const referenceUrl = `/api/project/${encodeURIComponent(currentProjectId)}/character/${encodeURIComponent(char.id)}/reference?v=${Date.now()}`;
+        return `
         <div class="character-card">
             <div class="character-avatar">${char.voice_gender === 'male' ? '👨' : '👩'}</div>
             <div class="character-name">${escapeHtml(char.name)}</div>
             <div class="character-desc">${escapeHtml(char.description || 'Không có mô tả')}</div>
+            <div class="character-readiness ${profileReady ? 'ready' : 'warning'}">
+                ${profileReady ? '✓ Đã khóa nhận dạng' : '⚠ Thiếu ngoại hình hoặc trang phục'}
+            </div>
+            ${hasReference ? `<img class="character-reference-preview" src="${referenceUrl}" alt="Ảnh tham chiếu ${escapeAttr(char.name)}">` : ''}
             <form class="character-bible visual-lock-form" data-character-visual-id="${escapeAttr(char.id)}">
                 <label>Ngoại hình cố định<textarea name="appearance_signature" placeholder="Tuổi, khuôn mặt, tóc, dáng người...">${escapeHtml(char.appearance_signature || char.description || '')}</textarea></label>
                 <label>Trang phục cố định<input name="wardrobe" value="${escapeAttr(char.wardrobe || '')}" placeholder="Màu áo, kiểu quần, phụ kiện..."></label>
@@ -985,7 +1034,8 @@ function renderCharacters() {
             <input type="file" id="file-voice-${escapeAttr(char.id)}" accept="audio/*" style="display:none"
                    data-file-id="${escapeAttr(char.id)}" data-file-type="voice">
         </div>
-    `).join('');
+    `;
+    }).join('');
     grid.querySelectorAll('[data-upload-id]').forEach(area => {
         area.addEventListener('click', () => uploadAsset(area.dataset.uploadId, area.dataset.uploadType));
     });
@@ -1007,6 +1057,28 @@ async function saveCharacterVisualDetails(event, characterId) {
         if (!response.ok) throw new Error(data.detail || 'Không lưu được mô tả nhân vật');
         Object.assign(currentScript.characters.find(item => item.id === characterId), data.character);
         showToast('Đã lưu mô tả nhân vật cho các cảnh liên quan.', 'success');
+    } catch (error) {
+        showToast(error.message, 'error');
+    }
+}
+
+async function createCharacter(event) {
+    event.preventDefault();
+    if (!currentProjectId) return showToast('Hãy tạo project trước', 'error');
+    const form = event.currentTarget;
+    try {
+        const response = await fetch(`/api/project/${encodeURIComponent(currentProjectId)}/characters`, {
+            method: 'POST', body: new FormData(form),
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Không thể thêm nhân vật');
+        currentScript.characters = currentScript.characters || [];
+        currentScript.characters.push(data.character);
+        form.reset();
+        renderCharacters();
+        renderGenerateSceneCards();
+        updateProjectStats();
+        showToast(`Đã thêm nhân vật ${data.character.name}.`, 'success');
     } catch (error) {
         showToast(error.message, 'error');
     }
@@ -1070,6 +1142,31 @@ async function setSceneLocation(sceneId, locationId) {
     } catch (error) {
         const select = document.querySelector(`[data-location-scene-id="${CSS.escape(sceneId)}"]`);
         if (select) select.value = scene?.location_id || '';
+        showToast(error.message, 'error');
+    }
+}
+
+async function saveSceneCharacters(sceneId) {
+    const selector = document.querySelector(`[data-character-scene-id="${CSS.escape(sceneId)}"]`);
+    if (!selector) return;
+    const selected = [...selector.querySelectorAll('input[type="checkbox"]:checked')]
+        .map(input => input.value);
+    const form = new FormData();
+    form.append('character_ids', JSON.stringify(selected));
+    try {
+        const response = await fetch(
+            `/api/project/${encodeURIComponent(currentProjectId)}/scene/${encodeURIComponent(sceneId)}/characters`,
+            {method: 'POST', body: form},
+        );
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.detail || 'Không thể lưu nhân vật của cảnh');
+        const scene = currentScript.scenes.find(item => item.id === sceneId);
+        if (scene) scene.visible_character_ids = data.visible_character_ids;
+        renderGenerateSceneCards();
+        const autoMessage = (data.automatically_added || []).length
+            ? ' Nhân vật có lời thoại đã được giữ lại tự động.' : '';
+        showToast(`Đã khóa nhân vật cho ${sceneId}.${autoMessage}`, 'success');
+    } catch (error) {
         showToast(error.message, 'error');
     }
 }
@@ -1672,6 +1769,7 @@ async function restoreLastProject({force = false} = {}) {
 }
 
 window.addEventListener('load', async () => {
+    document.getElementById('createCharacterForm')?.addEventListener('submit', createCharacter);
     document.getElementById('createLocationForm')?.addEventListener('submit', createLocation);
     await checkStatus();
     initScriptDropZone();

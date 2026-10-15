@@ -151,6 +151,85 @@ class MuseService:
         raise RuntimeError("Không tìm thấy ô nhập lệnh của Muse. Hãy kiểm tra đăng nhập và giao diện Muse.")
 
     @staticmethod
+    def _existing_reference_images(reference_images: list[str] | None) -> list[str]:
+        paths = []
+        for value in reference_images or []:
+            path = Path(value).resolve()
+            if path.is_file() and path.suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}:
+                resolved = str(path)
+                if resolved not in paths:
+                    paths.append(resolved)
+        return paths[:4]
+
+    @staticmethod
+    async def _find_upload_input(page):
+        selectors = [
+            'input[type="file"][accept*="image" i]',
+            'input[type="file"][accept*="png" i]',
+            'input[type="file"][accept*="jpeg" i]',
+            'input[type="file"]',
+        ]
+        for selector in selectors:
+            locator = page.locator(selector).last
+            try:
+                if await locator.count():
+                    return locator
+            except Exception:
+                continue
+        return None
+
+    async def _upload_reference_images(self, page, reference_images: list[str] | None) -> int:
+        """Attach character reference images through Muse's upload control."""
+        paths = self._existing_reference_images(reference_images)
+        if not paths:
+            return 0
+
+        upload_input = await self._find_upload_input(page)
+        if upload_input is None:
+            buttons = [
+                page.get_by_role("button", name=re.compile(
+                    "upload|attach|add image|add photo|add file|media|reference image|"
+                    "tải ảnh|đính kèm|thêm ảnh", re.I
+                )).last,
+                page.locator('button[aria-label*="upload" i]').last,
+                page.locator('button[aria-label*="attach" i]').last,
+                page.locator('button[aria-label*="file" i]').last,
+            ]
+            for button in buttons:
+                try:
+                    await button.wait_for(state="visible", timeout=2500)
+                    await button.click()
+                    await page.wait_for_timeout(500)
+                    upload_input = await self._find_upload_input(page)
+                    if upload_input is not None:
+                        break
+                except Exception:
+                    continue
+        if upload_input is None:
+            raise RuntimeError(
+                "Không tìm thấy nút Upload ảnh của Muse. Hãy mở Muse và kiểm tra giao diện tạo video."
+            )
+
+        try:
+            multiple = await upload_input.get_attribute("multiple") is not None
+        except Exception:
+            multiple = False
+        if multiple:
+            await upload_input.set_input_files(paths)
+            await page.wait_for_timeout(1800)
+            return len(paths)
+
+        uploaded = 0
+        for path in paths:
+            upload_input = await self._find_upload_input(page)
+            if upload_input is None:
+                raise RuntimeError(f"Muse chỉ nhận được {uploaded}/{len(paths)} ảnh tham chiếu")
+            await upload_input.set_input_files(path)
+            uploaded += 1
+            await page.wait_for_timeout(1800)
+        return uploaded
+
+    @staticmethod
     async def _submit(page) -> None:
         # Enter in the composer is more stable after a response adds other
         # buttons whose accessible name also contains "Generate".
@@ -421,6 +500,17 @@ class MuseService:
                 f"{prompt}\n\nINTERNAL JOB TOKEN: {job_token}. "
                 "Keep this token only in the request history; do not draw or display it in the video."
             )
+            reference_count = len(self._existing_reference_images(reference_images))
+            if reference_count:
+                await self._notify(progress_callback, {
+                    "scene_id": scene_id, "status": "processing", "progress": 10,
+                    "message": f"Đang tải {reference_count} ảnh nhân vật tham chiếu lên Muse...",
+                })
+                uploaded = await self._upload_reference_images(page, reference_images)
+                if uploaded != reference_count:
+                    raise RuntimeError(
+                        f"Muse chỉ nhận được {uploaded}/{reference_count} ảnh nhân vật tham chiếu"
+                    )
             await self._fill_prompt(page, tracked_prompt)
             await self._submit(page)
             if not await self._wait_prompt_accepted(page, job_token):

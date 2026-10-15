@@ -669,6 +669,49 @@ def test_location_reference_persists_and_reaches_scene_prompt(tmp_path, monkeypa
     assert client.get(f"/api/project/{project_id}/location/{location_id}/reference").content == buffer.getvalue()
 
 
+def test_two_character_scene_assignment_adds_distinct_identity_lock(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    client = TestClient(app_module.app)
+    script_data = _script()
+    script_data["scenes"][0]["dialogues"] = [{
+        "character": "person", "text": "Hello", "emotion": "calm",
+    }]
+    project_id = client.post(
+        "/api/project/create", data={"script_json": json.dumps(script_data)}
+    ).json()["project_id"]
+    created = client.post(f"/api/project/{project_id}/characters", data={
+        "name": "Lan",
+        "description": "Vietnamese woman, 28, oval face, long straight black hair",
+        "voice_gender": "female",
+    })
+    assert created.status_code == 200
+    lan_id = created.json()["character"]["id"]
+    assert client.post(
+        f"/api/project/{project_id}/character/{lan_id}/visual-details",
+        data={
+            "appearance_signature": "Vietnamese woman, 28, oval face, long straight black hair",
+            "wardrobe": "mustard cardigan and white blouse",
+            "identity_markers": "small silver earrings; side-parted hair",
+        },
+    ).status_code == 200
+
+    assigned = client.post(
+        f"/api/project/{project_id}/scene/scene_01/characters",
+        data={"character_ids": json.dumps([lan_id])},
+    )
+    assert assigned.status_code == 200
+    # The original speaker is retained even if the user omitted them.
+    assert assigned.json()["visible_character_ids"] == [lan_id, "person"]
+    assert assigned.json()["automatically_added"] == ["person"]
+
+    preview = client.get(f"/api/project/{project_id}/scene/scene_01/prompt").json()
+    assert "MULTI-CHARACTER CAST LOCK" in preview["muse_prompt"]
+    assert "Lan (ID" in preview["muse_prompt"]
+    assert "Person (ID person)" in preview["muse_prompt"]
+    assert "Never merge identities" in preview["muse_prompt"]
+
+
 def test_character_and_location_reference_generation_use_saved_assets(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
     app_module.projects.clear()
@@ -697,7 +740,7 @@ def test_character_and_location_reference_generation_use_saved_assets(tmp_path, 
     assert client.get(f"/api/project/{project_id}/character/person/reference").status_code == 200
 
 
-def test_muse_plan_one_uses_saved_text_locks_without_image_upload(tmp_path, monkeypatch):
+def test_muse_plan_one_uploads_character_reference_with_text_locks(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
     app_module.projects.clear()
     client = TestClient(app_module.app)
@@ -742,7 +785,8 @@ def test_muse_plan_one_uses_saved_text_locks_without_image_upload(tmp_path, monk
     assert "round glasses" in captured["prompt"]
     assert "Blue sofa beside a tall window" in captured["prompt"]
     assert "Person walks toward the window" in captured["prompt"]
-    assert captured["reference_images"] == []
+    assert "ATTACHED CHARACTER REFERENCE MAP" in captured["prompt"]
+    assert captured["reference_images"] == [str(reference.resolve())]
 
 
 def test_plan_one_location_lock_is_shared_and_editable(tmp_path, monkeypatch):
@@ -788,6 +832,32 @@ def test_muse_only_reads_generated_video_wrappers():
     assert sources == {"blob:https://muse.ai/generated"}
     assert captured["selector"] == '[data-hatch-video-wrapper="true"]'
     assert captured["token"] == ""
+
+
+def test_muse_uploads_all_existing_character_reference_images(tmp_path):
+    first = tmp_path / "person_a.png"
+    second = tmp_path / "person_b.jpg"
+    Image.new("RGB", (16, 16), "red").save(first)
+    Image.new("RGB", (16, 16), "blue").save(second)
+    captured = {}
+
+    class FakeInput:
+        @property
+        def last(self): return self
+        async def count(self): return 1
+        async def get_attribute(self, name): return "" if name == "multiple" else None
+        async def set_input_files(self, paths): captured["paths"] = paths
+
+    class FakePage:
+        def locator(self, _selector): return FakeInput()
+        async def wait_for_timeout(self, _milliseconds): return None
+
+    uploaded = asyncio.run(MuseService()._upload_reference_images(
+        FakePage(), [str(first), str(second)],
+    ))
+
+    assert uploaded == 2
+    assert captured["paths"] == [str(first.resolve()), str(second.resolve())]
 
 
 def test_muse_scopes_result_search_to_current_prompt_token():

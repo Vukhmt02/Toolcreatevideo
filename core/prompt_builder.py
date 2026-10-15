@@ -1,5 +1,7 @@
 """Deterministic prompts built from the project's visual and character bibles."""
 
+from pathlib import Path
+
 from core.script_parser import Character, Scene, Script
 
 
@@ -11,6 +13,68 @@ def _visible_characters(scene: Scene, script: Script) -> list[Character]:
     return [character for cid in ids if (character := script.get_character(cid))]
 
 
+def character_sync_warnings(scene: Scene, script: Script) -> list[str]:
+    """Return actionable character continuity problems for one scene."""
+    warnings = []
+    characters = _visible_characters(scene, script)
+    unknown = [value for value in scene.visible_character_ids if not script.get_character(value)]
+    if unknown:
+        warnings.append("ID nhân vật không tồn tại: " + ", ".join(unknown))
+    for dialogue in scene.dialogues:
+        if not script.get_character(dialogue.character):
+            warnings.append(f"Lời thoại đang dùng nhân vật chưa khai báo: {dialogue.character}")
+    for character in characters:
+        if not (character.appearance_signature or character.description).strip():
+            warnings.append(f"{character.name} chưa có mô tả ngoại hình cố định")
+        if not character.wardrobe.strip():
+            warnings.append(f"{character.name} chưa có trang phục cố định")
+        if not character.reference_images:
+            warnings.append(f"{character.name} chưa có ảnh tham chiếu")
+    return list(dict.fromkeys(warnings))
+
+
+def _multi_character_lock(characters: list[Character]) -> str:
+    if len(characters) < 2:
+        return ""
+    positions = ["screen-left", "screen-right", "center foreground", "center background"]
+    cast_map = "; ".join(
+        f"{character.name} (ID {character.id}) stays {positions[index] if index < len(positions) else f'in distinct blocking position {index + 1}'}"
+        for index, character in enumerate(characters)
+    )
+    return (
+        f"MULTI-CHARACTER CAST LOCK — exactly {len(characters)} distinct named people: {cast_map}. "
+        "Keep each person's face, hair, body, wardrobe and accessories attached to the correct name in every frame. "
+        "Never merge identities, swap faces, swap clothing, duplicate a person, or transfer one person's features to another. "
+        "Maintain clear physical separation and stable screen direction during interactions."
+    )
+
+
+def _reference_image_lock(characters: list[Character]) -> str:
+    labels = []
+    seen_paths = set()
+    image_number = 1
+    for character in characters:
+        for value in character.reference_images:
+            if image_number > 4:
+                break
+            path = Path(value).expanduser()
+            if not path.is_file() or path.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp"}:
+                continue
+            resolved = str(path.resolve()).lower()
+            if resolved in seen_paths:
+                continue
+            seen_paths.add(resolved)
+            labels.append(f"image {image_number} = {character.name} (ID {character.id})")
+            image_number += 1
+        if image_number > 4:
+            break
+    if not labels:
+        return ""
+    return (
+        "ATTACHED CHARACTER REFERENCE MAP: " + "; ".join(labels) + ". "
+        "Use each attached image only for its named character. Preserve that face, hair, skin tone, body proportions, "
+        "wardrobe and accessories; never transfer features between reference images."
+    )
 def _character_lock(character: Character) -> str:
     identity = character.appearance_signature or character.description
     parts = [f"IDENTITY LOCK — {character.name} (ID {character.id}): {identity}"]
@@ -93,6 +157,7 @@ def _base_blocks(scene: Scene, script: Script) -> list[str]:
     blocks = [
         f"Cinematic GLOBAL VISUAL BIBLE: {_visual_style(script)}.",
         *(_character_lock(character) for character in characters),
+        *([_multi_character_lock(characters)] if len(characters) > 1 else []),
         f"SCENE: {scene.setting}.",
         f"SHOT AND CAMERA: {scene.shot_type or scene.camera}. {scene.camera}.",
     ]
@@ -111,9 +176,11 @@ def _base_blocks(scene: Scene, script: Script) -> list[str]:
 def build_scene_prompt(scene: Scene, script: Script, audio_duration: float = 0) -> str:
     """Build a motion-focused Veo prompt while keeping identity blocks verbatim."""
     if scene.prompt_override.strip():
+        characters = _visible_characters(scene, script)
         return "\n\n".join([
             f"Cinematic GLOBAL VISUAL BIBLE: {_visual_style(script)}.",
-            *(_character_lock(character) for character in _visible_characters(scene, script)),
+            *(_character_lock(character) for character in characters),
+            *([_multi_character_lock(characters)] if len(characters) > 1 else []),
             *([f"LOCATION LOCK — {location.name} (ID {location.id}): {location.description or scene.setting}. Preserve the same layout and fixed props."] if (location := script.get_location(scene.location_id)) else []),
             f"USER SHOT DIRECTION: {scene.prompt_override.strip()}",
             *_script_requirements(scene, script),
@@ -155,6 +222,8 @@ def build_muse_prompt(scene: Scene, script: Script) -> str:
     locks = [
         f"Project visual style: {_visual_style(script)}",
         *(_character_lock(character) for character in characters),
+        *([_multi_character_lock(characters)] if len(characters) > 1 else []),
+        *([reference_lock] if (reference_lock := _reference_image_lock(characters)) else []),
     ]
     if location:
         locks.append(
