@@ -46,6 +46,24 @@
             <div class="card-title"><span class="icon">🔑</span> Cấu Hình API Keys & Dịch Vụ AI</div>
             <div class="config-grid">
                 <div class="config-item">
+                    <label>AI phân tích và tách kịch bản</label>
+                    <select id="scriptAiProvider">
+                        <option value="openai">OpenAI</option>
+                        <option value="gemini">Gemini</option>
+                    </select>
+                    <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
+                        Chỉ dùng để phân tích ngữ nghĩa, bố cục và prompt. Muse, Flow và Veo vẫn dùng cấu hình riêng.
+                    </span>
+                </div>
+                <div class="config-item">
+                    <label>OpenAI API Key</label>
+                    <input type="password" id="openaiApiKey" placeholder="Nhập API key từ platform.openai.com">
+                </div>
+                <div class="config-item">
+                    <label>Model OpenAI phân tích kịch bản</label>
+                    <input type="text" id="openaiModel" value="gpt-5-mini" placeholder="gpt-5-mini">
+                </div>
+                <div class="config-item">
                     <label>Google AI Studio API Key (cho Veo và Gemini tạo ảnh)</label>
                     <input type="password" id="googleApiKey" placeholder="Nhập API key từ aistudio.google.com">
                     <span style="font-size:11px;color:var(--text-secondary);margin-top:4px;display:block">
@@ -108,6 +126,7 @@
             </div>
             <div class="btn-group">
                 <button class="btn btn-primary" onclick="saveConfig()">💾 Lưu Cấu Hình</button>
+                <button class="btn btn-secondary" onclick="testOpenAIConnection()">🧠 Kiểm tra OpenAI</button>
                 <button class="btn btn-secondary" onclick="testGoogleConnection()">🔍 Kiểm tra Google API</button>
                 <button class="btn btn-secondary" onclick="testElevenLabsConnection()">🎙️ Kiểm tra ElevenLabs</button>
             </div>
@@ -150,15 +169,13 @@
 
             <div style="display:flex;gap:10px;align-items:center;margin:12px 0;flex-wrap:wrap">
                 <label for="sceneDensity" style="font-size:13px;color:var(--text-secondary);font-weight:600">
-                    Mức độ chia cảnh:
+                    Cách chia cảnh:
                 </label>
                 <select id="sceneDensity" style="min-width:220px">
-                    <option value="few">Ít cảnh — khoảng 12–20 giây/cảnh</option>
-                    <option value="balanced" selected>Cân bằng — khoảng 8–12 giây/cảnh</option>
-                    <option value="many">Nhiều cảnh — khoảng 5–8 giây/cảnh</option>
+                    <option value="semantic" selected>Theo ngữ nghĩa nội dung</option>
                 </select>
                 <span style="font-size:12px;color:var(--text-secondary)">
-                    Áp dụng khi đọc TXT, Markdown, DOCX hoặc kịch bản tự nhiên. JSON có sẵn giữ nguyên các cảnh.
+                    Tách khi đổi bối cảnh, thời gian, nhân vật, hành động hoặc ý hình ảnh chính; không chia theo số giây. JSON có sẵn giữ nguyên các cảnh.
                 </span>
             </div>
 
@@ -167,7 +184,7 @@
                 <button class="btn btn-secondary btn-sm" onclick="formatJson()" style="border-color:var(--accent-secondary);color:#38bdf8;font-weight:600">⚡ Tách đoạn sang JSON</button>
                 <button class="btn btn-secondary btn-sm" onclick="loadSampleScript()">📄 Tải kịch bản mẫu</button>
                 <button class="btn btn-secondary btn-sm" onclick="validateScript()">✅ Kiểm tra kịch bản</button>
-                <button class="btn btn-secondary btn-sm" id="btnAiRefine" onclick="refineScriptWithAI()" style="border-color:var(--accent-primary);color:#c4b5fd">🤖 AI Chuẩn hóa kịch bản (Gemini)</button>
+                <button class="btn btn-secondary btn-sm" id="btnAiRefine" onclick="refineScriptWithAI()" style="border-color:var(--accent-primary);color:#c4b5fd">🤖 AI phân tích ngữ nghĩa &amp; chuẩn hóa</button>
             </div>
 
             <textarea id="scriptEditor" placeholder='Dán kịch bản JSON hoặc kịch bản tự nhiên vào đây...

@@ -448,6 +448,22 @@ label {
     font-size: 12px;
 }
 
+.timeline-skip-errors {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px 0 4px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.timeline-skip-errors input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+}
+
 .scene-media-download {
     display: inline-flex;
     align-items: center;

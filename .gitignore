@@ -18,3 +18,6 @@ storage/muse_chrome/
 # Local virtual environments
 .venv/
 venv/
+
+# Local distribution packages
+dist/

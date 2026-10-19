@@ -226,6 +226,7 @@ def _detect_prose_dialogues(paragraphs: list[str], characters_map: dict) -> list
 
 
 SCENE_DENSITY_SETTINGS = {
+    "semantic": {"target_chars": None, "duration": ""},
     "few": {"target_chars": 300, "duration": "15s"},
     "balanced": {"target_chars": 180, "duration": "10s"},
     "many": {"target_chars": 80, "duration": "7s"},
@@ -233,8 +234,8 @@ SCENE_DENSITY_SETTINGS = {
 
 
 def normalize_scene_density(value: str) -> str:
-    value = (value or "balanced").strip().lower()
-    return value if value in SCENE_DENSITY_SETTINGS else "balanced"
+    value = (value or "semantic").strip().lower()
+    return value if value in SCENE_DENSITY_SETTINGS else "semantic"
 
 
 def _scene_story_length(scene: dict) -> int:
@@ -249,7 +250,7 @@ def _merge_narrative_scenes(scenes: list[dict], density: str) -> list[dict]:
     density = normalize_scene_density(density)
     settings = SCENE_DENSITY_SETTINGS[density]
     target_chars = settings["target_chars"]
-    if density == "many" or len(scenes) < 2:
+    if density in ("semantic", "many") or len(scenes) < 2:
         merged = scenes
     else:
         merged = []
@@ -276,7 +277,8 @@ def _merge_narrative_scenes(scenes: list[dict], density: str) -> list[dict]:
                 else:
                     current["narration"] = dict(next_narration)
             current.setdefault("dialogues", []).extend(scene.get("dialogues") or [])
-            current["duration_hint"] = settings["duration"]
+            if settings["duration"]:
+                current["duration_hint"] = settings["duration"]
         if current is not None:
             merged.append(current)
 
@@ -284,7 +286,8 @@ def _merge_narrative_scenes(scenes: list[dict], density: str) -> list[dict]:
     step = max(2, round(total / 12)) if total > 8 else 2
     for index, scene in enumerate(merged):
         scene["id"] = f"scene_{index + 1:02d}"
-        scene["duration_hint"] = settings["duration"]
+        if settings["duration"]:
+            scene["duration_hint"] = settings["duration"]
         scene["scene_type"] = "key" if (
             index == 0 or index == total - 1 or index % step == 0
         ) else "filler"
@@ -292,7 +295,7 @@ def _merge_narrative_scenes(scenes: list[dict], density: str) -> list[dict]:
 
 
 def parse_narrative_story(text: str, max_scenes: int = 10,
-                          scene_density: str = "balanced") -> dict:
+                          scene_density: str = "semantic") -> dict:
     """
     Phân tích truyện kể / văn xuôi liền mạch thành các cảnh video.
     - Dòng đầu tiên (ngắn ≤ 100 ký tự) = tiêu đề
@@ -383,7 +386,10 @@ def parse_narrative_story(text: str, max_scenes: int = 10,
     # === Tách văn bản thành các cảnh ===
     # Quy tắc: mỗi cảnh tối đa 8 giây → tối đa ~80 ký tự narration
     # Ước lượng sơ bộ; thời lượng thật được đo từ âm thanh ElevenLabs.
-    MAX_CHARS_PER_SCENE = 80  # 8 giây × 10 ký tự/giây
+    semantic_split = normalize_scene_density(scene_density) == "semantic"
+    # Chế độ ngữ nghĩa giữ nguyên mỗi đoạn/nhịp nội dung. Các chế độ cũ vẫn
+    # giới hạn độ dài để tương thích với project đã lưu.
+    MAX_CHARS_PER_SCENE = 1_000_000 if semantic_split else 80
 
     scenes = []
     scene_num = 0
@@ -424,7 +430,7 @@ def parse_narrative_story(text: str, max_scenes: int = 10,
             "dialogues": dialogues,
             "narration": {"text": narration_text.strip(), "voice": "", "emotion": "calm"} if narration_text.strip() else None,
             "background_music": "gentle ambient background music",
-            "duration_hint": "8s"
+            "duration_hint": "" if semantic_split else "8s"
         }
 
     def _split_text_to_chunks(text: str, max_chars: int) -> list[str]:
@@ -510,13 +516,17 @@ def parse_narrative_story(text: str, max_scenes: int = 10,
             if first_quote and first_quote.start() > 10:
                 pre_narration = block[:first_quote.start()].strip()
 
-            # Mỗi dialogue thành 1 cảnh riêng (dialogue ngắn vừa 8 giây)
-            if pre_narration:
+            # Ở chế độ ngữ nghĩa, một đoạn có cùng bối cảnh/hành động là một
+            # cảnh, kể cả khi đoạn đó có nhiều câu thoại.
+            if semantic_split:
+                scenes.append(_make_scene(pre_narration, dialogues_in_block, scene_num))
+                scene_num += 1
+            elif pre_narration:
                 for chunk in _split_text_to_chunks(pre_narration, MAX_CHARS_PER_SCENE):
                     scenes.append(_make_scene(chunk, [], scene_num))
                     scene_num += 1
 
-            for dlg in dialogues_in_block:
+            for dlg in ([] if semantic_split else dialogues_in_block):
                 # Cắt lời thoại dài thành nhiều cảnh
                 speech_chunks = _split_text_to_chunks(dlg["text"], MAX_CHARS_PER_SCENE)
                 for j, chunk in enumerate(speech_chunks):
@@ -531,7 +541,7 @@ def parse_narrative_story(text: str, max_scenes: int = 10,
                 scene_num += 1
 
     # === Gộp các cảnh quá ngắn (<20 ký tự) vào cảnh kế tiếp ===
-    MIN_SCENE_CHARS = 20
+    MIN_SCENE_CHARS = 0 if semantic_split else 20
     merged_scenes = []
     pending_text = ""  # Văn bản từ cảnh ngắn chờ gộp
 
@@ -595,7 +605,7 @@ def _has_scene_markers(lines: list[str]) -> bool:
     return False
 
 
-def parse_plain_text_script(text: str, scene_density: str = "balanced") -> dict:
+def parse_plain_text_script(text: str, scene_density: str = "semantic") -> dict:
     """
     Phân tích thông minh kịch bản viết bằng văn bản thuần (.txt, .md, ChatGPT, kịch bản phân cảnh).
     Hỗ trợ cả Markdown headers (### Cảnh 1), bullet points (- **Bối cảnh:**), TikTok script, voiceover scripts...
@@ -1031,7 +1041,7 @@ def normalize_script_data(data: dict) -> dict:
     return data
 
 
-def parse_script(raw_input: str | dict, scene_density: str = "balanced") -> Script:
+def parse_script(raw_input: str | dict, scene_density: str = "semantic") -> Script:
     """
     Parse kịch bản từ JSON string, Python dict hoặc văn bản thuần (.txt, .md).
     Tự động sửa lỗi cú pháp nhẹ, tự động phát hiện nhân vật và các cảnh.
@@ -1136,7 +1146,7 @@ FULL_SCRIPT_TEMPLATE = {
 }
 
 
-def format_script_to_complete_json(raw_input: str, scene_density: str = "balanced") -> dict:
+def format_script_to_complete_json(raw_input: str, scene_density: str = "semantic") -> dict:
     """
     Chuẩn hóa kịch bản thành JSON chuẩn và ĐẦY ĐỦ 100% tất cả các trường.
     Nếu đầu vào trống -> trả về FULL_SCRIPT_TEMPLATE.
@@ -1230,17 +1240,84 @@ def format_script_to_complete_json(raw_input: str, scene_density: str = "balance
     return data
 
 
-async def refine_script_with_ai(raw_text: str, scene_density: str = "balanced") -> dict:
+def _openai_output_text(payload: dict) -> str:
+    """Extract assistant text from a raw Responses API payload."""
+    if payload.get("output_text"):
+        return str(payload["output_text"])
+    for item in payload.get("output", []):
+        if item.get("type") != "message":
+            continue
+        for content in item.get("content", []):
+            if content.get("type") == "output_text" and content.get("text"):
+                return str(content["text"])
+    return ""
+
+
+async def _refine_script_with_openai(system_instruction: str, prompt: str) -> dict:
+    """Analyze a script through OpenAI Responses API and validate locally."""
+    import httpx
+    from config import config
+
+    def api_schema(value):
+        """Remove Pydantic presentation/default keywords not needed by the API."""
+        if isinstance(value, dict):
+            return {
+                key: api_schema(item)
+                for key, item in value.items()
+                if key not in {"default", "title"}
+            }
+        if isinstance(value, list):
+            return [api_schema(item) for item in value]
+        return value
+
+    schema = api_schema(Script.model_json_schema())
+    request_data = {
+        "model": config.OPENAI_MODEL,
+        "instructions": system_instruction,
+        "input": prompt,
+        "text": {
+            "format": {
+                "type": "json_schema",
+                "name": "video_script",
+                "schema": schema,
+                "strict": False,
+            }
+        },
+    }
+    headers = {
+        "Authorization": f"Bearer {config.OPENAI_API_KEY}",
+        "Content-Type": "application/json",
+    }
+    async with httpx.AsyncClient(timeout=120.0) as client:
+        response = await client.post(
+            "https://api.openai.com/v1/responses",
+            headers=headers,
+            json=request_data,
+        )
+    if response.status_code >= 400:
+        try:
+            detail = response.json().get("error", {}).get("message", response.text)
+        except Exception:
+            detail = response.text
+        if response.status_code == 401:
+            raise ValueError("OpenAI từ chối API Key (401). Hãy kiểm tra lại khóa trong tab Cài đặt.")
+        if response.status_code == 429:
+            raise ValueError(f"OpenAI đã hết quota hoặc đang giới hạn tốc độ (429): {detail}")
+        raise ValueError(f"OpenAI API lỗi HTTP {response.status_code}: {detail}")
+
+    response_text = _openai_output_text(response.json()).strip()
+    if not response_text:
+        raise ValueError("OpenAI không trả về nội dung kịch bản.")
+    data = json.loads(clean_json_string(response_text))
+    return normalize_script_data(data)
+
+
+async def refine_script_with_ai(raw_text: str, scene_density: str = "semantic") -> dict:
     """
     Sử dụng Google Gemini để chuẩn hóa bất kỳ kịch bản thô nào
     thành cấu trúc JSON điện ảnh hoàn chỉnh cho Veo 3.1 & Imagen 3.
     """
     from config import config
-    if not config.has_google_api():
-        raise ValueError("Chưa cấu hình Google API Key. Vui lòng nhập API Key tại tab Cài đặt.")
-
-    from google import genai
-    client = genai.Client(api_key=config.GOOGLE_API_KEY)
 
     system_instruction = """
 Bạn là đạo diễn và biên kịch video điện ảnh chuyên nghiệp.
@@ -1284,7 +1361,7 @@ YÊU CẦU ĐẦU RA (bắt buộc trả về đúng định dạng JSON hợp l
         "emotion": "calm"
       },
       "background_music": "mô tả nhạc nền bằng tiếng Anh (ví dụ: soft piano, gentle rain sounds)",
-      "duration_hint": "10s"
+      "duration_hint": "Ước lượng sau khi đã xác định ranh giới ngữ nghĩa, ví dụ 10s"
     }
   ]
 }
@@ -1294,11 +1371,22 @@ Lưu ý quan trọng về "scene_type":
 - "filler": Dành cho các cảnh chuyển tiếp, mô tả phong cảnh, lời dẫn chuyện không lời thoại (được tạo ảnh bằng Imagen 3 + hiệu ứng Ken Burns).
 - "setting", "camera", "action", "description" nên viết bằng TIẾNG ANH để mô hình video tạo hình ảnh đẹp và chuẩn nhất.
 - "text" trong dialogues và narration giữ nguyên bằng TIẾNG VIỆT để bộ đọc giọng tạo âm thanh tiếng Việt.
+- Ranh giới cảnh phải dựa trên NGỮ NGHĨA và nhu cầu hình ảnh, không dựa trên số ký tự hay mục tiêu số giây.
+- Tạo cảnh mới khi đổi địa điểm, thời gian, nhóm nhân vật hiện diện, hành động chính, chủ đề hội thoại, cảm xúc chính hoặc hình ảnh trọng tâm.
+- Giữ các câu thoại và hành động liên tục trong cùng một bối cảnh và cùng một nhịp nội dung ở chung một cảnh.
+- Chỉ ước lượng duration_hint sau khi đã chia cảnh. duration_hint tuyệt đối không được dùng làm lý do để tách hoặc gộp cảnh.
 - Trả về JSON thuần túy, không thêm bất kỳ văn bản giải thích nào ngoài JSON.
 """
 
     density = normalize_scene_density(scene_density)
     density_instruction = {
+        "semantic": (
+            "Tách cảnh hoàn toàn theo NGỮ NGHĨA. Không đặt mục tiêu số lượng cảnh hoặc số giây mỗi cảnh. "
+            "Chỉ mở cảnh mới khi có thay đổi rõ ràng về địa điểm, thời gian, nhân vật hiện diện, hành động chính, "
+            "chủ đề hội thoại, cảm xúc chính hoặc hình ảnh trọng tâm. Không tách riêng từng câu thoại nếu chúng "
+            "thuộc cùng một bối cảnh và cùng một nhịp nội dung. Sau khi tách xong mới ước lượng duration_hint "
+            "từ lượng lời đọc và hành động của chính cảnh đó."
+        ),
         "few": (
             "Tạo ÍT CẢNH: gộp lời dẫn, lời thoại và hành động liên tiếp trong cùng địa điểm/thời điểm; "
             "mỗi cảnh khoảng 12-20 giây. Chỉ tách khi đổi địa điểm, thời gian hoặc ý hình ảnh chính."
@@ -1314,6 +1402,30 @@ Lưu ý quan trọng về "scene_type":
     prompt = (
         f"Hãy chuyển đổi kịch bản sau thành JSON chuẩn. {density_instruction}\n\n{raw_text}"
     )
+
+    provider = getattr(config, "SCRIPT_AI_PROVIDER", "openai").strip().lower()
+    if provider == "openai":
+        if not config.has_openai_api():
+            # Người dùng có thể đã cấu hình Google từ trước nhưng vô tình để
+            # lựa chọn OpenAI. Trong trường hợp đó dùng Gemini thay vì chặn
+            # toàn bộ bước phân tích kịch bản.
+            if config.has_google_api():
+                provider = "gemini"
+            else:
+                raise ValueError(
+                    "Chưa cấu hình API Key cho OpenAI hoặc Gemini. "
+                    "Vui lòng nhập ít nhất một API Key tại tab Cài đặt."
+                )
+        else:
+            return await _refine_script_with_openai(system_instruction, prompt)
+
+    if provider != "gemini":
+        raise ValueError(f"Nhà cung cấp phân tích kịch bản không được hỗ trợ: {provider}")
+    if not config.has_google_api():
+        raise ValueError("Chưa cấu hình Google API Key. Vui lòng nhập API Key tại tab Cài đặt.")
+
+    from google import genai
+    client = genai.Client(api_key=config.GOOGLE_API_KEY)
 
     # Danh sách model thử nghiệm theo thứ tự ưu tiên
     model_preference = getattr(config, "GEMINI_MODEL", "gemini-3.8-flash")

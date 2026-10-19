@@ -114,6 +114,24 @@ def test_scene_density_does_not_merge_existing_json_scenes():
     assert len(parse_script(source, scene_density="few").scenes) == 2
 
 
+def test_semantic_scene_split_preserves_content_blocks_without_time_chunking():
+    source = """Câu chuyện trở về
+
+Nam đứng một mình ở sân ga cũ và nhìn đoàn tàu vừa rời bến.
+
+Ba ngày sau, Nam bước vào căn nhà tuổi thơ và gặp lại mẹ.
+
+Cuộc gặp khiến Nam quyết định ở lại quê hương."""
+
+    script = parse_script(source, scene_density="semantic")
+
+    assert len(script.scenes) == 3
+    assert all(scene.duration_hint == "" for scene in script.scenes)
+    narration = [scene.narration.text for scene in script.scenes]
+    assert "Ba ngày sau" in narration[1]
+    assert "quyết định ở lại" in narration[2]
+
+
 def test_prompt_builders():
     print("\n--- [3] Test Prompt Builders ---")
     script = parse_script("""

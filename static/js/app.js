@@ -91,6 +91,8 @@ async function checkStatus() {
         }
 
         if (document.getElementById('elevenlabsVoiceId')) document.getElementById('elevenlabsVoiceId').value = data.elevenlabs_voice_id || '';
+        if (document.getElementById('scriptAiProvider')) document.getElementById('scriptAiProvider').value = data.script_ai_provider || 'openai';
+        if (document.getElementById('openaiModel')) document.getElementById('openaiModel').value = data.openai_model || 'gpt-5-mini';
         if (document.getElementById('elevenlabsModelId')) document.getElementById('elevenlabsModelId').value = data.elevenlabs_model_id || 'eleven_multilingual_v2';
         if (document.getElementById('elevenlabsOutputFormat')) document.getElementById('elevenlabsOutputFormat').value = data.elevenlabs_output_format || 'mp3_44100_128';
         if (document.getElementById('elevenlabsStability')) document.getElementById('elevenlabsStability').value = data.elevenlabs_stability ?? 0.5;
@@ -102,6 +104,9 @@ async function checkStatus() {
             statusGrid.innerHTML = `
                 <div style="font-size:12px;padding:6px 12px;border-radius:6px;background:${data.google_api ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)'};color:${data.google_api ? '#34d399' : '#f87171'};border:1px solid ${data.google_api ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}">
                     ${data.google_api ? `✅ Google API (${escapeHtml(data.image_model)} & ${escapeHtml(data.video_model)})` : '⚠️ Google API Key chưa có'}
+                </div>
+                <div style="font-size:12px;padding:6px 12px;border-radius:6px;background:${data.script_ai_provider === 'openai' && data.openai_api ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.05)'};color:var(--text-secondary);border:1px solid var(--border-glass)">
+                    🧠 Phân tích kịch bản: <strong>${data.script_ai_provider === 'openai' ? `OpenAI (${escapeHtml(data.openai_model)})` : `Gemini (${escapeHtml(data.gemini_model)})`}</strong>
                 </div>
                 <div style="font-size:12px;padding:6px 12px;border-radius:6px;background:${data.elevenlabs_api ? 'rgba(168,85,247,0.15)' : 'rgba(239,68,68,0.1)'};color:${data.elevenlabs_api ? '#c084fc' : '#f87171'};border:1px solid ${data.elevenlabs_api ? 'rgba(168,85,247,0.3)' : 'rgba(239,68,68,0.3)'}">
                     🎙️ Voice: <strong>${voiceLabel}</strong>
@@ -127,6 +132,17 @@ async function testGoogleConnection() {
     }
 }
 
+async function testOpenAIConnection() {
+    try {
+        const res = await fetch('/api/openai/test');
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || `HTTP ${res.status}`);
+        showToast(`Kết nối OpenAI thành công: ${data.model}`, 'success');
+    } catch (error) {
+        showToast(`Kết nối OpenAI thất bại: ${error.message}`, 'error');
+    }
+}
+
 async function testElevenLabsConnection() {
     showToast('Đang kiểm tra ElevenLabs...', 'info');
     try {
@@ -141,6 +157,9 @@ async function testElevenLabsConnection() {
 
 async function saveConfig() {
     const googleKey = document.getElementById('googleApiKey').value.trim();
+    const scriptAiProvider = document.getElementById('scriptAiProvider')?.value || 'openai';
+    const openaiApiKey = document.getElementById('openaiApiKey')?.value.trim() || '';
+    const openaiModel = document.getElementById('openaiModel')?.value.trim() || 'gpt-5-mini';
     const wavespeedKey = document.getElementById('wavespeedApiKey').value.trim();
     const elevenlabsApiKey = document.getElementById('elevenlabsApiKey')?.value.trim() || '';
     const elevenlabsVoiceId = document.getElementById('elevenlabsVoiceId')?.value.trim() || '';
@@ -154,6 +173,9 @@ async function saveConfig() {
     try {
         const formData = new FormData();
         formData.append('google_api_key', googleKey);
+        formData.append('script_ai_provider', scriptAiProvider);
+        formData.append('openai_api_key', openaiApiKey);
+        formData.append('openai_model', openaiModel);
         formData.append('wavespeed_api_key', wavespeedKey);
         formData.append('elevenlabs_api_key', elevenlabsApiKey);
         formData.append('elevenlabs_voice_id', elevenlabsVoiceId);
@@ -222,7 +244,7 @@ async function testVoice() {
 //  Script Tab & File Upload
 // ═══════════════════════════════════════════
 function getSceneDensity() {
-    return document.getElementById('sceneDensity')?.value || 'balanced';
+    return document.getElementById('sceneDensity')?.value || 'semantic';
 }
 
 async function handleScriptFileUpload(input) {
@@ -429,7 +451,8 @@ async function refineScriptWithAI() {
 
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> AI đang phân tích kịch bản...';
-    showToast('Gemini AI đang chuẩn hóa kịch bản...', 'info');
+    const provider = document.getElementById('scriptAiProvider')?.value === 'openai' ? 'OpenAI' : 'Gemini';
+    showToast(`${provider} đang phân tích ngữ nghĩa kịch bản...`, 'info');
 
     try {
         const formData = new FormData();
@@ -452,7 +475,7 @@ async function refineScriptWithAI() {
                 <span style="font-size:12px;color:var(--text-secondary)">Các mô tả bối cảnh và góc máy đã được AI tối ưu hóa cho Veo 3.1. Bấm "Tạo Project" để tiếp tục.</span>
             </div>
         `;
-        showToast(`AI đã chuẩn hóa: ${data.title}`, 'success');
+        showToast(`${data.ai_provider === 'openai' ? 'OpenAI' : 'Gemini'} đã chuẩn hóa: ${data.title}`, 'success');
     } catch (e) {
         showToast('Lỗi AI: ' + e.message, 'error');
         validationDiv.innerHTML = `
@@ -462,7 +485,7 @@ async function refineScriptWithAI() {
         `;
     } finally {
         btn.disabled = false;
-        btn.innerHTML = '🤖 AI Chuẩn hóa kịch bản (Gemini)';
+        btn.innerHTML = '🤖 AI phân tích ngữ nghĩa &amp; chuẩn hóa';
     }
 }
 
@@ -742,6 +765,10 @@ function renderGenerateSceneCards() {
                     <button type="button" class="btn btn-primary btn-sm" onclick="startGeneration(true)">🎙️ Ghép timeline có giọng</button>
                     <button type="button" class="btn btn-secondary btn-sm" onclick="startGeneration(false)">🔇 Ghép timeline không tạo giọng</button>
                 </div>
+                <label class="timeline-skip-errors">
+                    <input type="checkbox" id="skipFailedScenes" checked>
+                    Bỏ qua cảnh lỗi và tiếp tục ghép các cảnh còn lại
+                </label>
                 <div class="progress-container">
                     <div class="progress-bar">
                         <div class="progress-fill" id="progress-final" style="width:0%"></div>
@@ -1184,11 +1211,12 @@ async function startGeneration(withVoice = true) {
     if (!container.innerHTML.trim()) {
         renderGenerateSceneCards();
     }
+    const skipFailedScenes = document.getElementById('skipFailedScenes')?.checked ?? true;
 
     // Start generation
     try {
         const res = await fetch(
-            `/api/project/${currentProjectId}/generate?with_voice=${withVoice ? 'true' : 'false'}`,
+            `/api/project/${currentProjectId}/generate?with_voice=${withVoice ? 'true' : 'false'}&skip_failed_scenes=${skipFailedScenes ? 'true' : 'false'}`,
             { method: 'POST' },
         );
         const data = await res.json();
@@ -1272,8 +1300,10 @@ async function pollGenerationStatus() {
             });
             else if (status === 'error') updateProgress({
                 scene_id: sceneId, status: 'error', progress: 0,
-                message: sceneId === data.active_scene_id && data.last_error
-                    ? data.last_error : 'Cảnh này gặp lỗi. Sửa lỗi rồi bấm Tiếp tục tác vụ.',
+                message: (data.skipped_scene_ids || []).includes(sceneId)
+                    ? 'Đã bỏ qua cảnh lỗi; cảnh này không có trong video xuất.'
+                    : (sceneId === data.active_scene_id && data.last_error
+                        ? data.last_error : 'Cảnh này gặp lỗi. Sửa lỗi rồi bấm Tiếp tục tác vụ.'),
             });
         });
         if (data.status === 'done' || data.status === 'partial') {

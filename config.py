@@ -75,6 +75,13 @@ class Config:
     # Gemini script refinement settings
     GEMINI_MODEL: str = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 
+    # Script analysis can use OpenAI independently from Google media creation.
+    SCRIPT_AI_PROVIDER: str = os.getenv(
+        "SCRIPT_AI_PROVIDER", "openai" if os.getenv("OPENAI_API_KEY") else "gemini"
+    ).strip().lower()
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-5-mini")
+
     # Gemini image settings (Filler scenes)
     IMAGE_MODEL: str = os.getenv("IMAGE_MODEL", "gemini-3.1-flash-image")
     IMAGEN_MODEL: str = os.getenv("IMAGEN_MODEL", "")
@@ -116,17 +123,17 @@ class Config:
         (cls.TEMP_DIR / "voices").mkdir(parents=True, exist_ok=True)
         (cls.TEMP_DIR / "composed").mkdir(parents=True, exist_ok=True)
 
-    @classmethod
-    def has_google_api(cls) -> bool:
-        return bool(cls.GOOGLE_API_KEY and cls.GOOGLE_API_KEY != "your_google_api_key_here")
+    def has_google_api(self) -> bool:
+        return bool(self.GOOGLE_API_KEY and self.GOOGLE_API_KEY != "your_google_api_key_here")
 
-    @classmethod
-    def has_wavespeed_api(cls) -> bool:
-        return bool(cls.WAVESPEED_API_KEY)
+    def has_openai_api(self) -> bool:
+        return bool(self.OPENAI_API_KEY and self.OPENAI_API_KEY != "your_openai_api_key_here")
 
-    @classmethod
-    def has_elevenlabs_api(cls) -> bool:
-        return bool(cls.ELEVENLABS_API_KEY and cls.ELEVENLABS_VOICE_ID)
+    def has_wavespeed_api(self) -> bool:
+        return bool(self.WAVESPEED_API_KEY)
+
+    def has_elevenlabs_api(self) -> bool:
+        return bool(self.ELEVENLABS_API_KEY and self.ELEVENLABS_VOICE_ID)
 
 
 config = Config()

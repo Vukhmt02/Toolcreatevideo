@@ -43,12 +43,19 @@ python app.py
 
 Mở giao diện tại `http://127.0.0.1:8000`. `start.bat` cũng có thể dùng để cài dependency và chạy ứng dụng.
 
+## Đóng gói để gửi sang máy khác
+
+Chạy `package-tool.bat`. Script tạo file `dist/ToolCreateVideo-YYYYMMDD-HHmm.zip` chỉ chứa mã nguồn và file cần thiết để cài đặt.
+
+Gói ZIP không chứa `.env`, API key, video đã tạo, cache, `.venv` hoặc hồ sơ đăng nhập Chrome. Người nhận giải nén ZIP, đọc `HUONG_DAN_CAI_DAT.md`, sau đó chạy `start.bat` và dùng API key/tài khoản của họ.
+
 ## Hàng đợi và tiếp tục tác vụ
 
 - Mỗi yêu cầu ghép timeline được lưu vào `state.json` trước khi đưa vào hàng đợi.
 - Mặc định chỉ có một timeline chạy cùng lúc để tránh quá tải FFmpeg, CPU và API.
 - Nếu server dừng khi tác vụ đang chạy, lần khởi động sau tác vụ tự quay lại hàng đợi và tiếp tục từ cảnh hoàn thành gần nhất.
 - Nếu người dùng chủ động bấm **Dừng**, tác vụ giữ trạng thái tạm dừng và chỉ chạy lại khi bấm **Tiếp tục tác vụ**.
+- Khi bật **Bỏ qua cảnh lỗi**, timeline đánh dấu cảnh lỗi, tiếp tục xử lý các cảnh còn lại và xuất video ở trạng thái một phần. Cảnh bị bỏ qua không xuất hiện trong video; sau khi sửa cảnh, bấm **Tiếp tục tác vụ** để tạo lại phần còn thiếu.
 - Có thể đặt `TIMELINE_CONCURRENCY=1`, `2` hoặc `3` trong `.env`; nên giữ giá trị `1` trên máy thông thường.
 
 ## Cấu hình Google Flow tự động
@@ -113,6 +120,18 @@ Sau khi nhận đủ video cảnh, chọn một trong hai cách ghép:
 - **Tạo video không giọng:** không gọi ElevenLabs, không tạo phụ đề và giữ âm thanh gốc của video Muse/Flow nếu có.
 
 Lựa chọn được lưu cùng hàng đợi và checkpoint, nên khi server khởi động lại hoặc tác vụ được tiếp tục, tool vẫn dùng đúng chế độ đã chọn.
+
+## OpenAI phân tích kịch bản theo ngữ nghĩa
+
+OpenAI có thể đảm nhiệm bước đọc kịch bản, xác định nhân vật, chia cảnh, xây bố cục và viết prompt. Ranh giới cảnh dựa trên thay đổi về bối cảnh, thời gian, nhân vật, hành động, chủ đề hoặc hình ảnh trọng tâm; số giây không được dùng làm tiêu chí chia cảnh.
+
+```env
+SCRIPT_AI_PROVIDER=openai
+OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-5-mini
+```
+
+Bạn cũng có thể nhập các giá trị này tại tab **Cấu hình**. Sau đó mở tab **Kịch bản**, đưa nội dung vào và bấm **AI phân tích ngữ nghĩa & chuẩn hóa**. Thời lượng được xác định sau khi chia cảnh: theo giọng đọc thật nếu tạo giọng, theo video nguồn nếu dùng video Muse/Flow, hoặc theo ước lượng của cảnh khi tạo chuyển động từ ảnh.
 
 ## Google AI Studio/Gemini API
 

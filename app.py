@@ -100,6 +100,8 @@ def _save_project_state(project_id: str) -> None:
         "last_error": project.get("last_error", ""),
         "queued_at": project.get("queued_at", 0),
         "with_voice": project.get("with_voice", True),
+        "skip_failed_scenes": project.get("skip_failed_scenes", False),
+        "skipped_scene_ids": project.get("skipped_scene_ids", []),
         "media_workflow": project.get("media_workflow", ""),
     }, ensure_ascii=False), encoding="utf-8")
     temporary.replace(state_path)
@@ -170,6 +172,8 @@ def _load_projects() -> None:
                 "last_error": state.get("last_error", ""),
                 "queued_at": state.get("queued_at", script_path.stat().st_mtime),
                 "with_voice": bool(state.get("with_voice", True)),
+                "skip_failed_scenes": bool(state.get("skip_failed_scenes", False)),
+                "skipped_scene_ids": list(state.get("skipped_scene_ids") or []),
                 "media_workflow": state.get("media_workflow") or (
                     "muse" if any(
                         scene.generated_media_provider == "muse" for scene in script.scenes
@@ -333,6 +337,9 @@ async def api_status():
         "image_model": config.IMAGE_MODEL,
         "video_model": config.VEO_MODEL,
         "gemini_model": getattr(config, "GEMINI_MODEL", "gemini-3.8-flash"),
+        "script_ai_provider": getattr(config, "SCRIPT_AI_PROVIDER", "openai"),
+        "openai_api": config.has_openai_api(),
+        "openai_model": getattr(config, "OPENAI_MODEL", "gpt-5-mini"),
         "elevenlabs_api": config.has_elevenlabs_api(),
         "elevenlabs_voice_id": config.ELEVENLABS_VOICE_ID,
         "elevenlabs_model_id": config.ELEVENLABS_MODEL_ID,
@@ -368,6 +375,28 @@ async def test_google_connection():
         await client.aio.aclose()
 
 
+@app.get("/api/openai/test")
+async def test_openai_connection():
+    """Verify the OpenAI key and configured script-analysis model."""
+    if not config.has_openai_api():
+        raise HTTPException(status_code=400, detail="OpenAI API key is not configured")
+    import httpx
+    model = getattr(config, "OPENAI_MODEL", "gpt-5-mini")
+    url = f"https://api.openai.com/v1/models/{urllib.parse.quote(model, safe='')}"
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.get(
+            url,
+            headers={"Authorization": f"Bearer {config.OPENAI_API_KEY}"},
+        )
+    if response.status_code >= 400:
+        try:
+            detail = response.json().get("error", {}).get("message", response.text)
+        except Exception:
+            detail = response.text
+        raise HTTPException(status_code=502, detail=f"OpenAI API connection failed: {detail}")
+    return {"status": "ok", "model": response.json().get("id", model)}
+
+
 @app.post("/api/flow/browser/start")
 async def start_flow_browser():
     try:
@@ -389,6 +418,9 @@ async def start_muse_browser():
 async def save_config(
     google_api_key: str = Form(""),
     gemini_model: str = Form(""),
+    script_ai_provider: str = Form("openai"),
+    openai_api_key: str = Form(""),
+    openai_model: str = Form("gpt-5-mini"),
     wavespeed_api_key: str = Form(""),
     elevenlabs_api_key: str = Form(""),
     elevenlabs_voice_id: str = Form(""),
@@ -401,11 +433,17 @@ async def save_config(
 ):
     """Lưu cấu hình Google media và ElevenLabs TTS."""
     for value in (
-        google_api_key, gemini_model, wavespeed_api_key, elevenlabs_api_key,
+        google_api_key, gemini_model, script_ai_provider, openai_api_key, openai_model,
+        wavespeed_api_key, elevenlabs_api_key,
         elevenlabs_voice_id, elevenlabs_model_id, elevenlabs_output_format,
     ):
         if len(value) > 2048 or "\n" in value or "\r" in value:
             raise HTTPException(status_code=400, detail="Invalid configuration value")
+    clean_provider = script_ai_provider.strip().lower()
+    if clean_provider not in ("openai", "gemini"):
+        raise HTTPException(status_code=400, detail="Nhà cung cấp phân tích kịch bản không hợp lệ")
+    if not re.fullmatch(r"[A-Za-z0-9._-]{1,128}", openai_model.strip()):
+        raise HTTPException(status_code=400, detail="Tên model OpenAI không hợp lệ")
     if elevenlabs_api_key and not elevenlabs_api_key.strip().startswith("sk_"):
         raise HTTPException(
             status_code=400,
@@ -447,6 +485,15 @@ async def save_config(
             clean_model = gemini_model.strip()
             env_dict["GEMINI_MODEL"] = clean_model
             config.GEMINI_MODEL = clean_model
+        env_dict["SCRIPT_AI_PROVIDER"] = clean_provider
+        config.SCRIPT_AI_PROVIDER = clean_provider
+        if openai_api_key:
+            clean_openai_key = openai_api_key.strip()
+            env_dict["OPENAI_API_KEY"] = clean_openai_key
+            config.OPENAI_API_KEY = clean_openai_key
+        clean_openai_model = openai_model.strip()
+        env_dict["OPENAI_MODEL"] = clean_openai_model
+        config.OPENAI_MODEL = clean_openai_model
         if wavespeed_api_key:
             clean_wkey = wavespeed_api_key.strip()
             env_dict["WAVESPEED_API_KEY"] = clean_wkey
@@ -486,7 +533,7 @@ async def save_config(
 
 @app.post("/api/script/upload")
 async def upload_script_file(
-    file: UploadFile = File(...), scene_density: str = Form("balanced")
+    file: UploadFile = File(...), scene_density: str = Form("semantic")
 ):
     """Upload file kịch bản (.json, .txt, .docx, .md)"""
     try:
@@ -562,9 +609,9 @@ async def upload_script_file(
 
 @app.post("/api/script/ai-refine")
 async def ai_refine_script(
-    script_text: str = Form(...), scene_density: str = Form("balanced")
+    script_text: str = Form(...), scene_density: str = Form("semantic")
 ):
-    """Dùng Gemini AI để chuẩn hóa kịch bản thô sang JSON điện ảnh (có fallback thông minh)"""
+    """Dùng AI đã chọn để phân tích ngữ nghĩa và chuẩn hóa kịch bản."""
     try:
         data = await refine_script_with_ai(script_text, scene_density=scene_density)
         is_fallback = data.pop("_used_fallback", False)
@@ -583,6 +630,7 @@ async def ai_refine_script(
             "warning": " ".join(filter(None, [fallback_notice, visual_warning])),
             "visual_fallback": visual_fallback,
             "scene_density": scene_density,
+            "ai_provider": config.SCRIPT_AI_PROVIDER,
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -592,7 +640,7 @@ async def ai_refine_script(
 
 @app.post("/api/script/format")
 async def format_script(
-    script_text: str = Form(""), scene_density: str = Form("balanced")
+    script_text: str = Form(""), scene_density: str = Form("semantic")
 ):
     """Format kịch bản thành JSON chuẩn và tách từng đoạn/cảnh đầy đủ các trường"""
     try:
@@ -638,7 +686,7 @@ async def get_full_template():
 
 @app.post("/api/script/validate")
 async def validate_script(
-    script_json: str = Form(...), scene_density: str = Form("balanced")
+    script_json: str = Form(...), scene_density: str = Form("semantic")
 ):
     """Validate kịch bản JSON hoặc text"""
     try:
@@ -669,7 +717,7 @@ async def get_sample_script():
 
 @app.post("/api/project/create")
 async def create_project(
-    script_json: str = Form(...), scene_density: str = Form("balanced")
+    script_json: str = Form(...), scene_density: str = Form("semantic")
 ):
     """Tạo project mới từ kịch bản"""
     try:
@@ -700,6 +748,8 @@ async def create_project(
         "last_error": "",
         "queued_at": 0,
         "with_voice": True,
+        "skip_failed_scenes": False,
+        "skipped_scene_ids": [],
         "media_workflow": "",
     }
     _save_project_state(project_id)
@@ -738,6 +788,8 @@ def _project_payload(project_id: str) -> dict:
         "resumable": project["status"] in {"paused", "paused_error", "error", "partial"},
         "queue_position": _generation_queue_position(project_id),
         "with_voice": project.get("with_voice", True),
+        "skip_failed_scenes": project.get("skip_failed_scenes", False),
+        "skipped_scene_ids": project.get("skipped_scene_ids", []),
     }
 
 
@@ -1495,7 +1547,11 @@ async def toggle_scene_type(project_id: str, scene_id: str):
 
 
 @app.post("/api/project/{project_id}/generate")
-async def generate_video(project_id: str, with_voice: bool = True):
+async def generate_video(
+    project_id: str,
+    with_voice: bool = True,
+    skip_failed_scenes: bool = False,
+):
     """Bắt đầu tạo video cho project"""
     if project_id not in projects:
         raise HTTPException(status_code=404, detail="Project không tồn tại")
@@ -1513,6 +1569,8 @@ async def generate_video(project_id: str, with_voice: bool = True):
     project["last_error"] = ""
     project["queued_at"] = time.time()
     project["with_voice"] = with_voice
+    project["skip_failed_scenes"] = skip_failed_scenes
+    project["skipped_scene_ids"] = []
     _save_project_state(project_id)
 
     await _enqueue_generation(project_id)
@@ -1521,6 +1579,7 @@ async def generate_video(project_id: str, with_voice: bool = True):
         "status": project["status"],
         "queue_position": _generation_queue_position(project_id),
         "with_voice": with_voice,
+        "skip_failed_scenes": skip_failed_scenes,
         "message": "Đã thêm tác vụ vào hàng đợi tạo video...",
     }
 
@@ -1652,6 +1711,10 @@ async def resume_generation(project_id: str):
         raise HTTPException(status_code=400, detail="Project không có tác vụ để tiếp tục")
 
     outputs = project.get("scene_outputs") or {}
+    if project["status"] == "partial":
+        # A completed partial video can be resumed after the failed scenes are
+        # fixed. Retry those scenes instead of silently skipping them again.
+        project["skipped_scene_ids"] = []
     for scene in project["script"].scenes:
         checkpoint = outputs.get(scene.id) or {}
         checkpoint_path = Path(checkpoint.get("video_path", ""))
@@ -1719,6 +1782,14 @@ async def _generate_project_video(project_id: str):
             if project.get("pause_requested"):
                 await _finish_pause(project_id, scene_id)
                 return
+
+            if scene_id in project.get("skipped_scene_ids", []):
+                project["scenes_status"][scene_id] = "error"
+                await send_progress(
+                    project_id, scene_id, "error", 0,
+                    f"Đã bỏ qua cảnh {scene_idx + 1} do lỗi; cảnh này không có trong video xuất.",
+                )
+                continue
 
             checkpoint = scene_outputs.get(scene_id) or {}
             checkpoint_path = Path(checkpoint.get("video_path", ""))
@@ -2060,8 +2131,33 @@ async def _generate_project_video(project_id: str):
                                 "Không có scene nào được tạo thành công")
 
     except Exception as e:
-        if active_scene_id and project["scenes_status"].get(active_scene_id) == "processing":
+        scene_failed = bool(
+            active_scene_id
+            and project["scenes_status"].get(active_scene_id) == "processing"
+        )
+        if scene_failed:
             project["scenes_status"][active_scene_id] = "error"
+        if scene_failed and project.get("skip_failed_scenes"):
+            skipped = project.setdefault("skipped_scene_ids", [])
+            if active_scene_id not in skipped:
+                skipped.append(active_scene_id)
+            project["active_scene_id"] = ""
+            project["last_error"] = str(e)
+            _save_project_state(project_id)
+            scene_number = next(
+                (index + 1 for index, item in enumerate(script.scenes) if item.id == active_scene_id),
+                0,
+            )
+            await send_progress(
+                project_id, active_scene_id, "error", 0,
+                f"Cảnh {scene_number} bị lỗi và đã được bỏ qua: {e}",
+            )
+            await send_progress(
+                project_id, "final", "generating", 0,
+                "Đang tiếp tục ghép các cảnh còn lại...",
+            )
+            await _generate_project_video(project_id)
+            return
         project["status"] = "paused_error"
         project["pause_requested"] = False
         project["active_scene_id"] = active_scene_id or ""
@@ -2092,6 +2188,8 @@ async def get_project_status(project_id: str):
         "resumable": project["status"] in {"paused", "paused_error", "error", "partial"},
         "queue_position": _generation_queue_position(project_id),
         "with_voice": project.get("with_voice", True),
+        "skip_failed_scenes": project.get("skip_failed_scenes", False),
+        "skipped_scene_ids": project.get("skipped_scene_ids", []),
     }
 
 

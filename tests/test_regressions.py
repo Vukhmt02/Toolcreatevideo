@@ -20,6 +20,7 @@ from services.compositor import compositor
 from core.prompt_builder import build_image_prompt
 from core.prompt_builder import build_scene_prompt
 from core.script_parser import parse_script
+import core.script_parser as script_parser
 import core.visual_analyzer as visual_analyzer
 import services.voice_service as voice_module
 from services.voice_service import VoiceService
@@ -34,6 +35,53 @@ def _script():
         "characters": [{"id": "person", "name": "Person"}],
         "scenes": [{"id": "scene_01", "setting": "A room", "dialogues": []}],
     }
+
+
+def test_openai_semantic_refinement_uses_meaning_instead_of_duration(monkeypatch):
+    captured = {}
+
+    async def fake_openai(system_instruction, prompt):
+        captured["system"] = system_instruction
+        captured["prompt"] = prompt
+        return _script()
+
+    monkeypatch.setattr(config, "SCRIPT_AI_PROVIDER", "openai")
+    monkeypatch.setattr(config, "OPENAI_API_KEY", "test-key")
+    monkeypatch.setattr(script_parser, "_refine_script_with_openai", fake_openai)
+
+    result = asyncio.run(script_parser.refine_script_with_ai(
+        "Nam rời ga. Ba ngày sau anh trở về nhà.",
+        scene_density="semantic",
+    ))
+
+    assert result["title"] == "Regression test"
+    assert "Không đặt mục tiêu số lượng cảnh hoặc số giây" in captured["prompt"]
+    assert "duration_hint tuyệt đối không được dùng làm lý do" in captured["system"]
+
+
+def test_script_refinement_falls_back_to_gemini_when_openai_key_is_missing(monkeypatch):
+    monkeypatch.setattr(config, "SCRIPT_AI_PROVIDER", "openai")
+    monkeypatch.setattr(config, "OPENAI_API_KEY", "")
+    monkeypatch.setattr(config, "GOOGLE_API_KEY", "google-test-key")
+
+    class FakeModels:
+        async def generate_content(self, **kwargs):
+            return SimpleNamespace(text=json.dumps(_script()))
+
+    class FakeAio:
+        models = FakeModels()
+
+    class FakeClient:
+        aio = FakeAio()
+
+    import google.genai
+    monkeypatch.setattr(google.genai, "Client", lambda **kwargs: FakeClient())
+
+    result = asyncio.run(script_parser.refine_script_with_ai(
+        "Nam trở về nhà.", scene_density="semantic"
+    ))
+
+    assert result["title"] == "Regression test"
 
 
 def test_pause_endpoint_requests_safe_stop_and_persists_state(tmp_path, monkeypatch):
@@ -177,6 +225,30 @@ def test_generate_endpoint_persists_no_voice_choice(tmp_path, monkeypatch):
     assert saved["with_voice"] is False
 
 
+def test_generate_endpoint_persists_skip_failed_scenes_choice(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+
+    async def enqueue(_project_id):
+        return None
+
+    monkeypatch.setattr(app_module, "_enqueue_generation", enqueue)
+    client = TestClient(app_module.app)
+    project_id = client.post(
+        "/api/project/create", data={"script_json": json.dumps(_script())}
+    ).json()["project_id"]
+
+    response = client.post(
+        f"/api/project/{project_id}/generate?with_voice=false&skip_failed_scenes=true"
+    )
+
+    assert response.status_code == 200
+    assert response.json()["skip_failed_scenes"] is True
+    assert app_module.projects[project_id]["skip_failed_scenes"] is True
+    saved = json.loads((tmp_path / project_id / "state.json").read_text(encoding="utf-8"))
+    assert saved["skip_failed_scenes"] is True
+
+
 def test_no_voice_timeline_skips_elevenlabs_and_subtitles(tmp_path, monkeypatch):
     monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
     app_module.projects.clear()
@@ -256,6 +328,61 @@ def test_muse_timeline_pauses_on_missing_clip_without_calling_google(tmp_path, m
     assert project["status"] == "paused_error"
     assert project["scenes_status"]["scene_01"] == "error"
     assert "chưa có video Muse" in project["last_error"]
+
+
+def test_timeline_can_skip_failed_muse_scene_and_export_partial_video(tmp_path, monkeypatch):
+    monkeypatch.setattr(config, "OUTPUT_DIR", tmp_path)
+    app_module.projects.clear()
+    script_data = _script()
+    script_data["scenes"].append({
+        "id": "scene_02",
+        "setting": "A garden",
+        "dialogues": [],
+        "duration_hint": "5s",
+    })
+    client = TestClient(app_module.app)
+    project_id = client.post(
+        "/api/project/create", data={"script_json": json.dumps(script_data)}
+    ).json()["project_id"]
+    project = app_module.projects[project_id]
+    second_video = tmp_path / "scene_02.mp4"
+    second_video.write_bytes(b"video" * 300)
+    second_scene = project["script"].scenes[1]
+    second_scene.generated_media_path = str(second_video)
+    second_scene.generated_media_type = "video"
+    second_scene.generated_media_provider = "muse"
+    project.update({
+        "status": "generating",
+        "with_voice": False,
+        "media_workflow": "muse",
+        "skip_failed_scenes": True,
+        "skipped_scene_ids": [],
+    })
+
+    stitched = tmp_path / "stitched.mp4"
+    final = tmp_path / "final.mp4"
+
+    def build_timeline(videos):
+        assert videos == [str(second_video)]
+        stitched.write_bytes(b"stitched")
+        return str(stitched)
+
+    def export(*_args):
+        final.write_bytes(b"final")
+        return str(final)
+
+    monkeypatch.setattr(app_module, "get_audio_duration", lambda _path: 5.0)
+    monkeypatch.setattr(app_module.compositor, "fit_video_duration", lambda path, _duration: path)
+    monkeypatch.setattr(app_module.compositor, "build_timeline_video", build_timeline)
+    monkeypatch.setattr(app_module.compositor, "export_final", export)
+
+    asyncio.run(app_module._generate_project_video(project_id))
+
+    assert project["status"] == "partial"
+    assert project["output_path"] == str(final)
+    assert project["scenes_status"]["scene_01"] == "error"
+    assert project["scenes_status"]["scene_02"] == "done"
+    assert project["skipped_scene_ids"] == ["scene_01"]
 
 
 def test_asset_upload_stays_in_project_and_persists(tmp_path, monkeypatch):
